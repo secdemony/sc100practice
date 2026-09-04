@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft SC-100 Practice Simulator</title>
+<style>
+  :root{
+    --navy:#1b3a5c;
+    --navy-light:#26527d;
+    --accent:#0f6cbd;
+    --accent-light:#deecf9;
+    --green:#15803d;
+    --green-light:#dcfce7;
+    --red:#b91c1c;
+    --red-light:#fee2e2;
+    --gray-50:#f9fafb;
+    --gray-100:#f4f5f7;
+    --gray-200:#e5e7eb;
+    --gray-300:#d1d5db;
+    --gray-500:#6b7280;
+    --gray-700:#374151;
+    --gray-900:#111827;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--gray-100);
+    color:var(--gray-900);
+    min-height:100vh;
+  }
+  #app{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--gray-300);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card + .card{margin-top:16px;}
+  .pad{padding:22px 24px;}
+  h1{font-size:25px;margin:0 0 4px;color:var(--navy);}
+  h2{font-size:19px;margin:0 0 12px;color:var(--navy);}
+  .subtitle{color:var(--gray-500);font-size:15px;margin-bottom:20px;}
+  label{display:block;font-size:14.5px;font-weight:600;color:var(--gray-700);margin-bottom:7px;}
+  input[type=text], input[type=number]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--gray-300);
+    border-radius:7px;
+    font-size:16px;
+    margin-bottom:16px;
+    font-family:inherit;
+  }
+  input[type=text]:focus, input[type=number]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  .row{display:flex;gap:12px;}
+  .row > div{flex:1;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:13px 24px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:inherit;
+    transition:opacity .15s, transform .05s;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn:disabled{opacity:0.45;cursor:not-allowed;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:0.9;}
+  .btn-green{background:var(--green);color:#fff;}
+  .btn-green:hover:not(:disabled){opacity:0.9;}
+  .btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--gray-300);}
+  .btn-outline:hover:not(:disabled){background:var(--gray-50);}
+  .btn-danger{background:#fff;color:var(--red);border:1.5px solid var(--red);}
+  .btn-danger:hover{background:var(--red-light);}
+  .btn-block{width:100%;}
+  .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .helper{font-size:14px;color:var(--gray-500);margin:4px 0 16px;}
+  .domain-weight-list{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px;}
+  .domain-weight-row{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;background:var(--gray-100,#f3f4f6);border-radius:7px;font-size:13.5px;}
+  .domain-weight-row .dname{color:#111827;}
+  .domain-weight-row .dcount{color:#4b5563;font-weight:600;white-space:nowrap;}
+  .err{color:var(--red);font-size:14.5px;margin:4px 0 14px;}
+
+  /* header bar */
+  .topbar{
+    background:var(--navy);
+    color:#fff;
+    padding:14px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .topbar .qnum{font-weight:700;font-size:17px;}
+  .topbar .cat{font-size:13px;color:#c7d2fe;font-style:italic;}
+  .topbar .meta{font-size:13.5px;color:#cbd5e1;}
+  .meta-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+  .exam-timer{font-size:14px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.02em;}
+
+  /* progress bar */
+  .progress-wrap{background:var(--gray-200);height:6px;width:100%;}
+  .progress-fill{background:var(--accent);height:6px;transition:width .2s;}
+
+  .qtext{font-size:18.5px;line-height:1.6;margin:22px 24px 8px;}
+  .qhint{font-size:14px;color:var(--gray-500);margin:0 24px 16px;font-style:italic;}
+  .qtable-wrap{margin:12px 24px 14px;overflow-x:auto;border:1px solid var(--gray-300);border-radius:8px;}
+  .qlog-wrap{margin:12px 24px 14px;overflow-x:auto;background:#1a1f2b;border-radius:8px;padding:12px 16px;}
+  .qlog-line{font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:13.5px;line-height:1.7;color:#d1e8ff;white-space:pre;}
+
+  /* ---- performance-based drop-down items (PBQ) ---- */
+  .pbq-instructions-wrap{margin:12px 24px 4px;padding:12px 16px;background:var(--gray-100,#f3f4f6);border:1px solid var(--gray-300);border-radius:8px;}
+  .pbq-instructions-head{font-size:11px;font-weight:700;letter-spacing:.06em;color:#4b5563;margin-bottom:6px;}
+  .pbq-instructions{margin:0;padding-left:18px;}
+  .pbq-instructions li{font-size:13.5px;line-height:1.6;color:#374151;}
+  .pbq-wrap{margin:12px 24px 4px;display:flex;flex-direction:column;gap:12px;}
+  .pbq-row{border:1px solid var(--gray-300);border-radius:8px;padding:14px 16px;background:#fff;}
+  .pbq-row-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;}
+  .pbq-id{font-size:12px;font-weight:700;letter-spacing:.05em;color:#1d4ed8;text-transform:uppercase;}
+  .pbq-target{font-size:12px;font-weight:600;color:#4b5563;}
+  .pbq-desc{font-size:14.5px;line-height:1.6;color:#111827;margin-bottom:10px;}
+  .pbq-fields{display:flex;gap:12px;flex-wrap:wrap;}
+  .pbq-field{flex:1 1 240px;min-width:0;}
+  .pbq-label{display:block;font-size:11.5px;font-weight:600;color:#4b5563;margin-bottom:4px;}
+  .pbq-select{width:100%;padding:9px 10px;border:1px solid var(--gray-300);border-radius:7px;font-size:14px;font-family:inherit;background:#fff;}
+  .pbq-select.correct{border-color:#15803d;background:#f0fdf4;}
+  .pbq-select.incorrect{border-color:#b91c1c;background:#fef2f2;}
+  .pbq-select:disabled{opacity:1;color:#111827;}
+  .pbq-mark{font-size:12px;font-weight:600;margin-top:4px;}
+  .pbq-mark.ok{color:#15803d;}
+  .pbq-mark.bad{color:#b91c1c;}
+  .pbq-why{margin-top:10px;padding-top:10px;border-top:1px dashed var(--gray-300);font-size:13.5px;line-height:1.6;color:#374151;}
+  .pbq-reset-row{margin:10px 24px 0;}
+  .qtable{width:100%;border-collapse:collapse;font-size:15px;}
+  .qtable th{background:var(--navy);color:#fff;text-align:left;padding:10px 14px;font-weight:700;white-space:nowrap;}
+  .qtable td{padding:9px 14px;border-top:1px solid var(--gray-200);color:var(--gray-900);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .qtable tr:nth-child(even) td{background:var(--gray-50);}
+
+  .choices{padding:0 24px 4px;}
+  .choice{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    border:1.5px solid var(--gray-300);
+    border-radius:8px;
+    padding:14px 16px;
+    margin-bottom:11px;
+    cursor:pointer;
+    font-size:17px;
+    line-height:1.5;
+    transition:background .1s, border-color .1s;
+  }
+  .choice:hover{background:var(--gray-50);}
+  .choice.selected{border-color:var(--accent);background:var(--accent-light);}
+  .choice.correct{border-color:var(--green);background:var(--green-light);}
+  .choice.incorrect{border-color:var(--red);background:var(--red-light);}
+  .choice input{margin-top:4px;flex-shrink:0;width:18px;height:18px;accent-color:var(--accent);}
+  .choice .letter{font-weight:700;margin-right:2px;}
+  .choice .mark{margin-left:auto;font-weight:700;font-size:14.5px;flex-shrink:0;padding-left:8px;}
+  .choice.correct .mark{color:var(--green);}
+  .choice.incorrect .mark{color:var(--red);}
+  .choice.disabled{cursor:default;}
+
+  .result-banner{
+    margin:16px 24px 0;
+    padding:14px 18px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:17px;
+  }
+  .result-banner.correct{background:var(--green-light);color:var(--green);}
+  .result-banner.incorrect{background:var(--red-light);color:var(--red);}
+  .result-banner.revealed{background:var(--accent-light);color:var(--accent);}
+
+  .explanation{
+    margin:16px 24px 0;
+    background:var(--gray-50);
+    border:1px solid var(--gray-300);
+    border-radius:8px;
+    padding:16px 18px;
+  }
+  .explanation .head{font-size:13px;font-weight:700;color:var(--gray-700);letter-spacing:.03em;margin-bottom:6px;}
+  .explanation .body{font-size:16.5px;line-height:1.65;color:var(--gray-700);white-space:pre-line;}
+
+  .footer-actions{
+    padding:18px 24px 22px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .footer-actions .left-actions,
+  .footer-actions .right-actions,
+  .footer-actions .answer-actions{display:flex;gap:10px;align-items:center;}
+  /* Wide screens: visually restore [Prev][flag] ......... [Show Answer][Next].
+     DOM order is mobile-first, so desktop reorders here. */
+  .footer-actions .left-actions{order:1;}
+  .footer-actions .answer-actions{order:2;margin-left:auto;}
+  .footer-actions .right-actions{order:3;}
+  .footer-actions .answer-actions ~ .right-actions{margin-left:0;}
+  .footer-actions .left-actions + .right-actions{margin-left:auto;}
+
+  .flag-star{
+    background:none;border:none;cursor:pointer;font-size:19px;color:var(--gray-300);padding:2px 4px;
+  }
+  .flag-star.on{color:#f59e0b;}
+
+  /* setup screen */
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .preset-btn{
+    padding:9px 16px;font-size:14.5px;border-radius:20px;border:1.5px solid var(--gray-300);
+    background:#fff;cursor:pointer;color:var(--gray-700);
+  }
+  .preset-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .resume-box{
+    border:1.5px dashed var(--accent);
+    background:var(--accent-light);
+    border-radius:8px;
+    padding:14px 16px;
+    margin-bottom:20px;
+  }
+  .resume-box .title{font-weight:700;color:var(--navy);font-size:16px;margin-bottom:4px;}
+  .resume-box .sub{font-size:14px;color:var(--gray-700);margin-bottom:10px;}
+
+  /* score screen */
+  .score-hero{
+    text-align:center;
+    padding:34px 24px 10px;
+  }
+  .score-hero .report-label{font-size:25px;color:var(--navy);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .score-hero .big{font-size:52px;font-weight:800;color:var(--navy);line-height:1;}
+  .score-hero .pct{font-size:17px;color:var(--gray-500);margin-top:6px;}
+  .score-hero .pass{display:inline-block;margin-top:14px;padding:7px 18px;border-radius:20px;font-weight:700;font-size:14.5px;}
+  .score-hero .pass.yes{background:var(--green-light);color:var(--green);}
+  .score-hero .pass.no{background:var(--red-light);color:var(--red);}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:10px 24px 24px;}
+  .stat{
+    text-align:center;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:12px 8px;
+  }
+  .stat .num{font-size:23px;font-weight:800;}
+  .stat .lbl{font-size:12.5px;color:var(--gray-500);margin-top:2px;text-transform:uppercase;letter-spacing:.03em;}
+  .stat.correct .num{color:var(--green);}
+  .stat.incorrect .num{color:var(--red);}
+  .stat.skipped .num{color:var(--gray-500);}
+
+  .cat-breakdown{padding:0 24px 20px;}
+  .cat-row{display:flex;align-items:center;gap:10px;font-size:14.5px;margin-bottom:10px;}
+  .cat-row .name{flex:0 0 190px;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cat-row .bar-wrap{flex:1;background:var(--gray-200);border-radius:4px;height:8px;overflow:hidden;}
+  .cat-row .bar{height:8px;background:var(--green);}
+  .cat-row .frac{flex:0 0 92px;text-align:right;color:var(--gray-500);}
+
+  .history-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:13px 0;border-bottom:1px solid var(--gray-200);font-size:15px;
+  }
+  .history-item:last-child{border-bottom:none;}
+  .history-item .name{font-weight:700;color:var(--navy);}
+  .history-item .range{color:var(--gray-500);font-size:13.5px;}
+  .history-item .score{font-weight:700;}
+
+  .review-list{padding:6px 24px 20px;}
+  .review-item{
+    border:1px solid var(--gray-300);border-radius:8px;padding:14px 16px;margin-bottom:11px;font-size:15px;
+  }
+  .review-item .qh{font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between;}
+  .review-item .qh .badge{font-size:12.5px;padding:2px 8px;border-radius:10px;font-weight:700;}
+  .review-item .qh .badge.correct{background:var(--green-light);color:var(--green);}
+  .review-item .qh .badge.incorrect{background:var(--red-light);color:var(--red);}
+  .review-item .qtxt{color:var(--gray-700);margin-bottom:4px;}
+  .review-item .ans{font-size:14px;color:var(--gray-500);}
+
+  .empty-note{color:var(--gray-500);font-size:15px;text-align:center;padding:20px;}
+  .brand{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .top-title{font-size:13.5px;color:var(--gray-500);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px;}
+
+  /* ===================== RESPONSIVE: tablets / small screens ===================== */
+  @media (max-width: 640px){
+    #app{padding:12px 10px 40px;}
+    .pad{padding:18px 16px;}
+    h1{font-size:22px;}
+    h2{font-size:17.5px;}
+    .subtitle{font-size:14.5px;margin-bottom:16px;}
+
+    .btn{padding:13px 18px;font-size:16px;}
+    .btn-row{flex-direction:column;}
+    .btn-row .btn{width:100%;}
+    .presets{gap:6px;}
+    .preset-btn{padding:8px 14px;font-size:14px;}
+
+    .topbar{padding:12px 16px;}
+    .topbar .qnum{font-size:16px;}
+    .topbar .cat{font-size:12.5px;}
+    .topbar .meta{font-size:12.5px;}
+    .exam-timer{font-size:13px;}
+
+    .qtext{margin:18px 16px 8px;font-size:17.5px;line-height:1.6;}
+    .qhint{margin:0 16px 14px;font-size:13.5px;}
+    .qtable-wrap{margin:10px 16px 12px;}
+    .qlog-wrap{margin:10px 16px 12px;padding:10px 12px;}
+    .qlog-line{font-size:12px;}
+    .pbq-instructions-wrap{margin:10px 16px 4px;padding:10px 12px;}
+    .pbq-wrap{margin:10px 16px 4px;gap:10px;}
+    .pbq-row{padding:12px 13px;}
+    .pbq-fields{flex-direction:column;gap:10px;}
+    .pbq-field{flex:1 1 auto;}
+    .pbq-reset-row{margin:10px 16px 0;}
+    .qtable{font-size:14px;}
+    .qtable th, .qtable td{padding:8px 11px;}
+
+    .choices{padding:0 16px 4px;}
+    .choice{padding:14px 14px;font-size:16.5px;gap:10px;line-height:1.5;}
+
+    .result-banner{margin:14px 16px 0;padding:13px 16px;font-size:16px;}
+    .explanation{margin:14px 16px 0;padding:14px 16px;}
+    .explanation .body{font-size:15.5px;line-height:1.6;}
+
+    /* ---- Small-screen action layout ----
+       Row 1: Show Answer (full width)
+       Row 2: [← Previous][flag]   [Next Question]
+       Achieved with flex-wrap + explicit order so the DOM stays desktop-friendly. */
+    /* Small-screen action layout.
+       Row 1: Show Answer, full width.
+       Row 2: [← Previous][flag]  |  [Next Question]
+       Uses block + float rather than flex-wrap so it renders identically in
+       every engine, including older WebKit. DOM order == visual order here. */
+    .footer-actions{
+      padding:16px 16px 18px;
+      display:block;
+    }
+    .footer-actions::after{content:"";display:block;clear:both;}
+    .footer-actions .answer-actions,
+    .footer-actions .left-actions,
+    .footer-actions .right-actions{order:0;margin-left:0;}
+    .footer-actions .answer-actions{
+      display:block;
+      width:100%;
+      margin:0 0 10px 0;
+    }
+    .footer-actions .answer-actions .btn{display:flex;width:100%;}
+    .footer-actions .left-actions{
+      float:left;
+      width:calc(50% - 5px);
+      display:flex;
+      gap:6px;
+    }
+    .footer-actions .right-actions{
+      float:right;
+      width:calc(50% - 5px);
+      display:flex;
+    }
+    .footer-actions .left-actions .btn{
+      flex:1 1 auto;min-width:0;
+      padding-left:8px;padding-right:8px;
+    }
+    .footer-actions .left-actions .flag-star{flex:0 0 auto;}
+    .footer-actions .right-actions .btn{flex:1 1 auto;width:100%;min-width:0;padding-left:8px;padding-right:8px;}
+
+    .score-hero{padding:26px 16px 8px;}
+    .score-hero .big{font-size:40px;}
+    .score-hero .pct{font-size:14px;}
+    .stat-grid{padding:8px 16px 20px;gap:8px;}
+    .stat .num{font-size:17px;}
+
+    .cat-breakdown{padding:0 16px 16px;}
+    .cat-row{flex-wrap:wrap;row-gap:4px;}
+    .cat-row .name{flex:1 1 100%;white-space:normal;}
+    .cat-row .bar-wrap{flex:1 1 auto;}
+    .cat-row .frac{flex:0 0 auto;}
+
+    .review-list{padding:6px 16px 16px;}
+    .review-item{padding:11px 12px;}
+
+    .resume-box{padding:12px 14px;}
+    .resume-box .btn-row{margin-top:10px;}
+  }
+
+  @media (max-width: 420px){
+    .row{flex-direction:column;gap:0;}
+    .score-hero .big{font-size:34px;}
+    .stat-grid{grid-template-columns:1fr 1fr 1fr;gap:6px;}
+    .stat{padding:10px 4px;}
+    .stat .lbl{font-size:11px;}
+    .stat .num{font-size:19px;}
+    .btn{padding:13px 12px;font-size:15px;}
+    .qtext{font-size:17px;}
+    .choice{font-size:16px;padding:13px 12px;}
+  }
+
+  /* Ensure touch targets are comfortably tappable on any touchscreen */
+  @media (pointer: coarse){
+    .btn{min-height:48px;}
+    .choice{min-height:48px;}
+    .flag-star{padding:8px 12px;font-size:24px;min-height:48px;}
+    .preset-btn{min-height:40px;}
+  }
+
+  /* ---- SC-100 additions ---- */
+
+  /* Provenance tag: which question in the source PDF this item came from, so a
+     candidate can go back to the original when an explanation is thin. */
+  .src-tag{
+    font-size:12px;color:var(--gray-500);margin:0 24px 2px;
+    letter-spacing:.02em;
+  }
+  .cs-badge{
+    display:inline-block;margin-left:8px;padding:2px 9px;border-radius:10px;
+    background:var(--accent-light);color:var(--accent);font-weight:700;
+    font-size:11.5px;letter-spacing:.02em;vertical-align:1px;
+  }
+  /* Case-study items reference a scenario the source PDF does not reproduce.
+     Say so on the question itself rather than letting it read as a broken stem. */
+  .cs-note{
+    margin:0 24px 14px;padding:10px 14px;border-radius:8px;
+    background:#fffbeb;border:1px solid #fde68a;
+    font-size:13.5px;line-height:1.55;color:#92400e;
+  }
+  .explanation .body a{color:var(--accent);word-break:break-all;}
+  .explanation .body .link-line{display:block;margin-top:4px;}
+  .links-only-note{font-size:13px;color:var(--gray-500);margin-bottom:8px;}
+
+  /* Answer-area (matching) items */
+  .match-note{
+    margin:12px 24px 4px;padding:11px 14px;border-radius:8px;
+    background:var(--gray-100);border:1px solid var(--gray-300);
+    font-size:13px;line-height:1.55;color:var(--gray-700);
+  }
+  .match-note b{color:var(--gray-900);}
+  .match-wrap{margin:12px 24px 4px;display:flex;flex-direction:column;gap:12px;}
+  .match-row{border:1px solid var(--gray-300);border-radius:8px;padding:13px 15px;background:#fff;}
+  .match-label{display:block;font-size:14.5px;font-weight:600;color:var(--gray-900);margin-bottom:8px;line-height:1.45;}
+  .match-select{width:100%;padding:10px 11px;border:1px solid var(--gray-300);border-radius:7px;font-size:15px;font-family:inherit;background:#fff;color:var(--gray-900);}
+  .match-select.correct{border-color:var(--green);background:var(--green-light);}
+  .match-select.incorrect{border-color:var(--red);background:var(--red-light);}
+  .match-select:disabled{opacity:1;color:var(--gray-900);}
+  .match-mark{font-size:12.5px;font-weight:600;margin-top:6px;line-height:1.5;}
+  .match-mark.ok{color:var(--green);}
+  .match-mark.bad{color:var(--red);}
+  .match-reset-row{margin:10px 24px 0;}
+
+  /* Domain weight rows on the setup screen wrap on narrow screens rather than
+     squeezing the long SC-100 domain names into an unreadable column. */
+  .domain-weight-row{flex-wrap:wrap;}
+
+  /* SC-100's skill-area names run to eight or nine words, far longer than the
+     fixed 190px column the base stylesheet gives them, so on the results screen
+     the name takes its own line above its bar instead of being ellipsised. */
+  .cat-row{flex-wrap:wrap;row-gap:4px;}
+  .cat-row .name{flex:1 1 100%;white-space:normal;}
+  .cat-row .bar-wrap{flex:1 1 auto;}
+  .cat-row .frac{flex:0 0 auto;}
+
+  @media (max-width: 640px){
+    .src-tag{margin:0 16px 2px;}
+    .cs-note{margin:0 16px 12px;}
+    .match-note, .match-wrap{margin:10px 16px 4px;}
+    .match-reset-row{margin:10px 16px 0;}
+    .cat-row .name{flex:1 1 100%;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const QUESTIONS = [
+{"n":1,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to meet the security requirements for the InfraSec group.","o":["a subscription","a custom role-based access control (RBAC) role","a resource group","a management group"],"a":"B","e":"","src":"Case Study 1: Fabrikam, Inc. #2","cs":"Fabrikam case study"},
+{"n":2,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to scan the application code.","o":["Azure Key Vault","GitHub Advanced Security","Application Insights in Azure Monitor","Azure DevTest Labs"],"a":"B","e":"https://docs.microsoft.com/en-us/learn/modules/introduction-github-advanced-security/2-what-is-github-advanced-security","src":"Case Study 1: Fabrikam, Inc. #3","cs":"Fabrikam case study"},
+{"n":3,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to secure the MedicalHistory data.","o":["Transparent Data Encryption (TDE)","Always Encrypted","row-level security (RLS)","dynamic data masking","data classification"],"a":"B","e":"https://docs.microsoft.com/en-us/learn/modules/protect-data-transit-rest/4-explain-object-encryption-secure-enclaves","src":"Case Study 1: Fabrikam, Inc. #5","cs":"Fabrikam case study"},
+{"n":4,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to meet the security requirements for the virtual machines.","o":["an Azure Bastion host","a network security group (NSG)","just-in-time (JIT) VM access","Azure Virtual Desktop"],"a":"D","e":"The security requirement is \"The secure host must be provisioned from a custom operating system image.\"\nhttps://docs.microsoft.com/en-us/azure/virtual-desktop/set-up-golden-image","src":"Case Study 1: Fabrikam, Inc. #8","cs":"Fabrikam case study"},
+{"n":5,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to resolve the virtual machine issue. (Choose Two)","o":["Onboard the virtual machines to Microsoft Defender for Endpoint","Onboard the virtual machines to Azure Arc","Create a device compliance policy in Microsoft Endpoint Manager","Enable the Qualys scanner in Defender for Cloud"],"a":"A D","e":"https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/switch-to-mde-phase-3?view=o365-worldwide","src":"Case Study 1: Fabrikam, Inc. #9","cs":"Fabrikam case study"},
+{"n":6,"c":"Design security solutions for applications and data","q":"Which two authentication methods must the applications support?","o":["Security Assertion Markup Language (SAML)","NTLMv2","certificate-based authentication","Kerberos"],"a":"A D","e":"https://docs.microsoft.com/en-us/azure/active-directory/app-proxy/application-proxy-configure-single-sign-on-on-premises-apps\nhttps://docs.microsoft.com/en-us/azure/active-directory/app-proxy/application-proxy-configure-single-sign-on-with-kcd","src":"Case Study 2: Litware, Inc. #4","cs":"Litware case study"},
+{"n":7,"c":"Design security solutions for applications and data","q":"Which two services should you leverage in the strategy?","o":["Azure AD Conditional Access","Microsoft Defender for Cloud Apps","Microsoft Defender for Cloud","Microsoft Defender for Endpoint","access reviews in Azure AD"],"a":"B C","e":"https://docs.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-session#conditional-access-application-control\nhttps://docs.microsoft.com/en-us/azure/active-directory/app-proxy/application-proxy-integrate-with-microsoft-cloud-application-security","src":"Case Study 2: Litware, Inc. #6","cs":"Litware case study"},
+{"n":8,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution for securing the landing zones.","o":["Azure DDoS Protection Standard","an Azure Private DNS zone","Microsoft Defender for Cloud","an ExpressRoute gateway"],"a":"D","e":"The solution must meet the landing zone requirements: \"Use a DNS namespace of litware.com\" and \"Ensure Azure virtual machines communicate with Azure App Service web apps over the Microsoft backbone network, rather than over public endpoints.\"","src":"Case Study 2: Litware, Inc. #8","cs":"Litware case study"},
+{"n":9,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to isolate the compute components on an Azure virtual network.","o":["Azure Active Directory (Azure AD) enterprise applications","an Azure App Service Environment (ASE)","Azure service endpoints","an Azure Active Directory (Azure AD) application proxy"],"a":"B","e":"App Service environments (ASEs) are appropriate for application workloads that require very high scale, isolation and secure network access, and high memory utilization.\nhttps://docs.microsoft.com/en-us/azure/app-service/environment/overview","src":"Standalone Questions #1"},
+{"n":10,"c":"Design solutions that align with security best practices and priorities","q":"You discover 0 out of 8 points in Secure management ports controls. You recommend enabling adaptive network hardening. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"JIT:\nhttps://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access#pa-2-avoid-standing-access-for-user-accounts-and-permissions\nAdaptive Network Hardening:\nhttps://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-network-security#ns-7-simplify-network-security-configuration","src":"Standalone Questions #4"},
+{"n":11,"c":"Design solutions that align with security best practices and priorities","q":"Which two conditions must be met before endpoint users can access the corporate applications again?","o":["Microsoft Defender for Endpoint reports the endpoints as compliant","Microsoft Intune reports the endpoints as compliant","A new Azure Active Directory (Azure AD) Conditional Access policy is enforced","The client access tokens are refreshed"],"a":"C D","e":"https://www.microsoft.com/security/blog/2022/02/17/4-best-practices-to-implement-a-comprehensive-zero-trust-security-approach/\nhttps://docs.microsoft.com/en-us/azure/active-directory/develop/refresh-tokens","src":"Standalone Questions #5"},
+{"n":12,"c":"Design security solutions for infrastructure","q":"Based on the virtual network design, how many Azure Bastion subnets are required?","o":["1","2","3","4","5"],"a":"C","e":"https://docs.microsoft.com/en-us/azure/bastion/vnet-peering\nhttps://docs.microsoft.com/en-us/learn/modules/connect-vm-with-azure-bastion/2-what-is-azure-bastion","src":"Standalone Questions #6"},
+{"n":13,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to prevent users on a specific list of countries from connecting to the applications.","o":["activity policies in Microsoft Defender for Cloud Apps","sign-in risk policies in Azure AD Identity Protection","device compliance policies in Microsoft Endpoint Manager","Azure AD Conditional Access policies","user risk policies in Azure AD Identity Protection"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/active-directory/conditional-access/howto-conditional-access-policy-location\nhttps://docs.microsoft.com/en-us/power-platform/admin/restrict-access-online-trusted-ip-rules","src":"Standalone Questions #7"},
+{"n":14,"c":"Design security operations, identity, and compliance capabilities","q":"What is the minimum number of Resource Guard resources required?","o":["1","2","3","4"],"a":"C","e":"","src":"Standalone Questions #8"},
+{"n":15,"c":"Design security solutions for applications and data","q":"For blob containers in Azure Storage, you recommend encryption that uses customer-managed keys (CMKs). Does this meet the goal?","o":["Yes","No"],"a":"A","e":"","src":"Standalone Questions #9"},
+{"n":16,"c":"Design security operations, identity, and compliance capabilities","q":"You need to minimize the operational load on Tier 1 Microsoft Security Operations Center (SOC) analysts.","o":["Enable built-in compliance policies in Azure Policy","Enable self-healing in Microsoft 365 Defender","Automate data classification","Create hunting queries in Microsoft 365 Defender"],"a":"A","e":"","src":"Standalone Questions #10"},
+{"n":17,"c":"Design security operations, identity, and compliance capabilities","q":"You need to recommend a solution to prevent users on a specific list of countries from connecting to the applications.","o":["Microsoft Entra Conditional Access policies","user risk policies in Microsoft Entra ID Protection","activity policies in Microsoft Defender for Cloud Apps","device compliance policies in Microsoft Intune","sign-in risk policies in Microsoft Entra ID Protection"],"a":"A","e":"","src":"Standalone Questions #12"},
+{"n":18,"c":"Design security solutions for applications and data","q":"You need to recommend what to configure before the databases can be scanned.","o":["Microsoft Defender for Cloud","Microsoft Defender Vulnerability Management","Microsoft Purview data governance","Microsoft Purview data loss prevention (DLP)"],"a":"A","e":"","src":"Standalone Questions #13"},
+{"n":19,"c":"Design security operations, identity, and compliance capabilities","q":"Which two configurations can you include in the recommendation?","o":["Azure Active Directory (Azure AD) Conditional Access policies","a custom collector that uses the Log Analytics agent","resource-based role-based access control (RBAC)","the Azure Monitor agent"],"a":"C D","e":"https://docs.microsoft.com/en-us/azure/azure-monitor/agents/log-analytics-agent","src":"Standalone Questions #14"},
+{"n":20,"c":"Design solutions that align with security best practices and priorities","q":"You need to recommend a best practice for implementing service accounts for Azure API management.","o":["device registrations in Azure AD","application registrations in Azure AD","Azure service principals with certificate credentials","Azure service principals with usernames and passwords","managed identities in Azure"],"a":"E","e":"","src":"Standalone Questions #15"},
+{"n":21,"c":"Design security solutions for infrastructure","q":"Which virtual machine scale sets will automatic guest patching support?","o":["VMSS1 only","VMSS2 only","VMSS1 and VMSS3 only","VMSS2 and VMSS4 only","VMSS1, VMSS2, VMSS3, and VMSS4"],"a":"C","e":"","src":"Standalone Questions #16"},
+{"n":22,"c":"Design solutions that align with security best practices and priorities","q":"What should you use to identify which archetype-aligned management groups to create beneath the landing zones management group?","o":["software development lifecycle (SDLC) environments","the internal billing chargeback structure","the hybrid connectivity requirements","geographical locations"],"a":"A","e":"","src":"Standalone Questions #17"},
+{"n":23,"c":"Design solutions that align with security best practices and priorities","q":"You need to monitor resources in the subscriptions for compliance with ISO 27001:2013 standards.","o":["Assign an initiative to a management group","Assign a policy to each subscription","Assign a policy to a management group","Assign an initiative to each subscription","Assign a blueprint to each subscription","Assign a blueprint to a management group"],"a":"A F","e":"https://docs.microsoft.com/en-us/azure/governance/management-groups/overview\nhttps://docs.microsoft.com/en-us/azure/governance/blueprints/overview\nhttps://docs.microsoft.com/en-us/azure/governance/policy/samples/iso-27001\nhttps://docs.microsoft.com/en-us/azure/governance/policy/tutorials/create-and-manage","src":"Standalone Questions #18"},
+{"n":24,"c":"Design security solutions for applications and data","q":"What should you include during the application design phase?","o":["static application security testing (SAST) by using SonarQube","dynamic application security testing (DAST) by using Veracode","threat modeling by using the Microsoft Threat Modeling Tool","software decomposition by using Microsoft Visual Studio Enterprise"],"a":"C","e":"https://www.microsoft.com/en-us/securityengineering/sdl/threatmodeling","src":"Standalone Questions #19"},
+{"n":25,"c":"Design security solutions for infrastructure","q":"You need to ensure that users can authenticate only to contoso.com.","o":["Microsoft Defender for Endpoint","Microsoft Entra Internet Access","Microsoft Entra Private Access","Microsoft Defender for Cloud Apps"],"a":"C","e":"","src":"Standalone Questions #20"},
+{"n":26,"c":"Design solutions that align with security best practices and priorities","q":"You need to ensure that all code changes are submitted by using pull requests before being deployed.","o":["custom roles in Azure Pipelines","branch policies in Azure Repos","Azure policies","custom Azure roles"],"a":"B","e":"","src":"Standalone Questions #22"},
+{"n":27,"c":"Design security solutions for applications and data","q":"You need to recommend a security solution that provides centralized management and updates for protection rules.","o":["Azure Application Gateway","Azure Front Door","Azure DDoS Protection","Azure Firewall"],"a":"B","e":"","src":"Standalone Questions #23"},
+{"n":28,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to evaluate the security and governance of the domains.","o":["Microsoft Entra ID Protection","Microsoft Defender for Servers","Microsoft Defender for Identity","Microsoft Sentinel"],"a":"C","e":"","src":"Standalone Questions #24"},
+{"n":29,"c":"Design security operations, identity, and compliance capabilities","q":"Which two traffic scenarios will occur?","o":["Traffic to https://www.fabrikam.com will be allowed from all the devices","Traffic to https://www.adatum.com:8433 will be blocked from all the devices","Traffic to https://www.adatum.com:8433 will be allowed from all the devices","Traffic to https://www.fabrikam.com will be allowed from compliant devices only","Traffic to https://www.adatum.com:8433 will be allowed from compliant devices only","Traffic to https://www.fabrikam.com will be blocked from noncompliant devices only"],"a":"A E","e":"","src":"Standalone Questions #25"},
+{"n":30,"c":"Design security solutions for applications and data","q":"You need to recommend a solution for connecting Azure DevOps pipelines to the resources.","o":["workload identity federation and system-assigned managed identities","service principals and secrets","workload identity federation and user-assigned managed identities","workload identity federation and service principals"],"a":"C","e":"","src":"Standalone Questions #26"},
+{"n":31,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution that will provide users with administrative access to the Windows computers only when access is required.","o":["Local Administrator Password Solution (LAPS)","Privileged Access Workstations (PAWs)","Azure AD Privileged Identity Management (PIM)","Azure AD Identity Protection"],"a":"A","e":"","src":"Standalone Questions #27"},
+{"n":32,"c":"Design security operations, identity, and compliance capabilities","q":"You need to recommend a solution to add a watermark to email attachments that contain sensitive data.","o":["Microsoft Defender for Cloud Apps","insider risk management","Microsoft Information Protection","Azure Purview"],"a":"C","e":"You can use sensitivity labels to provide protection settings that include encryption and content markings. For example, apply a \"Confidential\" label to a document or email, and that label encrypts the content and applies a \"Confidential\" watermark.\nhttps://docs.microsoft.com/en-us/microsoft-365/compliance/sensitivity-labels?view=o365-worldwide","src":"Standalone Questions #32"},
+{"n":33,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to prevent malicious bots from scanning the web apps.","o":["Azure Firewall Premium","Azure Application Gateway Web Application Firewall (WAF)","network security groups (NSGs)","Azure Traffic Manager and application security groups"],"a":"B","e":"","src":"Standalone Questions #33"},
+{"n":34,"c":"Design security solutions for infrastructure","q":"You need to configure the local Administrators group for each privileged access device.","o":["Only add Group2 to the local Administrators group","Configure Windows Local Administrator Password Solution (Windows LAPS) in legacy Microsoft LAPS emulation mode","Add Group2 to the local Administrators group. Add the user that is assigned the Security Administrator role to the local Administrators group of the user's assigned privileged access device"],"a":"B","e":"","src":"Standalone Questions #36"},
+{"n":35,"c":"Design security operations, identity, and compliance capabilities","q":"Which service should you recommend to complete the design?","o":["Azure Active Directory (Azure AD) B2C","Azure Active Directory (Azure AD) B2B","Azure AD Connect","Azure Active Directory Domain Services (Azure AD DS)"],"a":"A","e":"https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-facebook?pivots=b2c-user-flow\nhttps://docs.microsoft.com/en-us/azure/active-directory-b2c/customize-ui-with-html?pivots=b2c-user-flow","src":"Standalone Questions #38"},
+{"n":36,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the strategy?","o":["data connectors","playbooks","workbooks","KQL"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/sentinel/tutorial-respond-threats-playbook?tabs=LAC","src":"Standalone Questions #40"},
+{"n":37,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to ensure that the configuration of all the clusters remains consistent.","o":["Gatekeeper","Dependency Tracker","Dependency","Flux"],"a":"D","e":"","src":"Standalone Questions #42"},
+{"n":38,"c":"Design security solutions for infrastructure","q":"Which two actions should you perform?","o":["Deploy Azure Bastion to one virtual network","Deploy Azure Bastion to each virtual network","Enable just-in-time VM access on the virtual machines","Create a hub and spoke network by using virtual network peering","Create NAT rules and network rules in Azure Firewall"],"a":"A D","e":"https://docs.microsoft.com/en-us/learn/modules/connect-vm-with-azure-bastion/2-what-is-azure-bastion","src":"Standalone Questions #43"},
+{"n":39,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend doing first?","o":["Implement data protection","Develop a privileged access strategy","Prepare a recovery plan","Develop a privileged identity strategy"],"a":"C","e":"","src":"Standalone Questions #46"},
+{"n":40,"c":"Design security operations, identity, and compliance capabilities","q":"Solution: From Microsoft Defender for Cloud Apps, you configure a cloud discovery policy and unsanction risky apps. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"","src":"Standalone Questions #47"},
+{"n":41,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["SQL Server on Azure Virtual Machines with virtualization-based security (VBS) enclaves","Azure SQL Database with virtualization-based security (VBS) enclaves","Azure SQL Managed Instance that has Always Encrypted configured","Azure SQL Database with Intel Software Guard Extensions (Intel SGX) enclaves"],"a":"D","e":"","src":"Standalone Questions #51"},
+{"n":42,"c":"Design security solutions for infrastructure","q":"You need to recommend a solution to discover which virtual machines are internet-facing.","o":["Azure Network Watcher","Microsoft Defender for Cloud","Microsoft Defender for Cloud Apps","Microsoft Sentinel"],"a":"B","e":"","src":"Standalone Questions #52"},
+{"n":43,"c":"Design security solutions for applications and data","q":"You need to recommend a solution to secure the DNS record for each web app.","o":["Microsoft Defender for DevOps","Microsoft Defender for App Service","Microsoft Defender for Cloud Apps","Microsoft Defender for DNS"],"a":"B","e":"","src":"Standalone Questions #54"},
+{"n":44,"c":"Design solutions that align with security best practices and priorities","q":"Solution: From Microsoft Defender for Cloud Apps, you configure SaaS security posture management (SSPM) and create an access policy. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"","src":"Standalone Questions #55"},
+{"n":45,"c":"Design security solutions for applications and data","q":"Which type of diagram should you create?","o":["data flow","system flow","process flow","network flow"],"a":"A","e":"https://docs.microsoft.com/en-us/learn/modules/tm-create-a-threat-model-using-foundational-data-flow-diagram-elements/1b-elements\nhttps://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-getting-started?source=recommendations","src":"Standalone Questions #56"},
+{"n":46,"c":"Design security operations, identity, and compliance capabilities","q":"You need to recommend a solution to create the fake cached credentials on client computers.","o":["User and Entity Behavior Analytics (UEBA) in Microsoft Sentinel","a deception rule in Microsoft Defender for Endpoint","a Honeytoken tag in Microsoft Defender for Identity","a user risk policy in Microsoft Entra ID Protection"],"a":"C","e":"","src":"Standalone Questions #60"},
+{"n":47,"c":"Design solutions that align with security best practices and priorities","q":"Solution: You recommend enabling the VMAccess extension on all virtual machines. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"https://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access#pa-2-avoid-standing-access-for-user-accounts-and-permissions\nhttps://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-network-security#ns-7-simplify-network-security-configuration","src":"Standalone Questions #61"},
+{"n":48,"c":"Design security operations, identity, and compliance capabilities","q":"Solution: From the Microsoft Defender portal, you set Web content filtering to On and create a web content filtering policy. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"","src":"Standalone Questions #63"},
+{"n":49,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["an Azure logic app","an on-premises Syslog server","an on-premises data gateway","Azure Data Factory"],"a":"B","e":"","src":"Standalone Questions #64"},
+{"n":50,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Azure Traffic Manager with priority traffic-routing methods","Azure Application Gateway v2 with user-defined routes (UDRs)","Azure Front Door with Azure Web Application Firewall (WAF)","Azure Firewall with policy rule sets"],"a":"C","e":"https://docs.microsoft.com/en-us/azure/web-application-firewall/afds/afds-overview","src":"Standalone Questions #65"},
+{"n":51,"c":"Design security solutions for infrastructure","q":"What should you do first in each branch office?","o":["Configure an Intune policy to deploy the Global Secure Access client to each device","Configure an IPsec tunnel on the router","Install the Microsoft Entra private network connector on the file server","Configure an Intune policy to onboard Microsoft Defender for Endpoint to each device"],"a":"B","e":"","src":"Standalone Questions #67"},
+{"n":52,"c":"Design security solutions for infrastructure","q":"What should you do?","o":["From a Recovery Services vault generate a security PIN for critical operations","From Azure Backup, configure multi-user authorization by using Resource Guard","From Microsoft Azure Backup Setup, register MABS with a Recovery Services vault","From Azure AD Privileged Identity Management (PIM), create a role assignment for the Backup Contributor role"],"a":"B","e":"","src":"Standalone Questions #69"},
+{"n":53,"c":"Design solutions that align with security best practices and priorities","q":"Which two features should you include in the recommendation?","o":["continuous access evaluation","a sign-in risk policy","Azure AD Privileged Identity Management (PIM)","Conditional Access","Azure AD Application Proxy"],"a":"A D","e":"","src":"Standalone Questions #70"},
+{"n":54,"c":"Design security solutions for applications and data","q":"After remediating the threat, which policy definition should you assign?","o":["Storage account public access should be disallowed","Azure Key Vault Managed HSM should have purge protection enabled","Storage accounts should prevent shared key access","Storage account keys should not be expired"],"a":"C","e":"https://docs.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-prevent","src":"Standalone Questions #71"},
+{"n":55,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Microsoft Entra ID Protection","Microsoft Defender for Identity","Microsoft Defender for Office 365","Microsoft Entra Privileged Identity Management (PIM)"],"a":"B","e":"","src":"Standalone Questions #72"},
+{"n":56,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["a private endpoint","hybrid connections","virtual network NAT gateway integration","virtual network integration"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/app-service/app-service-hybrid-connections","src":"Standalone Questions #73"},
+{"n":57,"c":"Design security solutions for applications and data","q":"For blob containers in Azure Storage, you recommend encryption that uses Microsoft-managed keys within an encryption scope. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/key-vault/keys/how-to-configure-key-rotation","src":"Standalone Questions #74"},
+{"n":58,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Microsoft Defender for Key Vault","GitHub Advanced Security","Microsoft Defender for Cloud DevOps security","Microsoft Dev Box"],"a":"B","e":"","src":"Standalone Questions #76"},
+{"n":59,"c":"Design security solutions for infrastructure","q":"What should you include in the solution?","o":["Microsoft Entra Internet Access","Windows Admin Center","Azure Bastion","Microsoft Entra Private Access"],"a":"C","e":"","src":"Standalone Questions #78"},
+{"n":60,"c":"Design security solutions for applications and data","q":"Solution: You recommend configuring gateway-required virtual network integration. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions#restrict-access-to-a-specific-azure-front-door-instance","src":"Standalone Questions #80"},
+{"n":61,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend?","o":["an Azure Private DNS zone","an Azure key vault","an Azure firewall","an Azure virtual network gateway"],"a":"A","e":"","src":"Standalone Questions #81"},
+{"n":62,"c":"Design security solutions for infrastructure","q":"What should you recommend?","o":["The AKS cluster version must be upgraded","The updates must first be applied to the image used to provision the nodes","The nodes must restart after the updates are applied"],"a":"B","e":"","src":"Standalone Questions #82"},
+{"n":63,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Microsoft Endpoint Manager","Compliance Manager","Microsoft Defender for Cloud Apps","Microsoft Defender for Endpoint"],"a":"D","e":"https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/web-content-filtering?view=o365-worldwide#configure-web-content-filtering-policies","src":"Standalone Questions #83"},
+{"n":64,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["a Global Secure Access app","a private access traffic forwarding profile","an internet access traffic forwarding profile","a Quick Access app"],"a":"A","e":"","src":"Standalone Questions #84"},
+{"n":65,"c":"Design security operations, identity, and compliance capabilities","q":"What should you do first?","o":["From Azure Policy, assign a built-in policy definition that has a scope of the subscription","From Microsoft Defender for Cloud Apps, create an access policy for cloud applications","From Microsoft Defender for Cloud, turn on a security standard","From Microsoft Defender for Cloud, review the secure score recommendations"],"a":"A","e":"","src":"Standalone Questions #85"},
+{"n":66,"c":"Design security solutions for applications and data","q":"Which two configurations meet the compliance and privacy requirements?","o":["Store the insurance claim data in Azure Blob storage encrypted by using customer-provided keys","Store the cardholder data in an Azure SQL database that is encrypted by using keys stored in Azure Key Vault Managed HSM","Store the insurance claim data in Azure Files encrypted by using Azure Key Vault Managed HSM","Store the cardholder data in an Azure SQL database that is encrypted by using Microsoft-managed Keys"],"a":"A C","e":"https://azure.microsoft.com/en-us/blog/customer-provided-keys-with-azure-storage-service-encryption/","src":"Standalone Questions #86"},
+{"n":67,"c":"Design security operations, identity, and compliance capabilities","q":"What will necessitate an upgrade from the Azure AD Free edition to the Premium edition?","o":["role-based authorization","Azure AD Privileged Identity Management (PIM)","resource-based authorization","Azure AD Multi-Factor Authentication"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/active-directory/privileged-identity-management/pim-configure\nhttps://www.microsoft.com/en-us/security/business/identity-access/azure-active-directory-pricing?rtc=1","src":"Standalone Questions #87"},
+{"n":68,"c":"Design security operations, identity, and compliance capabilities","q":"What should you recommend using to prevent PHI from being shared outside the company?","o":["insider risk management policies","data loss prevention (DLP) policies","sensitivity label policies","retention policies"],"a":"C","e":"","src":"Standalone Questions #88"},
+{"n":69,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Configure connectors and rules in Microsoft Defender for Cloud Apps","Configure web protection in Microsoft Defender for Endpoint","Publish the web apps by using Azure AD Application Proxy","Configure the VPN to use Azure AD authentication"],"a":"C","e":"","src":"Standalone Questions #89"},
+{"n":70,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend?","o":["Compliance Manager in Microsoft Purview","Microsoft Defender for Cloud","Microsoft Sentinel","Microsoft Defender for Cloud Apps"],"a":"B","e":"","src":"Standalone Questions #91"},
+{"n":71,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Microsoft Entra B2B collaboration","Microsoft Entra Connect Sync","Cross-tenant synchronization","B2B direct connect"],"a":"D","e":"","src":"Standalone Questions #92"},
+{"n":72,"c":"Design security solutions for infrastructure","q":"What should you use for each app?","o":["Microsoft Entra Private Access for App1 and Microsoft Entra Internet Access for App2","Microsoft Entra Private Access for App1 and App2","Microsoft Entra Internet Access for App1 and App2","Microsoft Entra Private Access for App2 and Microsoft Entra Internet Access for App1"],"a":"A","e":"","src":"Standalone Questions #95"},
+{"n":73,"c":"Design security solutions for infrastructure","q":"What should you use?","o":["Microsoft Entra Permissions Management","Microsoft Defender for Identity","Azure Lighthouse","Microsoft Entra ID Governance"],"a":"A","e":"","src":"Standalone Questions #96"},
+{"n":74,"c":"Design security solutions for applications and data","q":"Solution: You recommend access restrictions to allow traffic from the backend IP address of the Front Door instance. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"","src":"Standalone Questions #97"},
+{"n":75,"c":"Design security operations, identity, and compliance capabilities","q":"What should you create first in Microsoft Entra?","o":["a Conditional Access policy","an enterprise application","a Microsoft Entra application proxy connector group","an access package"],"a":"A","e":"","src":"Standalone Questions #98"},
+{"n":76,"c":"Design security solutions for infrastructure","q":"Which three actions should you recommend?","o":["Configure network security groups (NSGs) to allow access from only specific logical groupings of IP address ranges","Implement Azure Firewall to restrict host pool outbound access","Configure Azure Active Directory (Azure AD) Conditional Access with multi-factor authentication (MFA) and named locations","Migrate from the Remote Desktop server to Azure Virtual Desktop","Deploy a Remote Desktop server to an Azure region located in France"],"a":"B C D","e":"https://docs.microsoft.com/en-us/azure/firewall/protect-azure-virtual-desktop","src":"Standalone Questions #99"},
+{"n":77,"c":"Design security solutions for infrastructure","q":"Which rule should you remove?","o":["Rule1","Rule2","Rule3","Rule4"],"a":"C","e":"","src":"Standalone Questions #100"},
+{"n":78,"c":"Design security solutions for infrastructure","q":"What should you use?","o":["Microsoft Defender for Cloud Apps","Microsoft Secure Score","Microsoft Assessment and Planning (MAP) Toolkit","Microsoft Defender for Identity"],"a":"D","e":"","src":"Standalone Questions #101"},
+{"n":79,"c":"Design security solutions for applications and data","q":"What should you include in the solution?","o":["a compute policy in Azure Policy","admin consent settings for enterprise applications in Azure AD","adaptive application controls in Defender for Servers","app governance in Microsoft Defender for Cloud Apps"],"a":"C","e":"","src":"Standalone Questions #103"},
+{"n":80,"c":"Design security solutions for applications and data","q":"What should you implement?","o":["NuGet Audit","secret scanning","Dependabot alerts","app governance in Microsoft Defender for Cloud Apps"],"a":"B","e":"","src":"Standalone Questions #104"},
+{"n":81,"c":"Design solutions that align with security best practices and priorities","q":"Solution: You recommend onboarding all virtual machines to Microsoft Defender for Endpoint. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls","src":"Standalone Questions #106"},
+{"n":82,"c":"Design security operations, identity, and compliance capabilities","q":"Which effect should you use in Azure Policy?","o":["Deny","Disabled","Modify","Append"],"a":"B","e":"Before managing new or updated resources with your new policy definition, it's best to see how it evaluates a limited subset of existing resources. Use the enforcement mode Disabled (DoNotEnforce) on your policy assignment to prevent the effect from triggering.\nhttps://docs.microsoft.com/en-us/azure/governance/policy/concepts/evaluate-impact","src":"Standalone Questions #107"},
+{"n":83,"c":"Design security operations, identity, and compliance capabilities","q":"What should you use?","o":["spoof intelligence insight in Exchange Online Protection (EOP)","Attack path analysis in Microsoft Defender for Cloud","Attack simulation training in Microsoft Defender for Office 365","user activity reports in Microsoft Purview insider risk management"],"a":"C","e":"","src":"Standalone Questions #108"},
+{"n":84,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["Microsoft Entra Private Access","Microsoft Entra application proxy","Microsoft Entra Internet Access","Azure Bastion","Azure Application Gateway"],"a":"A","e":"","src":"Standalone Questions #109"},
+{"n":85,"c":"Design solutions that align with security best practices and priorities","q":"Which compliance control should you evaluate?","o":["Data Protection","Incident Response","Posture and Vulnerability Management","Asset Management","Endpoint Security"],"a":"E","e":"https://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-endpoint-security","src":"Standalone Questions #111"},
+{"n":86,"c":"Design security solutions for infrastructure","q":"What should you include in the solution?","o":["Azure Virtual Network Manager connectivity configurations","Azure Virtual Network Manager security admin rules","Azure Firewall application rules","Azure Firewall network rules"],"a":"B","e":"","src":"Standalone Questions #112"},
+{"n":87,"c":"Design solutions that align with security best practices and priorities","q":"What should you use?","o":["Azure Blueprints","the regulatory compliance dashboard in Defender for Cloud","Azure role-based access control (Azure RBAC)","Azure Policy"],"a":"D","e":"","src":"Standalone Questions #113"},
+{"n":88,"c":"Design security solutions for applications and data","q":"What should you recommend?","o":["a group managed service account (gMSA)","a managed identity","a federated identity credential","a delegated managed service account (dMSA)"],"a":"B","e":"","src":"Standalone Questions #114"},
+{"n":89,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the design?","o":["Azure AD Application Proxy","connected apps in Microsoft Defender for Cloud Apps","Microsoft Entra Identity Governance","access policies in Microsoft Defender for Cloud Apps"],"a":"C","e":"","src":"Standalone Questions #115"},
+{"n":90,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["an Azure AD enterprise application","a relying party trust in Active Directory Federation Services (AD FS)","Azure AD Application Proxy","Azure AD B2C"],"a":"C","e":"","src":"Standalone Questions #117"},
+{"n":91,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend as part of the landing zone deployment?","o":["service chaining","local network gateways","forced tunneling","a VNet-to-VNet connection"],"a":"A","e":"https://docs.microsoft.com/en-us/learn/modules/configure-vnet-peering/5-determine-service-chaining-uses","src":"Standalone Questions #118"},
+{"n":92,"c":"Design security operations, identity, and compliance capabilities","q":"Which two solutions should you include in the recommendation?","o":["the Azure Monitor agent","Microsoft Entra Conditional Access policies","Windows Server event subscription","resource-based role-based access control (RBAC)"],"a":"A","e":"","src":"Standalone Questions #119"},
+{"n":93,"c":"Design security operations, identity, and compliance capabilities","q":"Which two configurations can you include in the recommendation?","o":["Configure Azure Active Directory (Azure AD) Conditional Access policies","Use the Azure Monitor agent with the multi-homing configuration","Implement resource-based role-based access control (RBAC) in Microsoft Sentinel","Create a custom collector that uses the Log Analytics agent"],"a":"B C","e":"","src":"Standalone Questions #122"},
+{"n":94,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Azure SQL Managed Instance","Azure Synapse Analytics dedicated SQL pools","Azure SQL Database","SQL Server on Azure Virtual Machines"],"a":"C","e":"","src":"Standalone Questions #123"},
+{"n":95,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["eDiscovery","retention policies","Compliance Manager","Microsoft Information Protection"],"a":"D","e":"https://docs.microsoft.com/en-us/microsoft-365/compliance/information-protection\nhttps://docs.microsoft.com/en-us/microsoft-365/compliance/ediscovery?view=o365-worldwide","src":"Standalone Questions #124"},
+{"n":96,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["interactive application security testing (IAST)","static application security testing (SAST)","runtime application self-protection (RASP)","dynamic application security testing (DAST)"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/security/develop/secure-develop#test-your-application-in-an-operating-state","src":"Standalone Questions #125"},
+{"n":97,"c":"Design security operations, identity, and compliance capabilities","q":"What should you recommend using in Microsoft Sentinel?","o":["playbooks","workbooks","notebooks","threat intelligence"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/azure-monitor/visualize/workbooks-overview","src":"Standalone Questions #127"},
+{"n":98,"c":"Design security solutions for applications and data","q":"Solution: You recommend access restrictions that allow traffic from the Front Door service tags. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions#restrict-access-to-a-specific-azure-front-door-instance","src":"Standalone Questions #129"},
+{"n":99,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["Microsoft Defender for Endpoint","Windows Defender Device Guard","protected folders","Azure Files","BitLocker Drive Encryption (BitLocker)"],"a":"C","e":"","src":"Standalone Questions #130"},
+{"n":100,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Migrate the on-premises applications to cloud-based applications","Redesign the VPN infrastructure by adopting a split tunnel configuration","Deploy Microsoft Endpoint Manager and Azure Active Directory (Azure AD) Conditional Access","Deploy Azure Virtual Desktop, Azure Active Directory (Azure AD) Conditional Access, and Microsoft Defender for Cloud Apps"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/architecture/example-scenario/wvd/windows-virtual-desktop\nhttps://docs.microsoft.com/en-us/azure/virtual-desktop/security-guide\nhttps://techcommunity.microsoft.com/t5/security-compliance-and-identity/announcing-microsoft-defender-for-cloud-apps/ba-p/2835842","src":"Standalone Questions #131"},
+{"n":101,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Flux","Envoy","Dapr","Istio"],"a":"D","e":"","src":"Standalone Questions #133"},
+{"n":102,"c":"Design security solutions for applications and data","q":"Solution: You recommend implementing Azure Key Vault to store credentials. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"When using Azure-provided PaaS services (e.g., Azure Storage, Azure Cosmos DB, or Azure Web App), use the PrivateLink connectivity option to ensure all data exchanges are over the private IP space and the traffic never leaves the Microsoft network.","src":"Standalone Questions #134"},
+{"n":103,"c":"Design solutions that align with security best practices and priorities","q":"What should you modify to ensure that all incoming email is scanned by Defender for Office 365 only?","o":["the DNS records","the Exchange Online connectors","the accepted domains in Exchange Online","the Exchange Online transport rule"],"a":"B","e":"","src":"Standalone Questions #135"},
+{"n":104,"c":"Design security solutions for applications and data","q":"Which two storage workloads support authentication by using Azure Active Directory?","o":["Azure Disk Storage","Azure Storage blob containers","Azure Storage file shares","Azure Data Lake Storage Gen2"],"a":"B D","e":"https://docs.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory\nhttps://docs.microsoft.com/en-us/azure/databricks/data/data-sources/azure/adls-gen2/azure-datalake-gen2-sp-access","src":"Standalone Questions #136"},
+{"n":105,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend using to enforce the governance requirement?","o":["regulatory compliance standards in Microsoft Defender for Cloud","custom Azure roles","Azure Policy assignments","Azure management groups"],"a":"C","e":"","src":"Standalone Questions #137"},
+{"n":106,"c":"Design security operations, identity, and compliance capabilities","q":"What should you do first?","o":["Enable Microsoft Purview insider risk management for all the users","Onboard all endpoint devices to Microsoft Purview","Configure Microsoft Purview data connectors for the generative AI apps","License all the users for Microsoft 365 Copilot"],"a":"B","e":"","src":"Standalone Questions #138"},
+{"n":107,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["Azure Monitor webhooks","Azure Logic Apps","Azure Event Hubs","Azure Functions apps"],"a":"B","e":"The workflow automation feature of Microsoft Defender for Cloud can trigger Logic Apps on security alerts, recommendations, and changes to regulatory compliance.","src":"Standalone Questions #139"},
+{"n":108,"c":"Design security solutions for applications and data","q":"What should you recommend using to secure the blob storage?","o":["service tags in network security groups (NSGs)","managed rule sets in Azure Web Application Firewall (WAF) policies","inbound rules in network security groups (NSGs)","firewall rules for the storage account","inbound rules in Azure Firewall"],"a":"C","e":"","src":"Standalone Questions #140"},
+{"n":109,"c":"Design security operations, identity, and compliance capabilities","q":"Solution: You configure app protection policies in Intune, and you create a Conditional Access policy. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"","src":"Standalone Questions #142"},
+{"n":110,"c":"Design security operations, identity, and compliance capabilities","q":"Which Defender for Identity feature should you include in the recommendation?","o":["standalone sensors","honeytoken entity tags","sensitivity labels","custom user tags"],"a":"B","e":"https://docs.microsoft.com/en-us/advanced-threat-analytics/suspicious-activity-guide#honeytoken-activity\nHoneytoken entities are used as traps for malicious actors. Any authentication associated with these honeytoken entities triggers an alert.","src":"Standalone Questions #143"},
+{"n":111,"c":"Design security solutions for infrastructure","q":"What should you include in the response plan?","o":["controlled folder access","application isolation","memory scanning","machine isolation","user isolation"],"a":"B","e":"","src":"Standalone Questions #145"},
+{"n":112,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the solution?","o":["Privileged Identity Management (PIM)","multi-user authorization (MUA)","Microsoft Entra B2B collaboration","Azure Lighthouse"],"a":"D","e":"","src":"Standalone Questions #146"},
+{"n":113,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the solution?","o":["Microsoft Defender for Cloud","Microsoft Defender for Cloud Apps","Microsoft Sentinel","Compliance Manager connectors"],"a":"A","e":"","src":"Standalone Questions #147"},
+{"n":114,"c":"Design solutions that align with security best practices and priorities","q":"Which framework should you follow to create the design?","o":["Enhanced Security Admin Environment (ESAE)","Microsoft Security Development Lifecycle (SDL)","Rapid Modernization Plan (RaMP)","Microsoft Operational Security Assurance (OSA)"],"a":"C","e":"https://docs.microsoft.com/en-us/security/compass/security-rapid-modernization-plan\nThis rapid modernization plan (RaMP) will help you quickly adopt Microsoft's recommended privileged access strategy.","src":"Standalone Questions #149"},
+{"n":115,"c":"Design solutions that align with security best practices and priorities","q":"Which three areas should you recommend based on RaMP?","o":["data, compliance, and governance","user access and productivity","infrastructure and development","modern security operations","operational technology (OT) and IoT"],"a":"A B D","e":"","src":"Standalone Questions #150"},
+{"n":116,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Apply read-only locks on the storage accounts","Set the AllowSharedKeyAccess property to false","Set the AllowBlobPublicAccess property to false","Configure automated key rotation"],"a":"A","e":"https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources","src":"Standalone Questions #151"},
+{"n":117,"c":"Design security solutions for applications and data","q":"Solution: You recommend access restrictions based on HTTP headers that have the Front Door ID. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"https://docs.microsoft.com/en-us/azure/frontdoor/front-door-faq#how-do-i-lock-down-the-access-to-my-backend-to-only-azure-front-door","src":"Standalone Questions #152"},
+{"n":118,"c":"Design security operations, identity, and compliance capabilities","q":"What should you use?","o":["Microsoft Entra ID Protection","Microsoft Defender for Identity","Microsoft Defender for Servers","Privileged Identity Management (PIM)"],"a":"B","e":"","src":"Standalone Questions #153"},
+{"n":119,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend using to compare the baselines to the current device configurations?","o":["Microsoft Intune","Policy Analyzer","Local Group Policy Object (LGPO)","Windows Autopilot"],"a":"B","e":"https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-security-configuration-framework/security-compliance-toolkit-10","src":"Standalone Questions #154"},
+{"n":120,"c":"Design security solutions for infrastructure","q":"Which three services can you use to provide security for the AWS resources?","o":["Azure Active Directory (Azure AD) Privileged Identity Management (PIM)","Azure Active Directory (Azure AD) Conditional Access","Microsoft Defender for servers","Azure Policy","Microsoft Defender for Containers"],"a":"B D E","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/supported-machines-endpoint-solutions-cloudst-containers?tabs=aws-eks","src":"Standalone Questions #160"},
+{"n":121,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["DevOps security in Microsoft Defender for Cloud","Microsoft Defender for App Service","a branch policy in Azure DevOps","Azure Policy"],"a":"D","e":"","src":"Standalone Questions #163"},
+{"n":122,"c":"Design security solutions for applications and data","q":"What should you do first?","o":["Add Microsoft Sentinel data connectors","Configure Continuous Integration/Continuous Deployment (CI/CD) vulnerability scanning","Enable the Defender plan for all resource types in Microsoft Defender for Cloud","Obtain Azure Active Directory Premium Plan 2 licenses"],"a":"C","e":"","src":"Standalone Questions #164"},
+{"n":123,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Azure Event Hubs","Azure Data Factory","a Microsoft Sentinel workbook","a Microsoft Sentinel data connector"],"a":"A","e":"","src":"Standalone Questions #165"},
+{"n":124,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["vulnerability assessment in Microsoft Defender for Containers","runtime threat protection in Microsoft Defender for Containers","malware scanning in Microsoft Defender for Storage","sensitive data threat detection in Microsoft Defender for Storage"],"a":"C","e":"","src":"Standalone Questions #166"},
+{"n":125,"c":"Design security solutions for infrastructure","q":"What is the first step in the recovery plan?","o":["Disable Microsoft OneDrive sync and Exchange ActiveSync","Recover files to a cleaned computer or device","Contact law enforcement","From Microsoft Defender for Endpoint perform a security scan"],"a":"A","e":"","src":"Standalone Questions #169"},
+{"n":126,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Microsoft 365 Defender","Microsoft Defender for Cloud","Microsoft Defender for Cloud Apps","Microsoft Sentinel"],"a":"D","e":"","src":"Standalone Questions #170"},
+{"n":127,"c":"Design security operations, identity, and compliance capabilities","q":"Which two services should you include in the solution?","o":["Microsoft Defender for Cloud Apps","Azure AD Application Proxy","Azure Data Catalog","Azure AD Conditional Access","Microsoft Purview Information Protection"],"a":"A D","e":"","src":"Standalone Questions #171"},
+{"n":128,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Authenticated scan for Windows in Microsoft Defender Vulnerability Management","Microsoft Secure Score for Devices in Defender for Endpoint","attack surface reduction (ASR) rules in Defender for Endpoint","security baselines assessments in Microsoft Defender Vulnerability Management"],"a":"D","e":"","src":"Standalone Questions #172"},
+{"n":129,"c":"Design security solutions for infrastructure","q":"What should you include in the solution?","o":["Azure Bastion","Azure NAT Gateway","just-in-time (JIT) VM access","Point-to-Site (P2S) VPN"],"a":"A","e":"","src":"Standalone Questions #173"},
+{"n":130,"c":"Design solutions that align with security best practices and priorities","q":"What are three best practices for identity management based on the Azure Security Benchmark?","o":["Manage application identities securely and automatically","Manage the lifecycle of identities and entitlements","Protect identity and authentication systems","Enable threat detection for identity and access management","Use a centralized identity and authentication system"],"a":"A C E","e":"","src":"Standalone Questions #175"},
+{"n":131,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Controlled folder access","Azure Files","Windows Defender Device Guard","Microsoft Defender for Endpoint","BitLocker Drive Encryption (BitLocker)"],"a":"A","e":"","src":"Standalone Questions #176"},
+{"n":132,"c":"Design security solutions for infrastructure","q":"What should you use?","o":["a network security group (NSG)","a service endpoint","a private endpoint","an authorized IP range"],"a":"D","e":"","src":"Standalone Questions #177"},
+{"n":133,"c":"Design solutions that align with security best practices and priorities","q":"To which subscriptions can the Defender for Cloud standard be applied?","o":["Azure and AWS only","Azure and GCP only","Azure, AWS, and GCP only","Azure, AWS, and OCI only","Azure, AWS, GCP, and OCI"],"a":"C","e":"","src":"Standalone Questions #179"},
+{"n":134,"c":"Design security solutions for applications and data","q":"Which two configurations should you include in the recommendation?","o":["Enable Microsoft Defender for Cosmos DB","Send the Azure Active Directory (Azure AD) sign-in logs to a Log Analytics workspace","Disable local authentication for Azure Cosmos DB","Enable Microsoft Defender for Identity","Send the Azure Cosmos DB logs to a Log Analytics workspace"],"a":"B C","e":"https://docs.microsoft.com/en-us/azure/cosmos-db/audit-control-plane-logs","src":"Standalone Questions #181"},
+{"n":135,"c":"Design solutions that align with security best practices and priorities","q":"What should you use to start the threat modeling process?","o":["the STRIDE model","the DREAD model","OWASP threat modeling"],"a":"C","e":"","src":"Standalone Questions #182"},
+{"n":136,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["the Microsoft Sentinel Health Summary dashboard","the MITRE analytics explorer","the MITRE coverage matrix","the Microsoft Sentinel Analytics blade"],"a":"C","e":"","src":"Standalone Questions #183"},
+{"n":137,"c":"Design security operations, identity, and compliance capabilities","q":"Which two actions should you include in the recommendation?","o":["Implement immutable, offline backups that have restricted access and test restore procedures regularly","Deploy Privileged Identity Management (PIM) that uses just-in-time (JIT) access and approval workflows","Enable firewall logging for auditing, without restricting inbound or outbound traffic","Use extended patching cycles to reduce the risk of update-related service disruptions"],"a":"A B","e":"","src":"Standalone Questions #184"},
+{"n":138,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Change all the servers to Microsoft Defender for Servers Plan 2","Add Microsoft Defender Vulnerability Management add-ons","Onboard all the servers to Azure Update Manager","Add the Microsoft Intune Suite add-on"],"a":"B","e":"","src":"Standalone Questions #187"},
+{"n":139,"c":"Design security solutions for applications and data","q":"Solution: You recommend implementing Azure Application Gateway with Azure Web Application Firewall (WAF). Does this meet the goal?","o":["Yes","No"],"a":"B","e":"When using Azure-provided PaaS services (e.g., Azure Storage, Azure Cosmos DB, or Azure Web App), use the PrivateLink connectivity option to ensure all data exchanges are over the private IP space.","src":"Standalone Questions #188"},
+{"n":140,"c":"Design solutions that align with security best practices and priorities","q":"Solution: You recommend enabling just-in-time (JIT) VM access on all virtual machines. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"https://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access#pa-2-avoid-standing-access-for-user-accounts-and-permissions","src":"Standalone Questions #189"},
+{"n":141,"c":"Design security solutions for infrastructure","q":"What should you configure?","o":["the Protected Users group","authentication policies","the User Rights Assignment security policy settings","an authentication policy silo"],"a":"B","e":"","src":"Standalone Questions #192"},
+{"n":142,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Microsoft Intune Endpoint Privilege Management","Windows Local Administrator Password Solution (Windows LAPS)","Cloud Infrastructure Entitlement Management","Privileged Identity Management (PIM) in Microsoft Entra ID"],"a":"A","e":"","src":"Standalone Questions #194"},
+{"n":143,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Use geo-redundant storage (GRS)","Use customer-managed keys (CMKs) for encryption","Require PINs to disable backups","Implement Azure Site Recovery replication"],"a":"C","e":"https://docs.microsoft.com/en-us/azure/security/fundamentals/backup-plan-to-protect-against-ransomware#azure-backup","src":"Standalone Questions #195"},
+{"n":144,"c":"Design solutions that align with security best practices and priorities","q":"Which two services should you include in the recommendation?","o":["Microsoft Defender for Cloud","Microsoft Defender for Endpoint","Azure Lighthouse","Microsoft Sentinel","Azure Arc"],"a":"A E","e":"","src":"Standalone Questions #196"},
+{"n":145,"c":"Design security operations, identity, and compliance capabilities","q":"Which two preventative controls can you implement to increase the secure score?","o":["Azure Firewall","Azure Web Application Firewall (WAF)","Microsoft Defender for Cloud alerts","Azure Active Directory (Azure AD) Privileged Identity Management (PIM)","Microsoft Sentinel"],"a":"D E","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls","src":"Standalone Questions #197"},
+{"n":146,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["the Azure landing zone accelerator","the Azure Well-Architected Framework","Azure Security Benchmark v3","Azure Advisor"],"a":"A","e":"","src":"Standalone Questions #200"},
+{"n":147,"c":"Design security operations, identity, and compliance capabilities","q":"What should you do first?","o":["From Defender for Cloud, review the secure score recommendations","From Microsoft Sentinel, configure the Microsoft Defender for Cloud data connector","From Defender for Cloud, review the Azure security baseline for audit report","From Defender for Cloud, add a regulatory compliance standard"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages#what-regulatory-compliance-standards-are-available-in-defender-for-cloud","src":"Standalone Questions #203"},
+{"n":148,"c":"Design security solutions for infrastructure","q":"Which two actions should you include in the solution?","o":["Enable Azure Active Directory (Azure AD) Privileged Identity Management (PIM) roles as virtual machine contributors","Configure Azure VPN Gateway","Enable Just Enough Administration (JEA)","Enable just-in-time (JIT) VM access","Configure Azure Bastion"],"a":"D E","e":"https://docs.microsoft.com/en-us/powershell/scripting/learn/remoting/jea/overview?view=powershell-7.2\nhttps://docs.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-usage\nhttps://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles","src":"Standalone Questions #208"},
+{"n":149,"c":"Design security solutions for applications and data","q":"Solution: You recommend implementing Azure Front Door with Azure Web Application Firewall (WAF). Does this meet the goal?","o":["Yes","No"],"a":"B","e":"https://www.varonis.com/blog/securing-access-azure-webapps","src":"Standalone Questions #209"},
+{"n":150,"c":"Design security operations, identity, and compliance capabilities","q":"Which role should you assign to the team leaders?","o":["Identity Governance Administrator","Catalog Owner","Access Package Assignment Manager","Access Package Manager"],"a":"C","e":"","src":"Standalone Questions #211"},
+{"n":151,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendations?","o":["Privileged Access Workstations (PAWs)","emergency access accounts","device compliance policies","Customer Lockbox for Microsoft Azure"],"a":"A","e":"","src":"Standalone Questions #213"},
+{"n":152,"c":"Design security operations, identity, and compliance capabilities","q":"Which identity service should you include in the recommendation?","o":["Azure Active Directory Domain Services (Azure AD DS)","Azure Active Directory (Azure AD) B2C","Azure Active Directory (Azure AD)","Active Directory Domain Services (AD DS)"],"a":"A","e":"https://docs.microsoft.com/en-us/azure/active-directory-domain-services/overview","src":"Standalone Questions #214"},
+{"n":153,"c":"Design security operations, identity, and compliance capabilities","q":"Which identity service should you include in the recommendation?","o":["Active Directory Domain Services (AD DS)","Microsoft Entra ID","Microsoft Entra Domain Services","Microsoft Entra External ID"],"a":"B","e":"","src":"Standalone Questions #215"},
+{"n":154,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Azure AD Application Proxy","Azure Virtual WAN","Microsoft Tunnel","web content filtering in Microsoft Defender for Endpoint"],"a":"A","e":"https://docs.microsoft.com/en-us/learn/modules/configure-azure-ad-application-proxy/2-explore","src":"Standalone Questions #216"},
+{"n":155,"c":"Design security operations, identity, and compliance capabilities","q":"What should you do first?","o":["From Defender for Cloud, review the Azure security baseline for audit report","From Defender for Cloud, review the secure score recommendations","From Azure Policy, assign a built-in initiative that has a scope of the subscription","From Defender for Cloud, enable Defender for Cloud plans"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages#what-regulatory-compliance-standards-are-available-in-defender-for-cloud","src":"Standalone Questions #217"},
+{"n":156,"c":"Design security solutions for applications and data","q":"Solution: You recommend creating private endpoints for the web app and the database layer. Does this meet the goal?","o":["Yes","No"],"a":"A","e":"When using Azure-provided PaaS services, use the PrivateLink connectivity option to ensure all data exchanges are over the private IP space.\n\nhttps://docs.microsoft.com/en-us/azure/cosmos-db/how-to-configure-private-endpoints","src":"Standalone Questions #218"},
+{"n":157,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend?","o":["unit testing","penetration testing","dependency testing","threat modeling"],"a":"C","e":"","src":"Standalone Questions #221"},
+{"n":158,"c":"Design security solutions for infrastructure","q":"Which two actions should you include in the recommendations?","o":["Onboard the kiosks to Azure Monitor","Implement Privileged Access Workstation (PAW) for the kiosks","Implement Automated Investigation and Remediation (AIR) in Microsoft Defender for Endpoint","Implement threat and vulnerability management in Microsoft Defender for Endpoint","Onboard the kiosks to Microsoft Intune and Microsoft Defender for Endpoint"],"a":"D E","e":"https://docs.microsoft.com/en-us/microsoft-365/security/defender-vulnerability-management/defender-vulnerability-management?view=o365-worldwide","src":"Standalone Questions #222"},
+{"n":159,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["data classification content explorer","data loss prevention (DLP)","eDiscovery","Information Governance"],"a":"B","e":"","src":"Standalone Questions #223"},
+{"n":160,"c":"Design security operations, identity, and compliance capabilities","q":"To which location should you apply the DLP policy?","o":["Devices","OneDrive accounts","SharePoint sites","Microsoft Defender for Cloud Apps"],"a":"A","e":"","src":"Standalone Questions #224"},
+{"n":161,"c":"Design security solutions for infrastructure","q":"What should you include in the recommendation?","o":["Azure Load Balancer","Azure Front Door","Azure Firewall","Azure Application Gateway"],"a":"D","e":"","src":"Standalone Questions #227"},
+{"n":162,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Microsoft Viva Insights","Advanced eDiscovery","Privacy Risk Management in Microsoft Priva","communication compliance in insider risk management"],"a":"C","e":"Privacy Risk Management in Microsoft Priva gives you the capability to set up policies that identify privacy risks in your Microsoft 365 environment and enable easy remediation.","src":"Standalone Questions #229"},
+{"n":163,"c":"Design security solutions for infrastructure","q":"Which two components should you recommend for the on-premises network?","o":["Azure VPN Gateway","guest configuration in Azure Policy","on-premises data gateway","Azure Bastion","Azure Arc"],"a":"B E","e":"https://docs.microsoft.com/en-us/azure/governance/machine-configuration/overview","src":"Standalone Questions #230"},
+{"n":164,"c":"Design security solutions for applications and data","q":"Which two controls should you include in the recommendation?","o":["Use Azure Monitor notifications when backup configurations change","Require PINs for critical operations","Perform offline backups to Azure Data Box","Encrypt backups by using customer-managed keys (CMKs)","Enable soft delete for backups"],"a":"A B","e":"https://docs.microsoft.com/en-us/azure/security/fundamentals/backup-plan-to-protect-against-ransomware","src":"Standalone Questions #233"},
+{"n":165,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["Microsoft Defender for Cloud","Conditional Access","Microsoft Entra ID Identity Governance","Microsoft Defender for Identity"],"a":"B","e":"","src":"Standalone Questions #234"},
+{"n":166,"c":"Design security operations, identity, and compliance capabilities","q":"Which two components should you include in the recommendation?","o":["data loss prevention (DLP) policies","sensitivity label policies","retention label policies","eDiscovery cases"],"a":"A B","e":"Data loss prevention (DLP) helps you protect sensitive information and prevent its inadvertent disclosure. Sensitivity labels let you classify and protect your organization's data.","src":"Standalone Questions #235"},
+{"n":167,"c":"Design security solutions for infrastructure","q":"Which Endpoint security settings should you use to review the recommended changes?","o":["Device compliance","Endpoint detection and response","Attack surface reduction","Security tasks"],"a":"C","e":"","src":"Standalone Questions #236"},
+{"n":168,"c":"Design security operations, identity, and compliance capabilities","q":"Which two configurations should you recommend?","o":["Azure AD Conditional Access integration with user flows and custom policies","Azure AD workbooks to monitor risk detections","custom resource owner password credentials (ROPC) flows in Azure AD B2C","access packages in Identity Governance","smart account lockout in Azure AD B2C"],"a":"A E","e":"https://docs.microsoft.com/en-us/azure/active-directory-b2c/threat-management\nhttps://docs.microsoft.com/en-us/azure/active-directory-b2c/conditional-access-user-flow?pivots=b2c-user-flow","src":"Standalone Questions #237"},
+{"n":169,"c":"Design security solutions for applications and data","q":"What should you recommend creating in contoso.com?","o":["a service principal","a system-assigned managed identity","an application object","a user-assigned managed identity"],"a":"A","e":"","src":"Standalone Questions #241"},
+{"n":170,"c":"Design security solutions for infrastructure","q":"What should you recommend?","o":["Azure Storage Analytics","Azure Network Watcher","Microsoft Sentinel","Azure Policy"],"a":"D","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/security-policy-concept\nhttps://docs.microsoft.com/en-us/security/benchmark/azure/baselines/storage-security-baseline","src":"Standalone Questions #242"},
+{"n":171,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the solution?","o":["Azure AD Information Protection labels","Microsoft 365 Defender user tags","adaptive scopes","administrative units"],"a":"C","e":"","src":"Standalone Questions #243"},
+{"n":172,"c":"Design solutions that align with security best practices and priorities","q":"Which two security methodologies should you include in the recommendation?","o":["passive traffic monitoring","active scanning","threat monitoring","software patching"],"a":"C D","e":"","src":"Standalone Questions #245"},
+{"n":173,"c":"Design security solutions for applications and data","q":"What should you use?","o":["Azure Firewall Premium","Azure Front Door with a web application firewall (WAF)","Azure Firewall Standard","Azure Application Gateway with a web application firewall (WAF)"],"a":"B","e":"","src":"Standalone Questions #249"},
+{"n":174,"c":"Design security solutions for infrastructure","q":"What should you use?","o":["Microsoft Defender for Servers","Microsoft Defender Threat Intelligence (Defender TI)","Microsoft Defender for Endpoint","Microsoft Defender External Attack Surface Management (Defender EASM)"],"a":"A","e":"","src":"Standalone Questions #250"},
+{"n":175,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the recommendation?","o":["security baselines in the Microsoft Cloud Security Benchmark","modern access control","business resilience","network isolation"],"a":"A","e":"","src":"Standalone Questions #251"},
+{"n":176,"c":"Design security operations, identity, and compliance capabilities","q":"Which two types of policies should you include in the recommendation?","o":["Microsoft Defender for Cloud regulatory compliance policy","Microsoft Defender for Endpoint endpoint security policy","Microsoft Entra ID Protection sign-in risk policy","Microsoft Entra Conditional Access policy","Microsoft Intune compliance policy"],"a":"D E","e":"","src":"Standalone Questions #252"},
+{"n":177,"c":"Design security solutions for infrastructure","q":"In which two environments can you use Defender for Containers to scan for known vulnerabilities?","o":["Linux containers deployed to Azure Container Registry","Linux containers deployed to Azure Kubernetes Service (AKS)","Windows containers deployed to Azure Container Registry","Windows containers deployed to Azure Kubernetes Service (AKS)","Linux containers deployed to Azure Container Instances"],"a":"A C","e":"https://docs.microsoft.com/en-us/learn/modules/design-strategy-for-secure-paas-iaas-saas-services/9-specify-security-requirements-for-containers\nhttps://docs.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction#view-vulnerabilities-for-running-images","src":"Standalone Questions #253"},
+{"n":178,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","o":["Create shared access signatures (SAS)","Share the connection string of the access key","Configure private link connections","Configure encryption by using customer-managed keys (CMKs)"],"a":"D","e":"","src":"Standalone Questions #254"},
+{"n":179,"c":"Design solutions that align with security best practices and priorities","q":"What should you use?","o":["the regulatory compliance dashboard in Defender for Cloud","Azure Policy","Azure Blueprints","Azure role-based access control (Azure RBAC)"],"a":"B","e":"https://azure.microsoft.com/en-us/blog/simplifying-your-environment-setup-while-meeting-compliance-needs-with-built-in-azure-blueprints/","src":"Standalone Questions #258"},
+{"n":180,"c":"Design solutions that align with security best practices and priorities","q":"Solution: For Azure SQL databases, you recommend Transparent Data Encryption (TDE) that uses Microsoft-managed keys. Does this meet the goal?","o":["Yes","No"],"a":"B","e":"","src":"Standalone Questions #259"},
+{"n":181,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the solution?","o":["Microsoft Information Protection","Microsoft Defender for Endpoint","Microsoft Sentinel","Microsoft Intune"],"a":"D","e":"https://docs.microsoft.com/en-us/mem/intune/protect/compliance-policy-monitor#open-the-compliance-dashboard","src":"Standalone Questions #261"},
+{"n":182,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the recommendation?","o":["Microsoft Defender for Cloud","Microsoft Entra access reviews","Microsoft Entra Privileged Identity Management (PIM)","Microsoft Entra Permissions Management"],"a":"D","e":"","src":"Standalone Questions #262"},
+{"n":183,"c":"Design solutions that align with security best practices and priorities","q":"Which two security controls should you include as part of the Zero Trust solution?","o":["Block sign-in attempts from unknown location","Always allow connections from the on-premises network","Disable passwordless sign-in for sensitive accounts","Block sign-in attempts from noncompliant devices"],"a":"A D","e":"","src":"Standalone Questions #265"},
+{"n":184,"c":"Design security solutions for applications and data","q":"What should you use?","o":["a Conditional Access policy that grants access from only compliant devices","a forwarding profile that directs all outbound internet traffic through the Microsoft backbone network","a connector group that contains the connectors used to access the web apps and a single endpoint for the internal fully qualified domain names (FQDNs)","an access policy that limits connections based on user groups"],"a":"C","e":"","src":"Standalone Questions #268"},
+{"n":185,"c":"Design security solutions for infrastructure","q":"Which two actions should you recommend in Microsoft Defender for Cloud?","o":["Configure auto provisioning","Assign regulatory compliance policies","Review the inventory","Add a workflow automation","Enable Defender plans"],"a":"A E","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages\nhttps://docs.microsoft.com/en-us/azure/defender-for-cloud/workflow-automation","src":"Standalone Questions #274"},
+{"n":186,"c":"Design security solutions for infrastructure","q":"Which security control should you recommend?","o":["Azure Active Directory (Azure AD) Conditional Access App Control policies","OAuth app policies in Microsoft Defender for Cloud Apps","app protection policies in Microsoft Endpoint Manager","application control policies in Microsoft Defender for Endpoint"],"a":"D","e":"https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control/select-types-of-rules-to-create#windows-defender-application-control-policy-rules","src":"Standalone Questions #275"},
+{"n":187,"c":"Design security solutions for applications and data","q":"Solution: For Azure SQL databases, you recommend Transparent Data Encryption (TDE) that uses customer-managed keys (CMKs). Does this meet the goal?","o":["Yes","No"],"a":"A","e":"","src":"Standalone Questions #276"},
+{"n":188,"c":"Design solutions that align with security best practices and priorities","q":"What should you recommend?","o":["an Azure AD user account that has a password stored in Azure Key Vault","a group managed service account (gMSA)","an Azure AD user account that has role assignments in Azure AD Privileged Identity Management (PIM)","a managed identity in Azure"],"a":"D","e":"","src":"Standalone Questions #277"},
+{"n":189,"c":"Design solutions that align with security best practices and priorities","q":"Which service should you recommend?","o":["Microsoft Purview Information Protection","Microsoft Defender for Cloud Apps","Microsoft Defender for Endpoint","Microsoft Sentinel"],"a":"B","e":"","src":"Standalone Questions #278"},
+{"n":190,"c":"Design security solutions for applications and data","q":"What should you recommend?","o":["Configure a Conditional Access policy that has a trusted network location","Deploy Microsoft Entra Domain Services","Deploy Microsoft Entra Private Access","Implement pass-through authentication"],"a":"B","e":"","src":"Standalone Questions #280"},
+{"n":191,"c":"Design security operations, identity, and compliance capabilities","q":"Which Microsoft 365 resources are protected by using continuous access evaluation?","o":["SharePoint Online only","Exchange Online only","both SharePoint Online and Exchange Online"],"a":"A","e":"","src":"Standalone Questions #281"},
+{"n":192,"c":"Design security solutions for infrastructure","q":"Which two scenarios are supported by compliant network check?","o":["connections from the branch office computers","Continuous Access Evaluation for Microsoft Exchange Online","connections to the third-party SaaS app","connections to the on-premises apps"],"a":"B C","e":"","src":"Standalone Questions #282"},
+{"n":193,"c":"Design security solutions for infrastructure","q":"Which security control should you recommend?","o":["app discovery anomaly detection policies in Microsoft Defender for Cloud Apps","adaptive application controls in Defender for Cloud","Azure Security Benchmark compliance controls in Defender for Cloud","app protection policies in Microsoft Endpoint Manager"],"a":"B","e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/recommendations-reference#compute-recommendations","src":"Standalone Questions #283"},
+{"n":194,"c":"Design security solutions for applications and data","q":"At which level should you recommend the encryption be applied?","o":["account","folder","file","container"],"a":"D","e":"","src":"Standalone Questions #286"},
+{"n":195,"c":"Design security operations, identity, and compliance capabilities","q":"What should you use?","o":["The Analytics dashboard in Microsoft Entra Permissions Management","access reviews in Microsoft Entra ID Identity Governance","access reviews in Privileged Identity Management (PIM)","Microsoft Defender External Attack Surface Management (Defender EASM) discovery"],"a":"C","e":"","src":"Standalone Questions #288"},
+{"n":196,"c":"Design solutions that align with security best practices and priorities","q":"What should you implement?","o":["Microsoft Local Administrator Password Solution (Microsoft LAPS)","Endpoint Privilege Management (EPM)","Privileged Identity Management (PIM)","Microsoft Entra entitlement management"],"a":"B","e":"","src":"Standalone Questions #289"},
+{"n":197,"c":"Design security operations, identity, and compliance capabilities","q":"Which two components can you use to achieve the goal?","o":["workload protections in Defender for Cloud","threat intelligence reports in Defender for Cloud","Microsoft Sentinel notebooks","Microsoft Sentinel threat intelligence workbooks"],"a":"B D","e":"https://docs.microsoft.com/en-us/azure/sentinel/understand-threat-intelligence\nhttps://docs.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction\nhttps://docs.microsoft.com/en-us/azure/defender-for-cloud/threat-intelligence-reports\nhttps://docs.microsoft.com/en-us/azure/sentinel/notebooks","src":"Standalone Questions #290"},
+{"n":198,"c":"Design solutions that align with security best practices and priorities","q":"You need to recommend a solution to meet the compliance requirements.","boxes":[{"label":"Box 1","value":"A Blueprint"},{"label":"Box 2","value":"Update an Azure Policy assignment"}],"e":"https://learn.microsoft.com/en-us/azure/governance/policy/tutorials/create-and-manage#update-assignment-with-exclusion\nhttps://docs.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure","src":"Case Study 1: Fabrikam, Inc. #1","cs":"Fabrikam case study"},
+{"n":199,"c":"Design security operations, identity, and compliance capabilities","q":"What should you create in Azure AD to meet the Contoso developer requirements?","boxes":[{"label":"Account type","value":"A guest account in the fabrikam.onmicrosoft.com tenant"},{"label":"Component in Identity Governance","value":"An access review"}],"e":"Box 1: A guest account in fabrikam.onmicrosoft.com tenant Box 2: An access review\nhttps://docs.microsoft.com/en-us/azure/active-directory-domain-services/synchronization\nhttps://docs.microsoft.com/en-us/azure/active-directory/governance/access-reviews-overview","src":"Case Study 1: Fabrikam, Inc. #6","cs":"Fabrikam case study"},
+{"n":200,"c":"Design security operations, identity, and compliance capabilities","q":"You need to recommend a SIEM and SOAR strategy.","boxes":[{"label":"Segment Microsoft Sentinel workspaces by","value":"Region and Azure AD tenant"},{"label":"Integrate Azure subscriptions by using","value":"Azure Lighthouse subscription onboarding process"}],"e":"","src":"Case Study 2: Litware, Inc. #1","cs":"Litware case study"},
+{"n":201,"c":"Design security operations, identity, and compliance capabilities","q":"You need to recommend an identity security solution for the Azure AD tenant.","boxes":[{"label":"For delegated management of users and groups","value":"Azure AD administrative units"},{"label":"To ensure leaked credential detection","value":"Enable password hash synchronization in the Azure AD Connect deployment"}],"e":"","src":"Case Study 2: Litware, Inc. #3","cs":"Litware case study"},
+{"n":202,"c":"Design security solutions for infrastructure","q":"You need to recommend a strategy for App Service web app connectivity.","boxes":[{"label":"Box 1","value":"Virtual Network Integration"},{"label":"Box 2","value":"Private Endpoints"}],"e":"Virtual network integration gives your app access to resources in your virtual network, but it doesn't grant inbound private access. Private Endpoint allows clients in your private network to securely access the app over Private Link.","src":"Case Study 2: Litware, Inc. #5","cs":"Litware case study"},
+{"n":203,"c":"Design security operations, identity, and compliance capabilities","q":"You need to ensure helpdesk users at Fabrikam can reset passwords for specific users at Contoso.","boxes":[{"label":"Role to assign","value":"Password Administrator"},{"label":"To restrict the scope","value":"A custom role"}],"e":"","src":"Standalone Questions #21"},
+{"n":204,"c":"Design security solutions for infrastructure","q":"You need to recommend a network security solution for App1.","boxes":[{"label":"To ensure that only VM1 can access DB1","value":"A private endpoint"},{"label":"To enforce network security restrictions for DB1","value":"Network security groups (NSGs)"}],"e":"","src":"Standalone Questions #29"},
+{"n":205,"c":"Design security operations, identity, and compliance capabilities","q":"Which scope should you recommend for the sensitivity label policies?","boxes":[{"label":"SharePoint Online","value":"Groups and sites"},{"label":"Microsoft Teams","value":"Groups and sites"},{"label":"Exchange Online","value":"Files and emails"}],"e":"https://docs.microsoft.com/en-us/microsoft-365/compliance/sensitivity-labels?view=o365-worldwide","src":"Standalone Questions #31"},
+{"n":206,"c":"Design security solutions for infrastructure","q":"Which feature will be supported by each platform?","boxes":[{"label":"Security baselines","value":"Windows only"},{"label":"Remote lock","value":"Windows and macOS"}],"e":"","src":"Standalone Questions #34"},
+{"n":207,"c":"Design security solutions for applications and data","q":"What should you recommend for each pool type?","boxes":[{"label":"Serverless SQL pool","value":"Azure Storage infrastructure encryption and Microsoft-managed keys"},{"label":"Dedicated SQL pool","value":"Transparent Data Encryption (TDE) and customer-managed keys"}],"e":"","src":"Standalone Questions #45"},
+{"n":208,"c":"Design security solutions for infrastructure","q":"What should you create in the tenant, and what should you install on Server2?","boxes":[{"label":"Tenant","value":"An enterprise application"},{"label":"Server2","value":"Microsoft Entra private network connector"}],"e":"","src":"Standalone Questions #48"},
+{"n":209,"c":"Design security solutions for infrastructure","q":"What should you use to evaluate the components?","boxes":[{"label":"Windows 11 devices","value":"Microsoft 365 Defender (Microsoft Defender for Endpoint)"},{"label":"Azure virtual machines","value":"Microsoft Defender for Cloud"},{"label":"Azure Storage accounts","value":"Microsoft Defender for Cloud"}],"e":"https://docs.microsoft.com/en-us/learn/modules/design-strategy-for-secure-paas-iaas-saas-services/8-specify-security-requirements-for-storage-workloads","src":"Standalone Questions #57"},
+{"n":210,"c":"Design solutions that align with security best practices and priorities","q":"During which stage should each security-related task be performed?","boxes":[{"label":"Threat modeling","value":"Plan and develop"},{"label":"Actionable intelligence","value":"Operate"},{"label":"Dynamic application security testing (DAST)","value":"Build and test"}],"e":"","src":"Standalone Questions #59"},
+{"n":211,"c":"Design security solutions for applications and data","q":"What should you configure for each requirement?","boxes":[{"label":"Rate limit","value":"A custom rule"},{"label":"Block malicious bots","value":"A managed rule set"}],"e":"","src":"Standalone Questions #121"},
+{"n":212,"c":"Design security operations, identity, and compliance capabilities","q":"What should you include in the solution?","boxes":[{"label":"For WAF","value":"Data connectors"},{"label":"For the virtual machines","value":"The Log Analytics agent"}],"e":"","src":"Standalone Questions #126"},
+{"n":213,"c":"Design solutions that align with security best practices and priorities","q":"What should you include in the solution?","boxes":[{"label":"To streamline creation","value":"The Microsoft Graph API"},{"label":"To streamline processing","value":"Microsoft Power Automate"}],"e":"","src":"Standalone Questions #167"},
+{"n":214,"c":"Design security operations, identity, and compliance capabilities","q":"What should you use for each requirement?","boxes":[{"label":"Ensure Fabrikam users can use access packages without creating guest accounts","value":"A connected organization"},{"label":"Allow non-administrative users to create access packages","value":"Catalogs"}],"e":"","src":"Standalone Questions #180"},
+{"n":215,"c":"Design security solutions for infrastructure","q":"Use the drop-down menus to select the answer choices.","boxes":[{"label":"Selection 1","value":"NSG"},{"label":"Selection 2","value":"Microsoft Defender for servers"}],"e":"https://docs.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls","src":"Standalone Questions #191"},
+{"n":216,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation for each component?","boxes":[{"label":"Data security","value":"Access keys stored in Azure Key Vault"},{"label":"Network access control","value":"Azure Private Link with network service tags"}],"e":"https://docs.microsoft.com/en-us/azure/automation/automation-security-guidelines#data-security","src":"Standalone Questions #193"},
+{"n":217,"c":"Design security solutions for applications and data","q":"What should you include in the recommendation?","boxes":[{"label":"Box 1","value":"Azure AD Application"},{"label":"Box 2","value":"Access Package in Identity Governance"}],"e":"https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app\nhttps://docs.microsoft.com/en-us/azure/active-directory/governance/entitlement-management-access-package-create","src":"Standalone Questions #219"}
+];
+
+// Where the multiple-choice items end and the answer-area items begin.
+const FIRST_MATCH_QN = 198;
+const CHOICE_COUNT = 197;
+const MATCH_COUNT = 20;
+// Items in the source PDF that carry no answer key at all (hotspot,
+// drag-and-drop and yes/no grids whose answer graphics were not captured).
+const DROPPED_NO_KEY = 92;
+
+const TOTAL_Q = QUESTIONS.length;
+// Highest question number in the bank. Range bounds are driven off this rather
+// than off the count so that gaps in the numbering can never push a preset
+// past the end of the bank.
+const MAX_QN = QUESTIONS.reduce((m,q)=>Math.max(m, q.n), 0);
+
+// ---------------------------------------------------------------------------
+// DOMAIN WEIGHTING (for the 50-question weighted practice exam)
+//
+// The bank's `c` field already holds the four official SC-100 skill-area names
+// exactly as Microsoft words them, so the mapping is identity — but it is kept
+// explicit so a future edit that adds a differently-worded label falls through
+// to domain 1 rather than silently vanishing from every weighted draw.
+//
+// Target counts are pre-computed from the midpoint of each published weight
+// range against a fixed 50-question exam (22.5/32.5/22.5/22.5% of 50 =
+// 11.25/16.25/11.25/11.25, rounded to 11/17/11/11 — which sums to exactly 50)
+// rather than computed at draw time, so the breakdown shown on the setup
+// screen always matches what actually gets drawn.
+// ---------------------------------------------------------------------------
+const DOMAIN_WEIGHTS = [
+  {num:1, name:'Design solutions that align with security best practices and priorities', pct:'20–25%', target:11},
+  {num:2, name:'Design security operations, identity, and compliance capabilities',        pct:'30–35%', target:17},
+  {num:3, name:'Design security solutions for infrastructure',                             pct:'20–25%', target:11},
+  {num:4, name:'Design security solutions for applications and data',                      pct:'20–25%', target:11}
+];
+
+const CATEGORY_DOMAIN = {};
+DOMAIN_WEIGHTS.forEach(d => { CATEGORY_DOMAIN[d.name] = d.num; });
+function domainOf(q){ return CATEGORY_DOMAIN[q.c] || 1; }
+
+function shuffled(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// Draws a 50-question set proportioned to DOMAIN_WEIGHTS. Returns both the
+// final shuffled order and a per-domain {picked, target} tally so the UI can
+// say so plainly if a domain's pool ever runs short (it currently never does —
+// every pool holds at least four times its target — but the bank could shrink).
+function buildWeightedOrder(){
+  const tally = [];
+  let combined = [];
+  DOMAIN_WEIGHTS.forEach(d=>{
+    const pool = [];
+    for(let n=1;n<=MAX_QN;n++){
+      const q = QMAP[n];
+      if(q && isPracticable(q) && domainOf(q) === d.num) pool.push(n);
+    }
+    const picked = shuffled(pool).slice(0, d.target);
+    tally.push({num:d.num, name:d.name, target:d.target, picked:picked.length});
+    combined = combined.concat(picked);
+  });
+  return {order: shuffled(combined), tally};
+}
+
+const QMAP = {};
+QUESTIONS.forEach(q => QMAP[q.n] = q);
+
+const SESSION_KEY = 'sc100-active-session';
+const HISTORY_KEY = 'sc100-history';
+// Microsoft scores its role-based exams out of 1000 and passes at 700, so a
+// practice run is marked "on track" at 70% or better.
+const PASS_THRESHOLD = 70;
+const AUTH_KEY = 'sc100-authed';
+const WRONG_POOL_KEY = 'sc100-wrong-pool';
+
+// ---------------------------------------------------------------------------
+// SHARED ACCESS CODE — change this to whatever you want the group password
+// to be. This is a simple front-door gate (not real security): anyone who
+// views the page source can find this value. It's meant to keep casual
+// visitors and search engines out, not to protect sensitive data.
+// ---------------------------------------------------------------------------
+const ACCESS_CODE = 'SC100-2026';
+
+let state = {
+  screen: 'loading', // loading | gate | setup | exam | finished | review | history
+  session: null,
+  historyList: [],
+  wrongPool: [],
+  loadError: null
+};
+
+function letterOf(i){ return String.fromCharCode(65+i); }
+
+function rangeLabelFor(isWrongPool, isRetake, rangeStart, rangeEnd, count, isWeighted){
+  if(isWrongPool) return `All-time missed · ${count} question${count===1?'':'s'}`;
+  if(isRetake) return `Retake · ${count} question${count===1?'':'s'} (incorrect & skipped)`;
+  if(isWeighted) return `Weighted exam · ${count} questions (by skill-area %)`;
+  return `Questions ${rangeStart}–${rangeEnd}`;
+}
+
+function parseAnswerLetters(a){
+  if(!a) return [];
+  return a.split(/[,\s]+/).filter(Boolean);
+}
+
+// Formats a millisecond duration as H:MM:SS (or M:SS under an hour).
+function formatDuration(ms){
+  const totalSec = Math.max(0, Math.round(ms/1000));
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  const pad = n => String(n).padStart(2,'0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+// ---------------------------------------------------------------------------
+// GRADING
+//
+// Two question shapes exist: ordinary choice questions (q.o + q.a) and
+// "answer area" matching items (q.boxes), where the source PDF gives a label
+// and correct value for each drop-down but never the list of choices. Every
+// place that needs to know "was this answered?" or "was this right?" goes
+// through these helpers so the two shapes can never drift apart.
+// ---------------------------------------------------------------------------
+
+function isMatch(q){ return !!(q && q.boxes && q.boxes.length); }
+
+// A question can be put in front of a candidate if it has selectable choices
+// or is a matching item.
+function isPracticable(q){
+  return !!(q && ((q.o && q.o.length > 0) || isMatch(q)));
+}
+
+// Every drop-down on a matching item offers the same list: the correct values
+// of all of that item's own boxes. The source never supplies distractors, so
+// inventing them would mean inventing exam content — instead the item becomes
+// a self-contained matching exercise built only from what the source states.
+//
+// The order is shuffled but STABLE: seeded off the question number so the same
+// item always presents its choices in the same order, across re-renders and
+// across a save/resume, and never in the giveaway order of the answer key.
+function matchOptions(q){
+  // A few items give two boxes the same correct value; listing it twice in the
+  // drop-down would look like a rendering fault, and grading compares values
+  // rather than positions, so one entry serves both boxes.
+  const vals = [...new Set(q.boxes.map(b => b.value))];
+  // Small deterministic PRNG (mulberry32) seeded from the question number.
+  let t = (q.n * 2654435761) >>> 0;
+  const rnd = ()=>{
+    t = (t + 0x6D2B79F5) >>> 0;
+    let x = Math.imul(t ^ (t >>> 15), 1 | t);
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+  for(let i=vals.length-1;i>0;i--){
+    const j = Math.floor(rnd()*(i+1));
+    [vals[i],vals[j]] = [vals[j],vals[i]];
+  }
+  return vals;
+}
+
+// Matching responses live in rec.boxes as {boxIndex: value}.
+function matchResponse(rec){ return (rec && rec.boxes) ? rec.boxes : {}; }
+
+function matchCellCorrect(q, idx, rec){
+  const picked = matchResponse(rec)[idx];
+  return !!picked && picked === q.boxes[idx].value;
+}
+
+// Number of drop-downs answered correctly, and the total number of drop-downs.
+function matchScore(q, rec){
+  let got = 0;
+  q.boxes.forEach((b, i)=>{ if(matchCellCorrect(q, i, rec)) got++; });
+  return {got, total: q.boxes.length};
+}
+
+// Did the candidate put anything down at all? Blank counts as skipped, not wrong.
+function hasResponse(q, rec){
+  if(isMatch(q)){
+    const resp = matchResponse(rec);
+    return q.boxes.some((b, i) => !!resp[i]);
+  }
+  return !!(rec && rec.selected && rec.selected.length > 0);
+}
+
+// Matching items are all-or-nothing: every drop-down must be right, which is
+// how Microsoft scores its own answer-area items.
+function isCorrectAnswer(q, rec){
+  if(!hasResponse(q, rec)) return false;
+  if(isMatch(q)){
+    const {got, total} = matchScore(q, rec);
+    return got === total;
+  }
+  return arraysEqualAsSets(rec.selected, parseAnswerLetters(q.a));
+}
+
+function el(tag, attrs, children){
+  const e = document.createElement(tag);
+  if(attrs){
+    for(const k in attrs){
+      const v = attrs[k];
+      if(v === null || v === undefined) continue; // don't set attributes explicitly passed as null/undefined
+      if(k === 'class') e.className = v;
+      else if(k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    }
+  }
+  (children||[]).forEach(c => {
+    if(c === null || c === undefined) return;
+    if(typeof c === 'string') e.appendChild(document.createTextNode(c));
+    else e.appendChild(c);
+  });
+  return e;
+}
+
+// Explanations in the source are often nothing but Microsoft Learn links, so
+// they are turned into real anchors. Built with DOM nodes rather than innerHTML
+// so nothing in the bank can be interpreted as markup.
+function explanationNodes(text){
+  const out = [];
+  (text||'').split('\n').forEach((line, i)=>{
+    if(i > 0) out.push(el('br'));
+    const parts = line.split(/(\s+)/);
+    parts.forEach(part=>{
+      if(/^https?:\/\/\S+$/.test(part)){
+        out.push(el('a',{href:part, target:'_blank', rel:'noopener noreferrer'},[part]));
+      } else if(part){
+        out.push(document.createTextNode(part));
+      }
+    });
+  });
+  return out;
+}
+
+// Persistence layer: uses Claude.ai's window.storage when running inside an
+// artifact, and transparently falls back to the browser's own localStorage
+// when this file is hosted anywhere else (Netlify, GitHub Pages, a local
+// file://), so "save progress" keeps working either way.
+const storageBackend = (typeof window !== 'undefined' && window.storage)
+  ? window.storage
+  : {
+      async get(key){
+        const v = localStorage.getItem(key);
+        return v !== null ? {key, value: v} : null;
+      },
+      async set(key, value){
+        localStorage.setItem(key, value);
+        return {key, value};
+      },
+      async delete(key){
+        localStorage.removeItem(key);
+        return {key, deleted: true};
+      }
+    };
+
+async function loadSession(){
+  try{
+    const r = await storageBackend.get(SESSION_KEY, false);
+    return r ? JSON.parse(r.value) : null;
+  }catch(e){ return null; }
+}
+async function saveSession(session){
+  try{
+    await storageBackend.set(SESSION_KEY, JSON.stringify(session), false);
+  }catch(e){ console.error('save session failed', e); }
+}
+async function clearSession(){
+  try{ await storageBackend.delete(SESSION_KEY, false); }catch(e){}
+}
+async function loadHistory(){
+  try{
+    const r = await storageBackend.get(HISTORY_KEY, false);
+    return r ? JSON.parse(r.value) : [];
+  }catch(e){ return []; }
+}
+async function saveHistory(list){
+  try{
+    await storageBackend.set(HISTORY_KEY, JSON.stringify(list.slice(0,100)), false);
+  }catch(e){ console.error('save history failed', e); }
+}
+
+// ---------------------------------------------------------------------------
+// ALL-TIME MISSED-QUESTION POOL
+//
+// The pool is CUMULATIVE and ADDITIVE. Every question answered incorrectly or
+// left unanswered — in any run, across any number of runs, including runs that
+// are abandoned part-way through — is added and STAYS in the list. Nothing is
+// ever removed automatically; the only things that take a question out are the
+// explicit user actions ("Clear list", or "Remove correct from missed list"
+// on the results screen).
+// ---------------------------------------------------------------------------
+
+// Coerce to unique, valid, sorted question numbers. Guards against legacy data
+// saved as strings, duplicates, and question numbers that no longer exist or
+// have no selectable choices (e.g. if the bank ever changes).
+function normalizeWrongPool(arr){
+  const seen = new Set();
+  const out = [];
+  (Array.isArray(arr) ? arr : []).forEach(v => {
+    const n = Number(v);
+    if(!Number.isFinite(n) || seen.has(n)) return;
+    if(!isPracticable(QMAP[n])) return;
+    seen.add(n);
+    out.push(n);
+  });
+  return out.sort((a,b)=>a-b);
+}
+
+async function loadWrongPool(){
+  try{
+    const r = await storageBackend.get(WRONG_POOL_KEY, false);
+    return normalizeWrongPool(r ? JSON.parse(r.value) : []);
+  }catch(e){ return []; }
+}
+async function saveWrongPool(arr){
+  try{
+    await storageBackend.set(WRONG_POOL_KEY, JSON.stringify(arr), false);
+  }catch(e){ console.error('save wrong pool failed', e); }
+}
+
+// Merge question numbers into the persistent pool. Never removes. Writes to
+// storage only when something actually changed, so this is cheap enough to
+// call once per graded question. Returns true if the pool grew.
+async function addToWrongPool(qns){
+  const list = Array.isArray(qns) ? qns : [qns];
+  const merged = normalizeWrongPool((state.wrongPool || []).concat(list));
+  if(merged.length === (state.wrongPool || []).length) return false;
+  state.wrongPool = merged;
+  await saveWrongPool(state.wrongPool);
+  return true;
+}
+
+// The only removal path other than a full clear — driven by an explicit click.
+async function removeFromWrongPool(qns){
+  const drop = new Set((Array.isArray(qns) ? qns : [qns]).map(Number));
+  const kept = (state.wrongPool || []).filter(n => !drop.has(n));
+  if(kept.length === (state.wrongPool || []).length) return false;
+  state.wrongPool = kept;
+  await saveWrongPool(state.wrongPool);
+  return true;
+}
+
+// Is this recorded answer a miss (wrong OR never answered)? Empty selection
+// counts as a miss for pool purposes even though it scores as "skipped".
+function isMissedAnswer(qn, rec){
+  return !isCorrectAnswer(QMAP[qn], rec);
+}
+
+async function checkAuthed(){
+  try{
+    const r = await storageBackend.get(AUTH_KEY, false);
+    return !!(r && r.value === '1');
+  }catch(e){ return false; }
+}
+async function setAuthed(){
+  try{ await storageBackend.set(AUTH_KEY, '1', false); }catch(e){}
+}
+
+// Handle for the exam screen's live-ticking clock. It updates its own DOM node
+// on a 1s interval rather than going through the full render() cycle, since a
+// full re-render every second would rebuild dropdowns and could disturb
+// in-progress selections. Every render() pass clears it first: if the exam
+// screen is being (re)drawn, renderExam() starts a fresh one pointed at the
+// new node; if we've navigated away, the old node is simply gone.
+let examTimerInterval = null;
+
+function render(){
+  if(examTimerInterval){ clearInterval(examTimerInterval); examTimerInterval = null; }
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  if(state.screen === 'loading'){
+    app.appendChild(el('div',{class:'card'},[el('div',{class:'pad empty-note'},['Loading…'])]));
+    return;
+  }
+  if(state.screen === 'gate') return renderGate(app);
+  if(state.screen === 'setup') return renderSetup(app);
+  if(state.screen === 'exam') return renderExam(app);
+  if(state.screen === 'finished') return renderFinished(app);
+  if(state.screen === 'review') return renderReview(app);
+  if(state.screen === 'history') return renderHistory(app);
+}
+
+// ---------------- GATE ----------------
+function renderGate(app){
+  const card = el('div',{class:'card'});
+  const pad = el('div',{class:'pad'});
+  pad.appendChild(el('div',{class:'top-title'},['Microsoft SC-100 · Cybersecurity Architect Expert']));
+  pad.appendChild(el('h1',{},['Access Required']));
+  pad.appendChild(el('div',{class:'subtitle'},['Enter the access code to continue.']));
+
+  pad.appendChild(el('label',{},['Access code']));
+  const codeInput = el('input',{type:'password', id:'gateInput', placeholder:'Access code'});
+  pad.appendChild(codeInput);
+
+  const errDiv = el('div',{class:'err', style:'display:none;'},['Incorrect code — try again.']);
+  pad.appendChild(errDiv);
+
+  const tryEnter = async ()=>{
+    if(codeInput.value === ACCESS_CODE){
+      await setAuthed();
+      state.session = await loadSession();
+      state.historyList = await loadHistory();
+      state.wrongPool = await loadWrongPool();
+      state.screen = 'setup';
+      render();
+    } else {
+      errDiv.style.display = 'block';
+      codeInput.value = '';
+    }
+  };
+
+  codeInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') tryEnter(); });
+
+  pad.appendChild(el('div',{class:'btn-row'},[
+    el('button',{class:'btn btn-primary btn-block', onclick: tryEnter},['Enter'])
+  ]));
+
+  card.appendChild(pad);
+  app.appendChild(card);
+  if(codeInput.focus) codeInput.focus();
+}
+
+// ---------------- SETUP ----------------
+function renderSetup(app){
+  const card = el('div',{class:'card'});
+  const pad = el('div',{class:'pad'});
+  pad.appendChild(el('div',{class:'top-title'},['Microsoft SC-100 · Cybersecurity Architect Expert']));
+  pad.appendChild(el('h1',{},['Practice Exam Simulator']));
+  pad.appendChild(el('div',{class:'subtitle'},[`${TOTAL_Q} questions available · answer, check, and review with explanations`]));
+
+  if(state.session && !state.session.completed){
+    const s = state.session;
+    const answered = s.order.filter(qn => hasResponse(QMAP[qn], (s.answers||{})[qn])).length;
+    const rangeLabel = rangeLabelFor(s.isWrongPool, s.isRetake, s.rangeStart, s.rangeEnd, s.order.length, s.isWeighted);
+    pad.appendChild(el('div',{class:'resume-box'},[
+      el('div',{class:'title'},[`Resume in progress: ${s.candidateName || 'Unnamed'}`]),
+      el('div',{class:'sub'},[`${rangeLabel} · ${answered}/${s.order.length} answered · currently at Q${s.order[s.currentIndex]}`]),
+      el('div',{class:'btn-row', style:'margin-top:0;'},[
+        el('button',{class:'btn btn-primary', onclick: ()=>{ state.screen='exam'; render(); }},['Resume exam']),
+        el('button',{class:'btn btn-outline', onclick: async ()=>{
+          if(confirm('Discard the in-progress exam? This cannot be undone.')){
+            await clearSession();
+            state.session = null;
+            render();
+          }
+        }},['Discard'])
+      ])
+    ]));
+  }
+
+  pad.appendChild(el('label',{},['Candidate name']));
+  const nameInput = el('input',{type:'text', id:'nameInput', placeholder:'e.g. Jordan Diaz'});
+  pad.appendChild(nameInput);
+
+  pad.appendChild(el('div',{class:'row'},[
+    el('div',{},[
+      el('label',{},['Start question #']),
+      el('input',{type:'number', id:'startInput', min:'1', max:String(MAX_QN), value:'1'})
+    ]),
+    el('div',{},[
+      el('label',{},['End question #']),
+      el('input',{type:'number', id:'endInput', min:'1', max:String(MAX_QN), value:String(MAX_QN)})
+    ])
+  ]));
+
+  const presetWrap = el('div',{class:'presets'});
+  const presets = [
+    [`Full bank (1–${MAX_QN})`, 1, MAX_QN],
+    ['First 50 (1–50)', 1, 50],
+    ['51–100', 51, 100],
+    ['101–150', 101, 150],
+    [`151–${FIRST_MATCH_QN - 1}`, 151, FIRST_MATCH_QN - 1],
+    [`Answer-area items (${FIRST_MATCH_QN}–${MAX_QN})`, FIRST_MATCH_QN, MAX_QN]
+  ];
+  presets.forEach(p=>{
+    presetWrap.appendChild(el('button',{class:'preset-btn', onclick: ()=>{
+      document.getElementById('startInput').value = p[1];
+      document.getElementById('endInput').value = p[2];
+    }},[p[0]]));
+  });
+  pad.appendChild(presetWrap);
+
+  pad.appendChild(el('label',{},['Question order']));
+  const orderSel = el('select',{id:'orderSelect', style:'width:100%;padding:10px 12px;border:1px solid var(--gray-300);border-radius:7px;font-size:14.5px;margin-bottom:6px;font-family:inherit;'},[
+    el('option',{value:'sequential'},['Sequential (in order)']),
+    el('option',{value:'random'},['Shuffled (random order)'])
+  ]);
+  pad.appendChild(orderSel);
+  pad.appendChild(el('div',{class:'helper'},[
+    `Q1–${FIRST_MATCH_QN - 1} are multiple choice. Q${FIRST_MATCH_QN}–${MAX_QN} are Microsoft "answer area" items, ` +
+    'answered with drop-downs and scored all-or-nothing.'
+  ]));
+
+  const errDiv = el('div',{class:'err', style:'display:none;'});
+  pad.appendChild(errDiv);
+
+  pad.appendChild(el('div',{class:'btn-row'},[
+    el('button',{class:'btn btn-primary btn-block', onclick: async ()=>{
+      const name = nameInput.value.trim();
+      const start = parseInt(document.getElementById('startInput').value,10);
+      const end = parseInt(document.getElementById('endInput').value,10);
+      const order = orderSel.value;
+      if(!name){ errDiv.textContent = 'Please enter the candidate name.'; errDiv.style.display='block'; return; }
+      if(!start || !end || start<1 || end>MAX_QN || start>end){
+        errDiv.textContent = `Enter a valid range between 1 and ${MAX_QN}.`; errDiv.style.display='block'; return;
+      }
+      let nums = [];
+      for(let i=start;i<=end;i++){
+        if(isPracticable(QMAP[i])) nums.push(i);
+      }
+      if(nums.length===0){
+        errDiv.textContent = 'No practicable questions in that range.'; errDiv.style.display='block'; return;
+      }
+      if(order === 'random') nums = shuffled(nums);
+      const session = {
+        candidateName: name,
+        rangeStart: start,
+        rangeEnd: end,
+        order: nums,
+        currentIndex: 0,
+        answers: {},
+        flags: {},
+        startedAt: new Date().toISOString(),
+        completed: false
+      };
+      state.session = session;
+      await saveSession(session);
+      state.screen = 'exam';
+      render();
+    }},['Start exam'])
+  ]));
+
+  card.appendChild(pad);
+  app.appendChild(card);
+
+  // ---- Weighted 50-question practice exam (proportioned to skill-area weights) ----
+  const weightedCard = el('div',{class:'card'});
+  const weightedPad = el('div',{class:'pad'});
+  weightedPad.appendChild(el('h2',{style:'margin-bottom:2px;'},['Weighted Practice Exam (50 Questions)']));
+  weightedPad.appendChild(el('div',{class:'subtitle'},[
+    'Randomly draws 50 questions proportioned to the official SC-100 skill-area weights, then shuffles the mix.'
+  ]));
+  weightedPad.appendChild(el('div',{class:'domain-weight-list'}, DOMAIN_WEIGHTS.map(d=>
+    el('div',{class:'domain-weight-row'},[
+      el('span',{class:'dname'},[d.name]),
+      el('span',{class:'dcount'},[`${d.pct} · ${d.target}q`])
+    ])
+  )));
+  weightedPad.appendChild(el('div',{class:'btn-row'},[
+    el('button',{class:'btn btn-primary', onclick: async ()=>{
+      const nameVal = nameInput.value.trim();
+      if(!nameVal){ errDiv.textContent = 'Please enter the candidate name.'; errDiv.style.display='block'; return; }
+      const {order, tally} = buildWeightedOrder();
+      const short = tally.filter(t => t.picked < t.target);
+      if(short.length){
+        // Extremely unlikely at the current bank size (see buildWeightedOrder),
+        // but if a skill area's pool is ever smaller than its target, say so
+        // plainly rather than silently handing back a shorter exam.
+        errDiv.textContent = 'Not enough practicable questions in: ' +
+          short.map(t=>`${t.name} (${t.picked}/${t.target})`).join(', ') + '.';
+        errDiv.style.display='block';
+        return;
+      }
+      const weightedSession = {
+        candidateName: nameVal,
+        rangeStart: null,
+        rangeEnd: null,
+        isWeighted: true,
+        order: order,
+        currentIndex: 0,
+        answers: {},
+        flags: {},
+        startedAt: new Date().toISOString(),
+        completed: false
+      };
+      state.session = weightedSession;
+      await saveSession(weightedSession);
+      state.screen = 'exam';
+      render();
+    }},['Start Weighted Exam (50 Q)'])
+  ]));
+  weightedCard.appendChild(weightedPad);
+  app.appendChild(weightedCard);
+
+  if(state.wrongPool && state.wrongPool.length > 0){
+    const wrongCard = el('div',{class:'card'});
+    const wrongPad = el('div',{class:'pad'});
+    wrongPad.appendChild(el('h2',{style:'margin-bottom:2px;'},[`All-Time Missed Questions (${state.wrongPool.length})`]));
+    wrongPad.appendChild(el('div',{class:'subtitle'},[
+      "Every question you've gotten wrong or skipped, accumulated across every exam you've taken on this device — including runs you exited part-way. Questions stay on this list until you remove them yourself."
+    ]));
+    wrongPad.appendChild(el('div',{class:'btn-row'},[
+      el('button',{class:'btn btn-primary', onclick: async ()=>{
+        const nameVal = nameInput.value.trim();
+        if(!nameVal){ errDiv.textContent = 'Please enter the candidate name.'; errDiv.style.display='block'; return; }
+        const order = state.wrongPool.slice();
+        const wrongSession = {
+          candidateName: nameVal,
+          rangeStart: Math.min(...order),
+          rangeEnd: Math.max(...order),
+          isWrongPool: true,
+          order: order,
+          currentIndex: 0,
+          answers: {},
+          flags: {},
+          startedAt: new Date().toISOString(),
+          completed: false
+        };
+        state.session = wrongSession;
+        await saveSession(wrongSession);
+        state.screen = 'exam';
+        render();
+      }},[`Practice All-Time Missed Questions (${state.wrongPool.length})`]),
+      el('button',{class:'btn btn-outline', onclick: async ()=>{
+        if(confirm("Clear your all-time missed-questions list? This can't be undone.")){
+          state.wrongPool = [];
+          await saveWrongPool([]);
+          render();
+        }
+      }},['Clear list'])
+    ]));
+    wrongCard.appendChild(wrongPad);
+    app.appendChild(wrongCard);
+  }
+
+  app.appendChild(el('div',{class:'card'},[
+    el('div',{class:'pad', style:'display:flex;justify-content:space-between;align-items:center;gap:12px;'},[
+      el('div',{},[
+        el('h2',{style:'margin-bottom:2px;'},['Past results']),
+        el('div',{class:'subtitle', style:'margin-bottom:0;'},[`${state.historyList.length} completed exam${state.historyList.length===1?'':'s'} saved`])
+      ]),
+      el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='history'; render(); }},['View history'])
+    ])
+  ]));
+
+  // Plain statement of what this bank does and does not contain, so nobody
+  // mistakes a thin stem for a rendering bug.
+  app.appendChild(el('div',{class:'card'},[
+    el('div',{class:'pad'},[
+      el('h2',{style:'margin-bottom:2px;'},['About this bank']),
+      el('div',{class:'subtitle', style:'margin-bottom:10px;'},['Built from the SC-100 question set you supplied']),
+      el('ul',{style:'margin:0;padding-left:20px;font-size:14.5px;line-height:1.7;color:var(--gray-700);'},[
+        el('li',{},[`${CHOICE_COUNT} multiple-choice items and ${MATCH_COUNT} answer-area (drop-down) items, ${TOTAL_Q} in total.`]),
+        el('li',{},[`${DROPPED_NO_KEY} items in the source PDF have no answer key at all — hotspot, drag-and-drop and yes/no grids whose answer graphics were not captured — and are not included here.`]),
+        el('li',{},['One item appears twice in the source with two different answer keys (Standalone #65 and #257, same stem and options). The copy whose reference link supports its key is kept; the other is dropped.']),
+        el('li',{},['Many stems are condensed in the source: the full scenario paragraph that precedes a question on the real exam is often missing, so some questions read tersely. The options and answer keys are reproduced exactly.']),
+        el('li',{},['Case-study questions are marked; the Fabrikam and Litware case narratives are not part of the source PDF.']),
+        el('li',{},['Explanations are shown where the source provides one — usually a Microsoft Learn link, which opens in a new tab.'])
+      ])
+    ])
+  ]));
+}
+
+// ---------------- EXAM ----------------
+function currentQ(){
+  const s = state.session;
+  return QMAP[s.order[s.currentIndex]];
+}
+
+function renderExam(app){
+  const s = state.session;
+  const q = currentQ();
+  const letters = parseAnswerLetters(q.a);
+  const isMulti = letters.length > 1;
+  const rec = s.answers[q.n];
+  const selected = rec ? (rec.selected || []) : [];
+  const checked = rec ? rec.checked : false;
+
+  const card = el('div',{class:'card'});
+
+  const timerEl = el('div',{class:'exam-timer'},[formatDuration(Date.now() - new Date(s.startedAt).getTime())]);
+  card.appendChild(el('div',{class:'topbar'},[
+    el('div',{},[
+      el('div',{class:'qnum'},[`Question ${q.n}`]),
+      el('div',{class:'cat'},[q.c])
+    ]),
+    el('div',{class:'meta-wrap'},[
+      timerEl,
+      el('div',{class:'meta'},[`${s.candidateName} · ${s.currentIndex+1} of ${s.order.length}`])
+    ])
+  ]));
+
+  // Live-tick the timer once a second without a full re-render. startedAt is
+  // set when the session was created and persists across save/resume, so the
+  // clock reflects true elapsed time even if the candidate left and came back.
+  const startedMs = new Date(s.startedAt).getTime();
+  examTimerInterval = setInterval(()=>{
+    timerEl.textContent = formatDuration(Date.now() - startedMs);
+  }, 1000);
+
+  const pct = Math.round((s.currentIndex / s.order.length) * 100);
+  card.appendChild(el('div',{class:'progress-wrap'},[el('div',{class:'progress-fill', style:`width:${pct}%`})]));
+
+  card.appendChild(el('div',{class:'qtext'},[q.q]));
+  card.appendChild(el('div',{class:'src-tag'},[
+    'Source: ' + q.src,
+    q.cs ? el('span',{class:'cs-badge'},[q.cs]) : null
+  ]));
+  if(q.cs){
+    card.appendChild(el('div',{class:'cs-note'},[
+      'This is a case-study question. The ' + q.cs.replace(' case study','') +
+      ' scenario it refers to is not reproduced in the source PDF, so treat it as recall practice for the answer itself.'
+    ]));
+  }
+  if(isMulti){
+    card.appendChild(el('div',{class:'qhint'},[`Select ${letters.length} answers.`]));
+  }
+
+  if(isMatch(q)){
+    renderMatchBody(card, q, rec, checked);
+  } else {
+    const choicesWrap = el('div',{class:'choices'});
+    q.o.forEach((opt, i)=>{
+      const letter = letterOf(i);
+      const isSelected = selected.includes(letter);
+      const isRight = letters.includes(letter);
+      let cls = 'choice';
+      if(!checked && isSelected) cls += ' selected';
+      if(checked){
+        cls += ' disabled';
+        if(isRight) cls += ' correct';
+        else if(isSelected) cls += ' incorrect';
+      }
+      const inputEl = el('input',{
+        type: isMulti ? 'checkbox' : 'radio',
+        name: 'choice'
+      });
+      inputEl.checked = isSelected;
+      if(checked) inputEl.disabled = true;
+      inputEl.addEventListener('change', ()=>{ toggleSelect(letter, isMulti); });
+
+      const markSpan = checked ? el('span',{class:'mark'},[ isRight ? '✓ Correct' : (isSelected ? '✗ Your pick' : '') ]) : null;
+
+      choicesWrap.appendChild(el('div',{class:cls, onclick: (e)=>{
+        if(checked) return;
+        if(e.target.tagName !== 'INPUT'){ toggleSelect(letter, isMulti); }
+      }},[
+        inputEl,
+        el('span',{},[el('span',{class:'letter'},[letter+'.']), ' ', opt]),
+        markSpan
+      ]));
+    });
+    card.appendChild(choicesWrap);
+  }
+
+  if(checked){
+    const revealedOnly = !hasResponse(q, rec);
+    const allCorrect = isCorrectAnswer(q, rec);
+    let bannerClass, bannerText;
+    if(isMatch(q)){
+      const {got, total} = matchScore(q, rec);
+      if(revealedOnly){
+        bannerClass = 'revealed';
+        bannerText = 'Answers revealed — the correct value is marked on each drop-down below';
+      } else if(allCorrect){
+        bannerClass = 'correct';
+        bannerText = `✓ Correct! ${got} of ${total} drop-downs right`;
+      } else {
+        bannerClass = 'incorrect';
+        bannerText = `✗ Incorrect — ${got} of ${total} drop-downs right (all ${total} must be correct to score)`;
+      }
+    } else if(revealedOnly){
+      bannerClass = 'revealed';
+      bannerText = `Answer revealed — correct answer: ${letters.join(', ') || '—'}`;
+    } else if(allCorrect){
+      bannerClass = 'correct';
+      bannerText = '✓ Correct!';
+    } else {
+      bannerClass = 'incorrect';
+      bannerText = `✗ Incorrect — correct answer: ${letters.join(', ')}`;
+    }
+    card.appendChild(el('div',{class:'result-banner ' + bannerClass},[bannerText]));
+
+    if(q.e){
+      const body = el('div',{class:'body'});
+      // The source's explanation is frequently nothing but reference links.
+      // Label that case so it doesn't read as a truncated paragraph.
+      if(/^\s*https?:\/\/\S+(\s+https?:\/\/\S+)*\s*$/.test(q.e)){
+        body.appendChild(el('div',{class:'links-only-note'},['The source gives reference links only:']));
+      }
+      explanationNodes(q.e).forEach(n => body.appendChild(n));
+      card.appendChild(el('div',{class:'explanation'},[
+        el('div',{class:'head'},['EXPLANATION']),
+        body
+      ]));
+    } else {
+      card.appendChild(el('div',{class:'explanation'},[
+        el('div',{class:'head'},['NOTE']),
+        el('div',{class:'body'},['The source question set gives an answer key for this item but no written explanation.'])
+      ]));
+    }
+  }
+
+  const footer = el('div',{class:'footer-actions'});
+  const leftActions = el('div',{class:'left-actions'});
+  leftActions.appendChild(el('button',{class:'btn btn-outline', disabled: s.currentIndex===0?'true':null, onclick: ()=>{
+    s.currentIndex = Math.max(0, s.currentIndex-1);
+    saveSession(s);
+    render();
+  }},['← Previous']));
+  const flagged = !!s.flags[q.n];
+  leftActions.appendChild(el('button',{class:'flag-star' + (flagged?' on':''), title:'Flag for review', onclick: ()=>{
+    s.flags[q.n] = !s.flags[q.n];
+    saveSession(s);
+    render();
+  }},[flagged ? '★' : '☆']));
+
+  const answerActions = el('div',{class:'answer-actions'});
+  const rightActions = el('div',{class:'right-actions'});
+  const isLast = s.currentIndex === s.order.length-1;
+  if(!checked){
+    // Show Answer lives in its own container so that on small screens it can be
+    // ordered onto its own full-width row above the Previous/Next pair.
+    answerActions.appendChild(el('button',{class:'btn btn-outline', onclick: async ()=>{
+      s.answers[q.n] = Object.assign({}, rec, {selected: selected.slice(), checked:true});
+      // Grade it now and bank the miss immediately, so it survives even if this
+      // run is abandoned instead of finished.
+      if(isMissedAnswer(q.n, s.answers[q.n])) await addToWrongPool(q.n);
+      await saveSession(s);
+      render();
+    }},['Show Answer']));
+    rightActions.appendChild(el('button',{class:'btn btn-primary', onclick: async ()=>{
+      s.answers[q.n] = Object.assign({}, rec, {selected: selected.slice(), checked:true});
+      const wasCorrect = isCorrectAnswer(q, s.answers[q.n]);
+      // Same here: a wrong or unanswered question joins the all-time list the
+      // instant it's graded, not at the end of the exam.
+      if(!wasCorrect) await addToWrongPool(q.n);
+      if(wasCorrect){
+        // Correct: skip the explanation, advance straight to the next question (or finish).
+        if(isLast){
+          await finishExam();
+        } else {
+          s.currentIndex += 1;
+          await saveSession(s);
+          render();
+        }
+      } else {
+        // Incorrect, or nothing selected: reveal the answer/explanation first,
+        // same as Show Answer. Scoring still counts an empty selection as
+        // "skipped" rather than "incorrect" — see finishExam.
+        await saveSession(s);
+        render();
+      }
+    }},['Next Question']));
+  } else {
+    rightActions.appendChild(el('button',{class:'btn btn-primary', onclick: async ()=>{
+      if(isLast){
+        await finishExam();
+      } else {
+        s.currentIndex += 1;
+        await saveSession(s);
+        render();
+      }
+    }},[isLast ? 'Finish exam' : 'Next Question']));
+  }
+
+  // DOM order is the MOBILE order (Show Answer first, then Prev/Next on one row).
+  // Desktop re-orders visually with CSS `order` in the base stylesheet.
+  if(!checked) footer.appendChild(answerActions);
+  footer.appendChild(leftActions);
+  footer.appendChild(rightActions);
+  card.appendChild(footer);
+
+  app.appendChild(card);
+
+  app.appendChild(el('div',{class:'card'},[
+    el('div',{class:'pad', style:'padding:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;'},[
+      el('div',{class:'subtitle', style:'margin:0;'},[`Progress is saved automatically. Answered: ${s.order.filter(qn => hasResponse(QMAP[qn], s.answers[qn])).length}/${s.order.length}`]),
+      el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='setup'; render(); }},['Save & exit to menu'])
+    ])
+  ]));
+}
+
+// ---------------- ANSWER-AREA (matching) ITEM ----------------
+function renderMatchBody(card, q, rec, checked){
+  card.appendChild(el('div',{class:'match-note'},[
+    el('b',{},['Answer area. ']),
+    `Choose a value for each of the ${q.boxes.length} drop-downs; all ${q.boxes.length} must be correct for the item to score. `,
+    'The source PDF records the correct value for each box but not the list of choices the real exam offers, ' +
+    'so each drop-down here lists this item’s own values — match each one to the right box.'
+  ]));
+
+  const opts = matchOptions(q);
+  const wrap = el('div',{class:'match-wrap'});
+  q.boxes.forEach((box, i)=>{
+    const picked = matchResponse(rec)[i] || '';
+    const ok = matchCellCorrect(q, i, rec);
+    const rowEl = el('div',{class:'match-row'});
+    rowEl.appendChild(el('label',{class:'match-label'},[box.label]));
+
+    const sel = el('select',{class:'match-select' + (checked ? (ok ? ' correct' : ' incorrect') : '')});
+    sel.appendChild(el('option',{value:''},['-- Select --']));
+    opts.forEach(opt=>{
+      const o = el('option',{value:opt},[opt]);
+      if(opt === picked) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.value = picked;
+    if(checked) sel.disabled = true;
+    else sel.addEventListener('change', ()=>{ setMatchValue(q.n, i, sel.value); });
+    rowEl.appendChild(sel);
+
+    if(checked){
+      rowEl.appendChild(el('div',{class:'match-mark ' + (ok ? 'ok' : 'bad')},[
+        ok ? '✓ Correct' : '✗ Correct answer: ' + box.value
+      ]));
+    }
+    wrap.appendChild(rowEl);
+  });
+  card.appendChild(wrap);
+
+  if(!checked){
+    card.appendChild(el('div',{class:'match-reset-row'},[
+      el('button',{class:'btn btn-outline', onclick: ()=>{ resetMatch(q.n); }},['Reset All'])
+    ]));
+  }
+}
+
+// Record one drop-down selection without disturbing the others.
+function setMatchValue(qn, idx, value){
+  const s = state.session;
+  const rec = s.answers[qn] || {};
+  const boxes = Object.assign({}, rec.boxes);
+  if(value) boxes[idx] = value; else delete boxes[idx];
+  s.answers[qn] = {selected: [], boxes, checked:false};
+  saveSession(s);
+  render();
+}
+
+// "Reset All" — clears every drop-down on this item only.
+function resetMatch(qn){
+  const s = state.session;
+  s.answers[qn] = {selected: [], boxes: {}, checked:false};
+  saveSession(s);
+  render();
+}
+
+function toggleSelect(letter, isMulti){
+  const s = state.session;
+  const q = currentQ();
+  const rec = s.answers[q.n];
+  let selected = rec ? (rec.selected || []).slice() : [];
+  if(isMulti){
+    const idx = selected.indexOf(letter);
+    if(idx>=0) selected.splice(idx,1); else selected.push(letter);
+  } else {
+    selected = [letter];
+  }
+  s.answers[q.n] = {selected, checked:false};
+  saveSession(s);
+  render();
+}
+
+function arraysEqualAsSets(a,b){
+  if(a.length!==b.length) return false;
+  return [...a].sort().join(',') === [...b].sort().join(',');
+}
+
+async function finishExam(){
+  const s = state.session;
+  s.completed = true;
+  s.finishedAt = new Date().toISOString();
+  // Elapsed wall-clock time from the moment the session was created to now.
+  // startedAt already persists across save/resume (it's set once, at session
+  // creation, and never touched again), so this is true elapsed time even if
+  // the candidate left mid-exam and came back later.
+  const durationMs = Date.now() - new Date(s.startedAt).getTime();
+  await saveSession(s);
+
+  let correct=0, incorrect=0, skipped=0;
+  const catStats = {};
+  // Final sweep into the persistent all-time "missed questions" pool. Misses
+  // are normally recorded the moment a question is graded (see the Show Answer
+  // / Next Question handlers) so that abandoned runs still count; this pass is
+  // the backstop that catches anything never reached or never graded.
+  //
+  // IMPORTANT: this is add-only. A question answered correctly here is NOT
+  // pulled out of the pool — the list is a cumulative record of everything
+  // ever missed and only the user clears it.
+  const newMisses = [];
+  s.order.forEach(qn=>{
+    const q = QMAP[qn];
+    const rec = s.answers[qn];
+    if(!catStats[q.c]) catStats[q.c] = {correct:0,total:0};
+    catStats[q.c].total++;
+    // No answer was ever put down (whether the question was left untouched, or
+    // revealed via Next Question / Show Answer without a selection) counts as
+    // skipped, not incorrect — "checked" only means the answer was viewed.
+    if(!hasResponse(q, rec)){ skipped++; newMisses.push(qn); return; }
+    if(isCorrectAnswer(q, rec)){ correct++; catStats[q.c].correct++; }
+    else { incorrect++; newMisses.push(qn); }
+  });
+  await addToWrongPool(newMisses);
+
+  const summary = {
+    candidateName: s.candidateName,
+    rangeStart: s.rangeStart,
+    rangeEnd: s.rangeEnd,
+    isRetake: !!s.isRetake,
+    isWrongPool: !!s.isWrongPool,
+    isWeighted: !!s.isWeighted,
+    total: s.order.length,
+    correct, incorrect, skipped,
+    durationMs,
+    date: new Date().toISOString()
+  };
+  state.historyList.unshift(summary);
+  await saveHistory(state.historyList);
+
+  state.lastResult = {summary, catStats, session: JSON.parse(JSON.stringify(s))};
+  await clearSession();
+  state.session = null;
+  state.screen = 'finished';
+  render();
+}
+
+// ---------------- FINISHED ----------------
+function renderFinished(app){
+  const r = state.lastResult;
+  if(!r){ state.screen='setup'; render(); return; }
+  const {summary, catStats, session} = r;
+  const pct = summary.total>0 ? Math.round((summary.correct/summary.total)*100) : 0;
+  const passed = pct >= PASS_THRESHOLD;
+  const rangeText = rangeLabelFor(summary.isWrongPool, summary.isRetake, summary.rangeStart, summary.rangeEnd, summary.total, summary.isWeighted);
+
+  const card = el('div',{class:'card'});
+  card.appendChild(el('div',{class:'score-hero'},[
+    el('div',{class:'report-label'},['Final Report']),
+    el('div',{class:'subtitle', style:'margin-bottom:0;'},[`Candidate: ${summary.candidateName}`]),
+    el('div',{class:'big'},[pct+'%']),
+    el('div',{class:'pct'},[`${summary.correct} of ${summary.total} correct · ${rangeText}${summary.durationMs != null ? ' · Time: ' + formatDuration(summary.durationMs) : ''}`]),
+    el('div',{class:'pass ' + (passed?'yes':'no')},[passed ? 'Practice score: on track' : 'Practice score: needs review'])
+  ]));
+
+  card.appendChild(el('div',{class:'stat-grid'},[
+    el('div',{class:'stat correct'},[el('div',{class:'num'},[String(summary.correct)]), el('div',{class:'lbl'},['Correct'])]),
+    el('div',{class:'stat incorrect'},[el('div',{class:'num'},[String(summary.incorrect)]), el('div',{class:'lbl'},['Incorrect'])]),
+    el('div',{class:'stat skipped'},[el('div',{class:'num'},[String(summary.skipped)]), el('div',{class:'lbl'},['Skipped'])])
+  ]));
+
+  const catWrap = el('div',{class:'cat-breakdown'});
+  catWrap.appendChild(el('h2',{},['By skill area']));
+  Object.keys(catStats).forEach(cat=>{
+    const cs = catStats[cat];
+    const p = cs.total>0 ? (cs.correct/cs.total)*100 : 0;
+    catWrap.appendChild(el('div',{class:'cat-row'},[
+      el('div',{class:'name', title:cat},[cat]),
+      el('div',{class:'bar-wrap'},[el('div',{class:'bar', style:`width:${p}%`})]),
+      el('div',{class:'frac'},[`${cs.correct}/${cs.total} (${Math.round(p)}%)`])
+    ]));
+  });
+  card.appendChild(catWrap);
+
+  // Question numbers that were missed or left blank, for the retake button.
+  const retakeNums = session.order.filter(qn => !isCorrectAnswer(QMAP[qn], session.answers[qn]));
+
+  // Questions in this run that are on the all-time missed list but were
+  // answered correctly here. The list is never pruned automatically, so this
+  // gives a targeted way to retire ones that have been mastered.
+  const wrongPoolSet = new Set(state.wrongPool || []);
+  const masteredNums = session.order.filter(qn => wrongPoolSet.has(qn) && !isMissedAnswer(qn, session.answers[qn]));
+
+  const leftBtns = [
+    el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='review'; state.reviewSession = session; render(); }},['Review answers'])
+  ];
+  if(masteredNums.length > 0){
+    leftBtns.push(el('button',{class:'btn btn-outline', onclick: async ()=>{
+      if(confirm(`Remove ${masteredNums.length} question${masteredNums.length===1?'':'s'} you answered correctly from your all-time missed list?`)){
+        await removeFromWrongPool(masteredNums);
+        render();
+      }
+    }},[`Remove ${masteredNums.length} Correct from Missed List`]));
+  }
+  if(retakeNums.length > 0){
+    leftBtns.push(el('button',{class:'btn btn-outline', onclick: async ()=>{
+      const retakeSession = {
+        candidateName: summary.candidateName,
+        rangeStart: Math.min(...retakeNums),
+        rangeEnd: Math.max(...retakeNums),
+        isRetake: true,
+        order: retakeNums.slice(),
+        currentIndex: 0,
+        answers: {},
+        flags: {},
+        startedAt: new Date().toISOString(),
+        completed: false
+      };
+      state.session = retakeSession;
+      await saveSession(retakeSession);
+      state.screen = 'exam';
+      render();
+    }},[`Retake Incorrect & Skipped Questions (${retakeNums.length})`]));
+  }
+
+  card.appendChild(el('div',{class:'footer-actions'},[
+    el('div',{class:'left-actions'},leftBtns),
+    el('div',{class:'right-actions'},[
+      el('button',{class:'btn btn-primary', onclick: ()=>{ state.screen='setup'; render(); }},['Back to menu'])
+    ])
+  ]));
+
+  app.appendChild(card);
+}
+
+function renderReview(app){
+  const session = state.reviewSession;
+  const rangeLabel = rangeLabelFor(session.isWrongPool, session.isRetake, session.rangeStart, session.rangeEnd, session.order.length, session.isWeighted);
+  const card = el('div',{class:'card'});
+  card.appendChild(el('div',{class:'pad'},[
+    el('h1',{},['Answer review']),
+    el('div',{class:'subtitle'},[`${session.candidateName} · ${rangeLabel}`]),
+    el('div',{class:'btn-row', style:'margin-top:0;'},[
+      el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='finished'; render(); }},['← Back to results']),
+      el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='setup'; render(); }},['Back to menu'])
+    ])
+  ]));
+  const list = el('div',{class:'review-list'});
+  session.order.forEach(qn=>{
+    const q = QMAP[qn];
+    const rec = session.answers[qn];
+    const letters = parseAnswerLetters(q.a);
+    const sel = rec ? (rec.selected || []) : [];
+    const answered = hasResponse(q, rec);
+    const correct = isCorrectAnswer(q, rec);
+    const badge = !answered
+      ? el('span',{class:'badge', style:'background:var(--gray-200);color:var(--gray-700);'},['Skipped'])
+      : el('span',{class:'badge ' + (correct?'correct':'incorrect')},[correct?'Correct':'Incorrect']);
+    const item = el('div',{class:'review-item'},[
+      el('div',{class:'qh'},[`Q${q.n}`, badge]),
+      el('div',{class:'qtxt'},[q.q])
+    ]);
+    if(isMatch(q)){
+      const resp = matchResponse(rec);
+      const {got, total} = matchScore(q, rec);
+      item.appendChild(el('div',{class:'ans'},[`${got} of ${total} drop-downs correct`]));
+      q.boxes.forEach((box, i)=>{
+        const picked = resp[i];
+        const ok = matchCellCorrect(q, i, rec);
+        item.appendChild(el('div',{class:'ans'},[
+          `${box.label}: ${box.value}`,
+          picked ? ` · Your answer: ${picked}${ok ? ' ✓' : ' ✗'}` : ' · Your answer: —'
+        ]));
+      });
+    } else {
+      item.appendChild(el('div',{class:'ans'},[
+        `Correct answer: ${letters.join(', ') || '—'}`,
+        answered ? ` · Your answer: ${sel.join(', ') || '—'}` : ''
+      ]));
+    }
+    list.appendChild(item);
+  });
+  card.appendChild(list);
+  app.appendChild(card);
+}
+
+// ---------------- HISTORY ----------------
+function renderHistory(app){
+  const card = el('div',{class:'card'});
+  card.appendChild(el('div',{class:'pad'},[
+    el('h1',{},['Past results']),
+    el('div',{class:'subtitle'},['All completed practice exams saved on this device']),
+    el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='setup'; render(); }},['← Back to menu'])
+  ]));
+  const listWrap = el('div',{class:'pad', style:'padding-top:0;'});
+  if(state.historyList.length===0){
+    listWrap.appendChild(el('div',{class:'empty-note'},['No completed exams yet.']));
+  } else {
+    state.historyList.forEach(h=>{
+      const pct = h.total>0 ? Math.round((h.correct/h.total)*100) : 0;
+      const d = new Date(h.date);
+      const rangeLabel = rangeLabelFor(h.isWrongPool, h.isRetake, h.rangeStart, h.rangeEnd, h.total, h.isWeighted);
+      listWrap.appendChild(el('div',{class:'history-item'},[
+        el('div',{},[
+          el('div',{class:'name'},[h.candidateName]),
+          el('div',{class:'range'},[`${rangeLabel} · ${d.toLocaleDateString()} ${d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}${h.durationMs != null ? ' · ' + formatDuration(h.durationMs) : ''}`])
+        ]),
+        el('div',{class:'score', style:`color:${pct>=PASS_THRESHOLD?'var(--green)':'var(--red)'}`},[`${pct}% (${h.correct}/${h.total})`])
+      ]));
+    });
+  }
+  card.appendChild(listWrap);
+  app.appendChild(card);
+}
+
+// ---------------- INIT ----------------
+async function init(){
+  const authed = await checkAuthed();
+  if(!authed){
+    state.screen = 'gate';
+    render();
+    return;
+  }
+  state.session = await loadSession();
+  state.historyList = await loadHistory();
+  state.wrongPool = await loadWrongPool();
+  state.screen = 'setup';
+  render();
+}
+init();
+</script>
+</body>
+</html>
