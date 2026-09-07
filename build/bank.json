@@ -5470,7 +5470,21 @@
     "Microsoft Defender for Identity",
     "Microsoft Sentinel"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Defender for Identity is the only one of these that looks inside an on-premises AD DS domain. Its identity security posture assessments evaluate domain configuration and surface the weaknesses attackers exploit, which is exactly “identify configuration issues and administrative vulnerabilities”, and it does so from a lightweight sensor on the domain controllers rather than a project you have to build — that is the “minimize effort” half.",
+    "whyWrong": [
+     "A. Microsoft Entra ID Protection scores risk on cloud identities (risky sign-ins, leaked credentials). It does not assess AD DS domain configuration.",
+     "B. Defender for Servers protects the operating system as a workload, not the directory it belongs to.",
+     "D. Microsoft Sentinel is a SIEM. It could ingest the signal, but you would have to write the detections yourself, which is the opposite of minimizing effort."
+    ],
+    "source": {
+     "title": "Microsoft Defender for Identity overview",
+     "url": "https://learn.microsoft.com/en-us/defender-for-identity/what-is"
+    }
+   }
   },
   {
    "n": 44,
@@ -5586,7 +5600,21 @@
     "Azure AD Privileged Identity Management (PIM)",
     "Azure AD identity Protection"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Windows LAPS gives every machine a different, automatically rotated local administrator password. Microsoft lists the first benefit as “protection against pass-the-hash and lateral-traversal attacks”, which is the requirement word for word: if one machine's local admin account is compromised, the credential is useless on every other machine, so the ransomware cannot spread sideways with it.",
+    "whyWrong": [
+     "B. Privileged Access Workstations harden the admin’s own device. They do not change the local administrator password on the 500 user machines.",
+     "C. PIM does just-in-time elevation for Entra ID roles, not for local Windows accounts.",
+     "D. Entra ID Protection detects risky sign-ins and has no role in local account management."
+    ],
+    "source": {
+     "title": "Windows LAPS overview",
+     "url": "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview"
+    }
+   }
   },
   {
    "n": 47,
@@ -6026,7 +6054,23 @@
     "Configure Windows Local Administrator Password Solution (Windows LAPS) in legacy Microsoft LAPS emulation mode.",
     "Add Group2 to the local Administrators group. Add the user that is assigned the Security Administrator role to the local Administrators group of the user ' s assigned privileged access device."
    ],
-   "a": "B"
+   "a": "A",
+   "srcA": "B",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe question asks what to put in the local Administrators group of a privileged access device, and the keyed answer does not answer that question — configuring LAPS in an emulation mode sets how a password is stored, not who is a member of the group. It is also the wrong direction: Microsoft deprecated the legacy LAPS product as of Windows 11 23H2, and emulation mode exists only to ease migration from an existing legacy deployment. Under least privilege, only Group2 — the team that manages the devices — belongs in the group. The Group1 user who is assigned the device must not be a local administrator on it: that is the whole point of a privileged access device.",
+    "whyWrong": [
+     "B. Legacy Microsoft LAPS is deprecated, emulation mode is a migration aid, and neither configures group membership — which is what the question asks for.",
+     "C. Adding the assigned user to the local Administrators group of their own privileged access device breaks least privilege and defeats the purpose of the device tier."
+    ],
+    "source": {
+     "title": "Windows LAPS overview",
+     "url": "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview"
+    },
+    "corrected": true,
+    "originalAnswer": "B"
+   }
   },
   {
    "n": 56,
@@ -8014,7 +8058,12 @@
     {
      "p": "https://www.microsoft.com/en-us/security/business/identity-access/azure-active-directory-pricing?rtc=1"
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged: the key looks wrong and the source seems to know it. The question asks what forces an upgrade from Microsoft Entra ID Free to Premium; the key says multifactor authentication, but the source’s own explanation links to the Privileged Identity Management documentation, which points at option B instead. That fits the licensing: some MFA is available on the Free tier through security defaults, whereas PIM has always required Entra ID P2. Treat B as the more defensible answer. The key is left as the source has it pending a licensing page check."
+   }
   },
   {
    "n": 107,
@@ -8538,7 +8587,21 @@
     "Microsoft Assessment and Planning (MAP) Toolkit",
     "Microsoft Defender for Identity"
    ],
-   "a": "D"
+   "a": "D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Credential exposure in an AD DS domain is Defender for Identity's posture territory: it identifies risky configurations and exposures, analyses lateral movement paths showing how an attacker would traverse the environment, and surfaces the findings as remediation recommendations through Microsoft Secure Score. That combination — actionable recommendations, no infrastructure to build — is what the two requirements are testing.",
+    "whyWrong": [
+     "A. Defender for Cloud Apps is a CASB for SaaS activity.",
+     "B. Secure Score is where some of these recommendations surface, but it is a score, not the product that assesses the domain.",
+     "C. The MAP Toolkit is an inventory and migration-planning tool with no security assessment role."
+    ],
+    "source": {
+     "title": "Microsoft Defender for Identity overview",
+     "url": "https://learn.microsoft.com/en-us/defender-for-identity/what-is"
+    }
+   }
   },
   {
    "n": 121,
@@ -9188,7 +9251,12 @@
     "Windows Server event subscription",
     "resource-based role-based access control (RBAC)"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged as a defective question rather than a wrong key. The stem asks which **two** solutions to include and says each correct answer is a complete solution, but the source records a single letter. Resource-based RBAC in Microsoft Sentinel is what separates the two teams’ log access, and the Azure Monitor agent is what collects the perimeter servers’ event logs — both are needed, and the near-identical Standalone 122 keys exactly that pair. The likeliest explanation is that this copy lost an option or half its key. Answer it as Azure Monitor agent plus resource-based RBAC, and do not treat the graded result here as meaningful."
+   }
   },
   {
    "n": 139,
@@ -9933,7 +10001,25 @@
     "firewall rules for the storage account",
     "inbound rules in Azure Firewall"
    ],
-   "a": "C"
+   "a": "D",
+   "srcA": "C",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nA network security group cannot protect a storage account at all. NSGs filter traffic at a subnet or network interface inside a virtual network; a storage account is a PaaS service reached through its own public endpoint, which no NSG sits in front of. The control that does this is the storage account firewall: “Each IP network rule enables traffic from a specific public IP address range”, and Microsoft gives the identical example of allowing a client’s public IP. With the firewall configured, only the 20 application servers’ addresses get through and everything else is denied.",
+    "whyWrong": [
+     "A. Service tags are used inside NSG rules, so this fails for the same reason — NSGs do not govern access to a storage account.",
+     "B. A Web Application Firewall inspects HTTP for a web application behind Application Gateway or Front Door.",
+     "C. Inbound NSG rules govern traffic entering a subnet or NIC, not a storage account.",
+     "E. Azure Firewall filters traffic leaving or crossing your network; it is not in the path of an internet client reaching a storage endpoint."
+    ],
+    "source": {
+     "title": "Azure Storage firewall rules and network access",
+     "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-network-security"
+    },
+    "corrected": true,
+    "originalAnswer": "C"
+   }
   },
   {
    "n": 160,
@@ -10351,7 +10437,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The requirement that decides this is “minimize the impact on the legacy applications”. A read-only lock blocks the List Keys operation — Microsoft states plainly that “a read-only lock on a storage account prevents users from listing the account keys”, because listKeys is a POST and locks block the control plane. New applications therefore cannot obtain a key, while legacy applications already holding one keep working, since locks do not touch the data plane.",
+    "whyWrong": [
+     "B. Setting AllowSharedKeyAccess to false rejects every request authorized with an account key — it would break the legacy applications outright. Microsoft explicitly says to migrate clients to Microsoft Entra ID before doing this.",
+     "C. AllowBlobPublicAccess governs anonymous public read access, a different problem entirely.",
+     "D. Rotating keys automatically does not stop anyone from retrieving the current key, and it breaks apps holding the old one."
+    ],
+    "source": {
+     "title": "Lock your Azure resources - considerations before applying locks",
+     "url": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources"
+    }
+   }
   },
   {
    "n": 171,
@@ -10401,7 +10501,21 @@
     "Microsoft Defender for Servers",
     "Privileged Identity Management (PIM)"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Privilege escalation against a synced on-premises domain is a core Defender for Identity detection: it monitors “privilege escalation and suspicious role or group membership changes” and domain-dominance behaviour such as DCShadow and Golden Ticket. Note the direction of travel — the domain syncs to Entra ID, but the attack happens on-premises, so a cloud identity product cannot see it.",
+    "whyWrong": [
+     "A. Entra ID Protection evaluates cloud sign-in risk, not on-premises privilege escalation.",
+     "C. Defender for Servers protects the server workload.",
+     "D. PIM governs how Entra roles are activated. It is a preventive control, not a detection for an attack already underway in AD DS."
+    ],
+    "source": {
+     "title": "Microsoft Defender for Identity overview",
+     "url": "https://learn.microsoft.com/en-us/defender-for-identity/what-is"
+    }
+   }
   },
   {
    "n": 173,
@@ -11883,7 +11997,21 @@
     "Cloud Infrastructure Entitlement Management",
     "Privileged Identity Management (PIM) in Microsoft Entra ID"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Endpoint Privilege Management lets standard users run specific approved binaries elevated without ever joining the local Administrators group. The detail the question turns on is the elevation type: EPM normally elevates using an isolated virtual account, but its “Elevate as current user” type “runs the elevated process under the signed-in user's own account” — which is precisely the stated requirement that apps run in the context of each signed-in standard user.",
+    "whyWrong": [
+     "B. Windows LAPS manages the local administrator account’s password. Using it means signing in as that separate account, not running as the signed-in user.",
+     "C. Cloud Infrastructure Entitlement Management (Entra Permissions Management) governs cloud resource permissions across clouds, not Windows elevation.",
+     "D. PIM elevates Entra ID directory roles, not processes on a device."
+    ],
+    "source": {
+     "title": "Endpoint Privilege Management with Microsoft Intune",
+     "url": "https://learn.microsoft.com/en-us/intune/intune-service/protect/epm-overview"
+    }
+   }
   },
   {
    "n": 214,
@@ -14234,7 +14362,24 @@
     "Configure private link connections.",
     "Configure encryption by using customer-managed keys (CMKs)"
    ],
-   "a": "D"
+   "a": "A",
+   "srcA": "D",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe keyed answer confuses encryption with access control. Customer-managed keys change which key encrypts data at rest; they grant nobody access and expire for no one. A shared access signature is the delegated-access mechanism, and Microsoft describes it as giving “granular control over how a client can access your data — what resources the client may access, what permissions they have to those resources, how long the SAS is valid”. Scoped to specific blobs, with an expiry, and without making the container public: that is the question restated.",
+    "whyWrong": [
+     "B. Sharing the connection string hands over the account key, granting full access to everything with no expiry.",
+     "C. Private Link makes the account reachable privately from a virtual network. External vendors on the internet cannot use it, and it grants no data permissions.",
+     "D. Customer-managed keys control encryption at rest. They neither grant nor time-limit access."
+    ],
+    "source": {
+     "title": "Grant limited access to data with shared access signatures (SAS)",
+     "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview"
+    },
+    "corrected": true,
+    "originalAnswer": "D"
+   }
   },
   {
    "n": 274,
@@ -15574,7 +15719,21 @@
     "Privileged Identity Management (PIM)",
     "Microsoft Entra entitlement management"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Installing an application needs administrative rights, and EPM grants exactly that for exactly that binary — elevation is scoped by rules to specific files, logged per elevation, and leaves the user a standard user the rest of the time. Microsoft frames it as supporting Zero Trust by “enabling least privilege access and minimizing lateral movement risks”, which is the phrase the question is pointing at.",
+    "whyWrong": [
+     "A. LAPS would hand Group1 a working local administrator credential — broad standing privilege, the opposite of Zero Trust.",
+     "C. PIM covers Entra roles, not application installation on a device.",
+     "D. Entitlement management governs access packages for resources, not local elevation."
+    ],
+    "source": {
+     "title": "Endpoint Privilege Management with Microsoft Intune",
+     "url": "https://learn.microsoft.com/en-us/intune/intune-service/protect/epm-overview"
+    }
+   }
   },
   {
    "n": 309,
