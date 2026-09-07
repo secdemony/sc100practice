@@ -1,0 +1,264 @@
+{
+ "cs1/1": [
+  {
+   "label": "Box 1",
+   "value": "A Blueprint"
+  },
+  {
+   "label": "Box 2",
+   "value": "Update an Azure Policy assignment"
+  }
+ ],
+ "cs1/6": [
+  {
+   "label": "Account type",
+   "value": "A guest account in the fabrikam.onmicrosoft.com tenant"
+  },
+  {
+   "label": "Component in Identity Governance",
+   "value": "An access review"
+  }
+ ],
+ "cs2/1": [
+  {
+   "label": "Segment Microsoft Sentinel workspaces by",
+   "value": "Region and Azure AD tenant"
+  },
+  {
+   "label": "Integrate Azure subscriptions by using",
+   "value": "Azure Lighthouse subscription onboarding process"
+  }
+ ],
+ "cs2/3": [
+  {
+   "label": "For delegated management of users and groups",
+   "value": "Azure AD administrative units"
+  },
+  {
+   "label": "To ensure leaked credential detection",
+   "value": "Enable password hash synchronization in the Azure AD Connect deployment"
+  }
+ ],
+ "cs2/5": [
+  {
+   "label": "Box 1",
+   "value": "Virtual Network Integration"
+  },
+  {
+   "label": "Box 2",
+   "value": "Private Endpoints"
+  }
+ ],
+ "cs2/7": [
+  {
+   "label": "Box 1",
+   "value": "Azure AD Identity Protection"
+  },
+  {
+   "label": "Box 2",
+   "value": "Microsoft Defender for Identity"
+  }
+ ],
+ "std/2": [
+  {
+   "label": "To automate vulnerability code scanning",
+   "value": "GitHub Enterprise Cloud",
+   "options": [
+    "GitHub Enterprise Cloud",
+    "GitHub Enterprise Server",
+    "GitHub Team"
+   ]
+  },
+  {
+   "label": "To automatically generate pull requests",
+   "value": "Dependabot",
+   "options": [
+    "Dependabot",
+    "Codespaces",
+    "Dependency Tracker"
+   ]
+  }
+ ],
+ "std/3": [
+  {
+   "label": "For NIST",
+   "value": "Microsoft Defender for Cloud",
+   "options": [
+    "Microsoft Defender for Cloud",
+    "Microsoft Defender Vulnerability Management",
+    "Microsoft Sentinel"
+   ]
+  },
+  {
+   "label": "For GDPR",
+   "value": "Microsoft Purview Compliance Manager",
+   "options": [
+    "Microsoft Priva",
+    "Microsoft Purview Communication Compliance",
+    "Microsoft Purview Compliance Manager"
+   ]
+  }
+ ],
+ "std/21": [
+  {
+   "label": "Role to assign",
+   "value": "Password Administrator"
+  },
+  {
+   "label": "To restrict the scope",
+   "value": "A custom role"
+  }
+ ],
+ "std/29": [
+  {
+   "label": "To ensure that only VM1 can access DB1",
+   "value": "A private endpoint"
+  },
+  {
+   "label": "To enforce network security restrictions for DB1",
+   "value": "Network security groups (NSGs)"
+  }
+ ],
+ "std/31": [
+  {
+   "label": "SharePoint Online",
+   "value": "Groups and sites"
+  },
+  {
+   "label": "Microsoft Teams",
+   "value": "Groups and sites"
+  },
+  {
+   "label": "Exchange Online",
+   "value": "Files and emails"
+  }
+ ],
+ "std/34": [
+  {
+   "label": "Security baselines",
+   "value": "Windows only"
+  },
+  {
+   "label": "Remote lock",
+   "value": "Windows and macOS"
+  }
+ ],
+ "std/45": [
+  {
+   "label": "Serverless SQL pool",
+   "value": "Azure Storage infrastructure encryption and Microsoft-managed keys"
+  },
+  {
+   "label": "Dedicated SQL pool",
+   "value": "Transparent Data Encryption (TDE) and customer-managed keys"
+  }
+ ],
+ "std/48": [
+  {
+   "label": "Tenant",
+   "value": "An enterprise application"
+  },
+  {
+   "label": "Server2",
+   "value": "Microsoft Entra private network connector"
+  }
+ ],
+ "std/57": [
+  {
+   "label": "Windows 11 devices",
+   "value": "Microsoft 365 Defender (Microsoft Defender for Endpoint)"
+  },
+  {
+   "label": "Azure virtual machines",
+   "value": "Microsoft Defender for Cloud"
+  },
+  {
+   "label": "Azure Storage accounts",
+   "value": "Microsoft Defender for Cloud"
+  }
+ ],
+ "std/59": [
+  {
+   "label": "Threat modeling",
+   "value": "Plan and develop"
+  },
+  {
+   "label": "Actionable intelligence",
+   "value": "Operate"
+  },
+  {
+   "label": "Dynamic application security testing (DAST)",
+   "value": "Build and test"
+  }
+ ],
+ "std/121": [
+  {
+   "label": "Rate limit",
+   "value": "A custom rule"
+  },
+  {
+   "label": "Block malicious bots",
+   "value": "A managed rule set"
+  }
+ ],
+ "std/126": [
+  {
+   "label": "For WAF",
+   "value": "Data connectors"
+  },
+  {
+   "label": "For the virtual machines",
+   "value": "The Log Analytics agent"
+  }
+ ],
+ "std/167": [
+  {
+   "label": "To streamline creation",
+   "value": "The Microsoft Graph API"
+  },
+  {
+   "label": "To streamline processing",
+   "value": "Microsoft Power Automate"
+  }
+ ],
+ "std/180": [
+  {
+   "label": "Ensure Fabrikam users can use access packages without creating guest accounts",
+   "value": "A connected organization"
+  },
+  {
+   "label": "Allow non-administrative users to create access packages",
+   "value": "Catalogs"
+  }
+ ],
+ "std/191": [
+  {
+   "label": "Selection 1",
+   "value": "NSG"
+  },
+  {
+   "label": "Selection 2",
+   "value": "Microsoft Defender for servers"
+  }
+ ],
+ "std/193": [
+  {
+   "label": "Data security",
+   "value": "Access keys stored in Azure Key Vault"
+  },
+  {
+   "label": "Network access control",
+   "value": "Azure Private Link with network service tags"
+  }
+ ],
+ "std/219": [
+  {
+   "label": "Box 1",
+   "value": "Azure AD Application"
+  },
+  {
+   "label": "Box 2",
+   "value": "Access Package in Identity Governance"
+  }
+ ]
+}

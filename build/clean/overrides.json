@@ -1,0 +1,6 @@
+{
+  "_comment": "Every exhibit in the dump is watermarked by the vendor. Where a clean copy of the same diagram is available, map the extracted image's filename to the replacement file in this directory.",
+  "images": {
+    "p024_x555.png": "sc100GQ1.png"
+  }
+}

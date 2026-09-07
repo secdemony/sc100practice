@@ -1,0 +1,177 @@
+
+  /* ---- SC-100 additions ---- */
+
+  /* A case-study question announces its case study above everything else. The
+     stem on its own ("You need to recommend a solution to meet the compliance
+     requirements") gives no clue which scenario it belongs to. */
+  .case-banner{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    padding:11px 24px;background:var(--accent-light);
+    border-bottom:1px solid #b6d5ee;
+  }
+  .case-banner-label{
+    font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--accent);
+  }
+  .case-banner-name{font-size:15px;font-weight:700;color:var(--navy);}
+  .case-banner-q{font-size:12.5px;color:#3d6f9e;margin-left:auto;white-space:nowrap;}
+
+  /* Where the source contradicts itself, the question says so on its face. */
+  .warn-note{
+    margin:0 24px 14px;padding:10px 14px;border-radius:8px;
+    background:#fff7ed;border:1px solid #fed7aa;
+    font-size:13.5px;line-height:1.55;color:#9a3412;
+  }
+  /* Case-study items reference a scenario the source PDF does not reproduce.
+     Say so on the question itself rather than letting it read as a broken stem. */
+  .cs-note{
+    margin:0 24px 14px;padding:10px 14px;border-radius:8px;
+    background:#fffbeb;border:1px solid #fde68a;
+    font-size:13.5px;line-height:1.55;color:#92400e;
+  }
+  .explanation .body a{color:var(--accent);word-break:break-all;}
+  .explanation .body .link-line{display:block;margin-top:4px;}
+  .links-only-note{font-size:13px;color:var(--gray-500);margin-bottom:8px;}
+
+  /* Answer-area (matching) items */
+  .match-note{
+    margin:12px 24px 4px;padding:11px 14px;border-radius:8px;
+    background:var(--gray-100);border:1px solid var(--gray-300);
+    font-size:13px;line-height:1.55;color:var(--gray-700);
+  }
+  .match-note b{color:var(--gray-900);}
+  .match-wrap{margin:12px 24px 4px;display:flex;flex-direction:column;gap:12px;}
+  .match-row{border:1px solid var(--gray-300);border-radius:8px;padding:13px 15px;background:#fff;}
+  .match-label{display:block;font-size:14.5px;font-weight:600;color:var(--gray-900);margin-bottom:8px;line-height:1.45;}
+  .match-select{width:100%;padding:10px 11px;border:1px solid var(--gray-300);border-radius:7px;font-size:15px;font-family:inherit;background:#fff;color:var(--gray-900);}
+  .match-select.correct{border-color:var(--green);background:var(--green-light);}
+  .match-select.incorrect{border-color:var(--red);background:var(--red-light);}
+  .match-select:disabled{opacity:1;color:var(--gray-900);}
+  .match-mark{font-size:12.5px;font-weight:600;margin-top:6px;line-height:1.5;}
+  .match-mark.ok{color:var(--green);}
+  .match-mark.bad{color:var(--red);}
+  .match-reset-row{margin:10px 24px 0;}
+
+  /* Domain weight rows on the setup screen wrap on narrow screens rather than
+     squeezing the long SC-100 domain names into an unreadable column. */
+  .domain-weight-row{flex-wrap:wrap;}
+
+  /* SC-100's skill-area names run to eight or nine words, far longer than the
+     fixed 190px column the base stylesheet gives them, so on the results screen
+     the name takes its own line above its bar instead of being ellipsised. */
+  .cat-row{flex-wrap:wrap;row-gap:4px;}
+  .cat-row .name{flex:1 1 100%;white-space:normal;}
+  .cat-row .bar-wrap{flex:1 1 auto;}
+  .cat-row .frac{flex:0 0 auto;}
+
+  /* ---- question body ---- */
+  /* Questions arrive as paragraphs and exhibits rather than one blob of text,
+     so the spacing is set here rather than by the single .qtext rule. */
+  .qtext{margin:0;padding:18px 0 2px;}
+  .qpara{font-size:17.5px;line-height:1.6;margin:0 24px 10px;color:var(--gray-900);}
+  .qpara.bullet{margin-left:36px;text-indent:-12px;margin-bottom:5px;}
+  .qpara a{color:var(--accent);word-break:break-all;}
+
+  /* ---- case study scenario ---- */
+  .case-panel{margin:0 24px 14px;}
+  .case-toggle{
+    display:block;width:100%;text-align:left;
+    padding:10px 14px;border-radius:8px;cursor:pointer;
+    background:var(--accent-light);border:1px solid #b6d5ee;
+    color:var(--navy);font-size:14px;font-weight:700;font-family:inherit;
+  }
+  .case-toggle:hover{background:#cfe4f5;}
+  .case-body{
+    margin-top:8px;padding:14px 16px;max-height:420px;overflow-y:auto;
+    border:1px solid var(--gray-300);border-radius:8px;background:var(--gray-50);
+  }
+  .case-body .qpara{font-size:15px;line-height:1.6;margin:0 0 8px;}
+  .case-body .exhibit-wrap{margin:10px 0;}
+
+  /* ---- exhibits ---- */
+  .exhibit-wrap{
+    margin:12px 24px 6px;padding:0;
+    border:1px solid var(--gray-300);border-radius:8px;overflow:hidden;
+    background:#fff;
+  }
+  .exhibit{display:block;width:100%;height:auto;cursor:zoom-in;}
+  /* Enlarged: the image drops to its natural size and the figure scrolls. */
+  .exhibit-wrap.zoomed{overflow-x:auto;}
+  .exhibit-wrap.zoomed .exhibit{width:auto;max-width:none;cursor:zoom-out;}
+  .exhibit-wrap figcaption{
+    padding:7px 12px;border-top:1px solid var(--gray-200);
+    background:var(--gray-50);
+    font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--gray-500);
+  }
+
+  /* Shown only after the answer is revealed, where a key was corrected against
+     the source PDF. Deliberately loud enough to notice while reviewing. */
+  .key-note{
+    margin:16px 24px 0;padding:14px 17px;border-radius:8px;
+    background:#fffbeb;border:1px solid #fcd34d;
+  }
+  .key-note .head{
+    font-size:11px;font-weight:800;letter-spacing:.06em;color:#92400e;
+    margin-bottom:6px;
+  }
+  .key-note .body{font-size:15px;line-height:1.6;color:#78350f;}
+
+  /* ---- items the source cannot grade ---- */
+  .unscored-note{
+    margin:12px 24px 4px;padding:12px 15px;border-radius:8px;
+    background:var(--gray-50);border:1px dashed var(--gray-300);
+    font-size:13.5px;line-height:1.6;color:var(--gray-700);
+  }
+  .unscored-note b{color:var(--gray-900);}
+  .statements-wrap{
+    margin:14px 24px 4px;padding:13px 16px;border:1px solid var(--gray-300);
+    border-radius:8px;background:#fff;
+  }
+  .statements-head{
+    font-size:10.5px;font-weight:800;letter-spacing:.07em;color:var(--gray-500);
+    margin-bottom:8px;
+  }
+  .statements-list{margin:0;padding-left:20px;}
+  .statements-list li{font-size:15px;line-height:1.6;color:var(--gray-900);margin-bottom:6px;}
+  .statements-list li:last-child{margin-bottom:0;}
+  .source-answer{
+    margin:16px 24px 0;padding:14px 17px;border-radius:8px;
+    background:var(--accent-light);border:1px solid #b6d5ee;
+  }
+  .source-answer .head{
+    font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent);
+    margin-bottom:6px;
+  }
+  .source-answer .body{font-size:16px;line-height:1.6;color:var(--navy);white-space:pre-line;}
+
+  .stat.unscored .num{color:var(--gray-500);}
+  .stat-grid.four{grid-template-columns:repeat(4,1fr);}
+  .unscored-footnote{
+    padding:0 24px 18px;margin-top:-12px;
+    font-size:13px;line-height:1.55;color:var(--gray-500);
+  }
+  .review-item .qh .badge.unscored{background:var(--gray-200);color:var(--gray-700);}
+
+  /* Checkbox row on the setup screen: the label wraps beside the box rather
+     than under it, so a long explanation stays readable. */
+  .check-row{
+    display:flex;align-items:flex-start;gap:10px;
+    font-weight:400;font-size:14px;line-height:1.55;color:var(--gray-700);
+    margin:2px 0 16px;cursor:pointer;
+  }
+  .check-row input{margin-top:2px;flex-shrink:0;width:17px;height:17px;accent-color:var(--accent);}
+
+  @media (max-width: 640px){
+    .exhibit-wrap{margin:10px 16px 6px;}
+    .case-banner{padding:10px 16px;}
+    .case-banner-q{margin-left:0;flex-basis:100%;}
+    .warn-note, .cs-note{margin:0 16px 12px;}
+    .match-note, .match-wrap, .unscored-note{margin:10px 16px 4px;}
+    .statements-wrap{margin:12px 16px 4px;}
+    .source-answer{margin:14px 16px 0;}
+    .match-reset-row{margin:10px 16px 0;}
+    .unscored-footnote{padding:0 16px 14px;}
+    .stat-grid.four{grid-template-columns:1fr 1fr;}
+    .cat-row .name{flex:1 1 100%;}
+  }
