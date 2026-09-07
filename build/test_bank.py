@@ -84,8 +84,19 @@ problems = review_mod.validate(entries, index)
 check('review.json is internally consistent', not problems, '; '.join(problems[:3]))
 
 corrected = {k for k, e in entries.items() if e['status'] == 'CORRECTED'}
+
+def graded_value(key):
+    """The value actually scored for a correction: a box's value for a
+    match/answer-area item (named by boxLabel), else the item's own key."""
+    e = entries[key]
+    boxes = index[key].get('boxes')
+    if boxes:
+        box = next(b for b in boxes if b.get('label') == e.get('boxLabel'))
+        return box['value']
+    return index[key]['a']
+
 check('every correction changed the graded key',
-      all(index[k]['a'] == entries[k]['answer'] != entries[k]['originalAnswer']
+      all(graded_value(k) == entries[k]['answer'] != entries[k]['originalAnswer']
           for k in corrected))
 
 check('every corrected item is marked corrected in the bank',
@@ -132,9 +143,10 @@ check('the page carries the review payload for each reviewed item',
 
 for key in sorted(corrected):
     e = entries[key]
-    pattern = '"num":%d,' % index[key]['num']
+    needle = ('"value":%s' % json.dumps(e['answer'])) if index[key].get('boxes') \
+        else ('"a":%s' % json.dumps(e['answer']))
     check('%s is published with the corrected key %s' % (key, e['answer']),
-          ('"a":"%s"' % e['answer']) in html)
+          needle in html)
 
 weights = re.search(r'const DOMAIN_WEIGHTS = \[(.*?)\];', html, re.S)
 check('the weighted exam draws 50 questions',

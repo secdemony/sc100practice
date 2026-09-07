@@ -2654,5 +2654,231 @@
       "B. A private DNS zone supports name resolution for private endpoints, which serves the separate \"communicate over the Microsoft backbone rather than public endpoints\" requirement, not the secure-score requirement this question is built around.",
       "D. An ExpressRoute gateway is a hub-level hybrid connectivity resource. The case study's own architecture puts hybrid and internet connectivity in the single dedicated hub subscription, not duplicated into each landing zone, and a gateway does nothing to produce a secure score at all."
     ]
+  },
+  "std/2": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Adopt updates for open-source software (OSS) components (Dependabot on GitHub Enterprise Cloud)",
+      "url": "https://learn.microsoft.com/en-us/security/zero-trust/prioritizing-defense/adopt-open-source-updates"
+    },
+    "explanation": "GitHub Advanced Security's code scanning (CodeQL) covers vulnerability code scanning for both public and private repositories, and GitHub Enterprise Cloud is the plan that makes GHAS available with no extra infrastructure to run or maintain, which is what \"minimize administrative effort\" and \"minimize costs\" point to over a self-hosted GitHub Enterprise Server. Dependabot is the companion feature that opens the pull requests automatically: it tracks the dependency graph, and when a new advisory affects a package the app uses, it raises a PR with the fixed version, which is exactly \"automate the generation of pull requests that remediate identified vulnerabilities.\"",
+    "whyWrong": [
+      "GitHub Enterprise Server would require Fabrikam to host and maintain the GitHub instance itself, which fails minimize administrative effort. GitHub Team lacks GitHub Advanced Security code scanning entirely.",
+      "Codespaces provisions cloud development environments; it does not open remediation pull requests. Dependency Tracker is not a GitHub product name."
+    ]
+  },
+  "std/3": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "The Microsoft cloud security benchmark in Microsoft Defender for Cloud (regulatory compliance)",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-regulatory-compliance"
+    },
+    "explanation": "Defender for Cloud's regulatory compliance dashboard assesses Azure resource configuration against standards you assign, including NIST CSF, which is exactly the \"identify whether Azure resources comply with NIST\" requirement, and its recommendations page is where the improvement guidance for those Azure resources lives. GDPR spans both Azure and Microsoft 365 data, which is outside Defender for Cloud's Azure-resource-only scope; Compliance Manager is Microsoft's cross-service compliance assessment tool, tracking an improvement action score with specific implementation guidance across both Microsoft 365 and Azure, matching \"identify whether data in Azure and Microsoft 365 complies with GDPR\" and \"provide recommendations on controls to improve compliance.\"",
+    "whyWrong": [
+      "Microsoft Defender Vulnerability Management finds and scores device vulnerabilities; it has no regulatory compliance assessment capability.",
+      "Microsoft Sentinel is a SIEM, not a compliance assessment tool.",
+      "Microsoft Priva assesses privacy risk (data minimization, oversharing), a related but distinct discipline from GDPR regulatory compliance scoring. Purview Communication Compliance monitors for inappropriate messages, unrelated to GDPR assessment."
+    ]
+  },
+  "std/21": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "boxLabel": "To restrict the scope",
+    "originalAnswer": "A custom role",
+    "answer": "An administrative unit",
+    "source": {
+      "title": "Administrative units in Microsoft Entra ID",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/administrative-units"
+    },
+    "explanation": "Password Administrator is the right built-in role to assign for resetting a specific set of users' passwords, and the source has that half correct. Where it goes wrong is the scoping mechanism: Microsoft's documentation is explicit that \"administrative units restrict permissions in a role to any portion of your organization that you define,\" and gives this exact scenario as the example, an administrative-unit-scoped Helpdesk or Password Administrator \"can reset passwords for users in the administrative unit only.\" That is precisely \"follow least privilege\" applied to the Fabrikam helpdesk users, achieved by scoping the existing built-in role to an administrative unit containing only the specific Contoso users in question, with no new role definition to design, test or maintain, which is also what \"minimize administrative effort\" is asking for. Building a custom role does the opposite: it adds a new, bespoke permission set to create and govern when the built-in role already has the exact permissions needed and only the scope needs narrowing.",
+    "whyWrong": [
+      "A custom role would be the answer if Password Administrator’s permissions were wrong for the job, granting too much or too little. They are not; the built-in role is fine. What needs restricting is which users it applies to, which is an administrative unit’s job, not a new role’s."
+    ]
+  },
+  "std/29": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Manage network policies for private endpoints (NSG support)",
+      "url": "https://learn.microsoft.com/en-us/azure/private-link/disable-private-endpoint-network-policy"
+    },
+    "explanation": "A private endpoint gives DB1 a private IP inside the VNet and lets its public endpoint be disabled entirely, which is the cheapest way to make it \"inaccessible from the internet\" without standing up an Application Gateway or a second Private Link resource. Restricting that private endpoint down to only Subnet1's VMs then needs a network security group: Microsoft documents that \"private endpoints support network policies, which enable support for network security groups,\" letting you add an inbound rule that allows only Subnet1's address range to reach the private endpoint's NIC, which is exactly \"only the virtual machines connected to Subnet1 must be able to connect to DB1.\"",
+    "whyWrong": [
+      "Azure Application Gateway is a web traffic reverse proxy for HTTP(S) applications; it isn’t how you privately expose an Azure SQL Database.",
+      "Azure Private Link is the umbrella service that private endpoints are built on; the private endpoint is the specific resource you actually create, so it is the more precise and directly actionable answer.",
+      "Azure Firewall rules and virtual network rules are both real Azure SQL access-control mechanisms, but neither is the network-security-group-based restriction on the private endpoint’s own subnet that this pairing calls for."
+    ]
+  },
+  "std/31": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "boxLabel": "SharePoint Online",
+    "originalAnswer": "Groups and sites",
+    "answer": "Files and emails",
+    "source": {
+      "title": "Learn about sensitivity labels (label scopes: Files & emails vs. Groups & sites)",
+      "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+    },
+    "explanation": "Microsoft's own auto-labeling documentation draws a hard line on this: \"if the scope doesn't include email, you can't select the label for an auto-labeling policy that includes the Exchange location. If the scope doesn't include files, you can't select the label for an auto-labeling policy that includes the SharePoint and OneDrive locations.\" Since the requirement is to automatically label sensitive data stored in SharePoint Online (files), the label's scope for that location has to be Files and emails, not Groups and sites. Groups and sites is a different capability entirely, labeling the SharePoint site or Microsoft 365 Group container itself (setting things like its default sharing link type), and \"doesn't label the items in them,\" which is why it is the correct scope for Microsoft Teams here (governing the team as a container) but not for auto-labeling documents inside a SharePoint site.",
+    "whyWrong": [
+      "Groups and sites is the container-level scope, correct for Teams in this same question, but it does not apply labels to individual files, so it cannot be the scope for an auto-labeling policy targeting SharePoint content.",
+      "Schematized data assets is the scope for structured data sources catalogued in Microsoft Purview’s data map (databases, Power BI), not for document libraries in SharePoint Online."
+    ]
+  },
+  "std/34": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Intune remote actions and security baselines platform support",
+      "url": "https://learn.microsoft.com/en-us/mem/intune/protect/security-baselines"
+    },
+    "explanation": "Intune's built-in security baseline templates (the MDM security baseline, the Microsoft Defender for Endpoint baseline, the Edge baseline) exist for Windows only; there is no macOS equivalent baseline template in Intune. Remote lock, by contrast, is one of Intune's general cross-platform device actions, available for Windows, macOS, iOS and Android alike, so it covers both platforms in this device estate.",
+    "whyWrong": [
+      "macOS-only or neither answer would be wrong in either direction: Intune security baselines are Windows-specific, and remote lock is not restricted to a single platform."
+    ]
+  },
+  "std/45": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Azure Synapse Analytics encryption (serverless vs. dedicated SQL pool)",
+      "url": "https://learn.microsoft.com/en-us/azure/synapse-analytics/security/workspaces-encryption"
+    },
+    "explanation": "The two pool types sit on genuinely different storage engines, which is why the requirement's \"customer-managed keys whenever possible\" resolves differently for each. Serverless SQL pool queries data directly in Azure Data Lake Storage or Blob Storage and \"relies on Azure Storage encryption technologies for data protection,\" with no TDE layer of its own; that storage-level infrastructure encryption is Microsoft-managed, so a Microsoft-managed key is what's actually available, not a shortfall in the design. Dedicated SQL pool has its own database engine, and there \"transparent data encryption (TDE) with customer-managed key enables a Bring Your Own Key (BYOK) scenario,\" so a customer-managed key genuinely is possible and therefore required by the stated policy.",
+    "whyWrong": [
+      "Recommending TDE for the serverless pool would be recommending a layer that pool doesn’t have; it has no database engine of its own to apply TDE to.",
+      "Recommending Microsoft-managed keys for the dedicated pool would violate “customer-managed whenever possible,” since customer-managed TDE keys are exactly what’s documented as available there."
+    ]
+  },
+  "std/48": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Configure per-app access for Microsoft Entra Private Access",
+      "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-configure-per-app-access"
+    },
+    "explanation": "Publishing App1 through Global Secure Access Private Access creates an object in the tenant that functions as an enterprise application, the container that Conditional Access and the connector group attach to, and it is what makes \"users must authenticate by using their Microsoft Entra credentials\" enforceable before the session ever reaches App1. Server1 hosts App1 and is isolated from the internet, so it cannot make the outbound connection to the Global Secure Access service itself; that job falls to Server2, which needs the Microsoft Entra private network connector installed so it can broker the outbound connection between the service and App1 on Server1's behalf.",
+    "whyWrong": [
+      "An access package, an app registration, and a managed identity are all real Entra objects, but none of them is what a Global Secure Access Private Access application manifests as, or what Conditional Access attaches to for this scenario.",
+      "The Azure Connected Machine agent onboards a server to Azure Arc, an unrelated hybrid-management scenario. Microsoft Entra Connect Sync synchronizes on-premises AD DS to Entra ID, which has nothing to do with brokering Global Secure Access traffic to an isolated server."
+    ]
+  },
+  "std/57": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Microsoft Defender for Endpoint?",
+      "url": "https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-endpoint"
+    },
+    "explanation": "Each component has one Microsoft product built to evaluate its posture. Windows 11 devices managed by Intune are endpoint posture, which is Microsoft Defender for Endpoint, delivered and reported through Microsoft 365 Defender. Azure virtual machines and Azure Storage accounts are both Azure resources, and Defender for Cloud's cloud security posture management is what assesses resource configuration and workload protection for both compute and storage in Azure, regardless of resource type, which is why the same answer, Microsoft Defender for Cloud, correctly applies to both boxes.",
+    "whyWrong": [
+      "Microsoft 365 compliance center covers information protection and compliance workflows, not device or Azure-resource security posture.",
+      "Microsoft Sentinel is a SIEM for analyzing collected events; it is not the posture-assessment tool for any of these three components on its own."
+    ]
+  },
+  "std/59": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "DevOps security considerations overview - Cloud Adoption Framework",
+      "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/considerations/security-considerations-overview"
+    },
+    "explanation": "Threat modeling identifies design-time risks before code is written, which places it in Plan and develop; it is the same design-phase placement this project has already confirmed for Microsoft's SDL. Dynamic application security testing exercises a running, deployed build to find runtime issues, which is Build and test, the same phase DAST occupies in Microsoft's own SDL guidance. Actionable intelligence, threat and telemetry data that feeds back from a live environment to inform ongoing defense, belongs to Operate, the phase where a shipped system is running and being monitored.",
+    "whyWrong": [
+      "Placing any of these three in Commit the code or Go to production would separate them from the activity they actually describe: threat modeling has no code to commit yet, DAST needs a deployed target to test rather than a production release, and actionable intelligence has no meaning before something is live to generate telemetry from."
+    ]
+  },
+  "std/121": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Configure a Front Door bot protection rule",
+      "url": "https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-tuning"
+    },
+    "explanation": "Rate limiting on Front Door's WAF is configured as a custom rule with the rate-limit rule type and a threshold you define yourself, so there is no built-in managed option for it. Blocking malicious bots is the opposite case: Microsoft ships a managed Bot Protection rule set, maintained and updated centrally from Microsoft's own threat intelligence feed, which is what \"minimize administrative effort\" is asking you to reach for instead of hand-authoring bot-detection logic in a custom rule.",
+    "whyWrong": [
+      "Reversing the pairing would mean hand-building a custom rule to detect bot signatures, which is far more administrative effort than enabling the managed rule set, and trying to rate-limit through a managed rule set, which Front Door’s managed rule sets don’t offer since rate limiting is inherently a custom-rule capability."
+    ]
+  },
+  "std/126": {
+    "status": "OUTDATED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Log Analytics agent overview (retired 31 August 2024)",
+      "url": "https://learn.microsoft.com/en-us/previous-versions/azure/azure-monitor/agents/log-analytics-agent"
+    },
+    "explanation": "Getting Defender for Cloud alerts on the virtual machines requires a data collection agent feeding it security-relevant signal, and among the five choices actually offered here, none of which is Azure Monitor Agent, the Log Analytics agent is the only one that did that job, which is why it was the correct choice when this question was written. That agent, however, reached end of support on 31 August 2024, and Microsoft's current guidance is to use the Azure Monitor Agent for this purpose instead. Since Azure Monitor Agent isn't among the options this item offers, the key is left as the source has it and the item is flagged as outdated rather than corrected to an option that doesn't exist here.",
+    "whyWrong": [
+      "The Azure Diagnostics extension collects platform metrics and logs to storage or an Event Hub; it does not feed the endpoint and workload signal that Defender for Cloud’s VM alerting is built on.",
+      "Azure Storage Analytics is a Storage-account-specific logging feature, unrelated to VM security monitoring."
+    ]
+  },
+  "std/167": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Automate Subject Rights Requests in Microsoft Priva",
+      "url": "https://learn.microsoft.com/en-us/privacy/priva/subject-rights-requests-automate"
+    },
+    "explanation": "Priva's subject rights request automation is built around exactly this split. Creating requests programmatically, at scale or on a schedule rather than one at a time through the portal, is done through the Microsoft Graph API, which is what \"streamline creation\" with minimal development effort points to: a small script or scheduled job against the API, not a bespoke intake application. Processing an already-created request, retrieving the relevant data, routing tasks, sending notifications, is instead automated with prebuilt Power Automate templates and connectors that Priva ships specifically for SRR workflows, requiring configuration rather than custom code.",
+    "whyWrong": [
+      "Swapping the two would mean hand-coding the workflow orchestration in Graph API calls, which is more development effort, not less, and trying to bulk-create requests through Power Automate’s connector surface, which is built for orchestrating the process rather than for request creation at scale."
+    ]
+  },
+  "std/180": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Delegation and roles in entitlement management",
+      "url": "https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-delegate"
+    },
+    "explanation": "A connected organization is the entitlement management object built for letting users from an external directory request and use access packages without first becoming individual guest accounts in your own tenant; associating Fabrikam as a connected organization is what lets its users be recognized and granted access packages while Entra ID manages the guest lifecycle behind the scenes rather than an admin manually inviting each one. Delegating access package creation to non-administrative users runs through catalogs: Microsoft's delegation model is built around catalog-scoped roles like Catalog owner and Access package manager, and a catalog is the container those roles are granted on, which is how a non-admin in contoso.com gets the ability to create and manage access packages without being handed tenant-wide Identity Governance Administrator rights.",
+    "whyWrong": [
+      "An external organization and an identity provider are not the entitlement management terms for this relationship; connected organization is the object Microsoft's documentation actually defines for it.",
+      "Administrative units scope directory role delegation over users and groups, not the ability to create access packages. Programs are not an entitlement management delegation construct."
+    ]
+  },
+  "std/191": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Secure score in Microsoft Defender for Cloud (security controls table)",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
+    },
+    "explanation": "Both answers match the secure score control table directly. \"Restrict unauthorized network access\" is the control that covers network security groups among its recommendations, alongside adaptive network hardening and Private Link, so implementing NSGs is what raises that control's score. \"Enable endpoint protection\" is explicitly the control where, \"if no EDR solution is enabled, use these recommendations to deploy Microsoft Defender for Endpoint,\" and Defender for Endpoint is delivered through the Defender for Servers plan, which is exactly what \"Microsoft Defender for servers\" supplies.",
+    "whyWrong": [
+      "Conditional Access policies are an identity sign-in control with no effect on Defender for Cloud's network-access-restriction recommendations for resources.",
+      "Azure WAF protects a specific published web application and belongs to a different control category than general network access restriction.",
+      "Microsoft Defender for Resource Manager detects suspicious ARM API activity, a different capability from endpoint threat detection. Private endpoints restrict network reachability; they are not what the endpoint protection control specifically measures."
+    ]
+  },
+  "std/193": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Azure Automation security guidelines",
+      "url": "https://learn.microsoft.com/en-us/azure/automation/automation-security-guidelines"
+    },
+    "explanation": "Storing the storage account access keys the runbook uses in Azure Key Vault, rather than embedded in the runbook's own code or variables, keeps the actual secret out of the automation asset and lets it be rotated and access-controlled centrally, which is the standard pattern for data security. For network access control on the copy path into Data Lake Storage Gen2, restricting traffic to a private path recognized as coming from the Automation service, using Private Link together with the storage account's network rules, is the mechanism available among the choices here for keeping that path off the open internet.",
+    "whyWrong": [
+      "The Automation Contributor built-in role governs who may manage the Automation account itself; it says nothing about how the runbook protects a secret or restricts network paths.",
+      "Azure WAF rules protect HTTP(S) web applications from web exploits. A runbook writing to a storage backend is not HTTP traffic to a web application, so a WAF has no role here."
+    ]
+  },
+  "std/219": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Configure OIDC SSO for gallery and custom applications",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal-setup-oidc-sso"
+    },
+    "explanation": "Enabling Entra ID authentication for App1 in the first place means registering it as an application in Entra ID, the standard app-registration/enterprise-application object that lets users authenticate with their Entra credentials, which is what \"Azure AD application\" refers to here. The access request workflow described, users request through the My Apps portal and an HR manager approves, is entitlement management's core scenario: an access package with a request-and-approval policy is exactly this self-service-with-approval pattern, configured once and requiring no custom development.",
+    "whyWrong": [
+      "Application Proxy and Application Gateway both publish and route to on-premises or internal apps; App1 is an Azure App Service web app that needs Entra sign-in enabled directly, not on-premises publishing.",
+      "A managed identity authenticates a resource to other Azure services; it is not how end users sign in to a web app. Microsoft Defender for App is not a Microsoft product name.",
+      "An access policy or an OAuth app policy in Defender for Cloud Apps govern session behavior and third-party app consent respectively; neither implements a request-and-approval workflow. An access review recertifies existing access periodically; it does not process the initial request."
+    ]
   }
 }

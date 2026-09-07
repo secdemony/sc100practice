@@ -1132,9 +1132,15 @@ function reviewPanel(q){
     body.appendChild(el('div',{class:'ai-banner'},[banner]));
     // The banner is stored in some explanations too; do not print it twice.
     text = text.replace(banner, '').replace(/^\s+/, '');
-    body.appendChild(el('div',{class:'was'},[
-      `The source's key was ${r.originalAnswer}. This bank grades ${q.a}.`
-    ]));
+    // A box-type correction names which drop-down it fixed; the graded value
+    // then lives on that box, not on q.a (which match items don't have).
+    const gradedNow = r.boxLabel
+      ? ((q.boxes || []).find(b => b.label === r.boxLabel) || {}).value
+      : q.a;
+    const was = r.boxLabel
+      ? `The source's key for "${r.boxLabel}" was ${r.originalAnswer}. This bank grades ${gradedNow}.`
+      : `The source's key was ${r.originalAnswer}. This bank grades ${gradedNow}.`;
+    body.appendChild(el('div',{class:'was'},[was]));
   }
   text.split(/\n{2,}/).forEach(para=>{
     if(para.trim()) body.appendChild(el('div',{class:'para'}, linkify(para.trim())));

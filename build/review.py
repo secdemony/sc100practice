@@ -75,6 +75,34 @@ def validate(entries, bank_index):
                 problems.append('%s: %s needs a learn.microsoft.com source, got %r'
                                 % (key, status, url))
 
+        boxes = item.get('boxes')
+        if boxes:
+            # A match/answer-area item has no single letter key; a correction
+            # names which drop-down (by label) it's fixing instead.
+            if status == 'CORRECTED':
+                box_label = e.get('boxLabel')
+                box = next((b for b in boxes if b.get('label') == box_label), None)
+                if box is None:
+                    problems.append('%s: CORRECTED names boxLabel %r, no such box'
+                                    % (key, box_label))
+                    continue
+                if not e.get('answer'):
+                    problems.append('%s: CORRECTED with no answer' % key)
+                if 'originalAnswer' not in e:
+                    problems.append('%s: CORRECTED without recording originalAnswer' % key)
+                else:
+                    source_val = box.get('srcValue', box.get('value'))
+                    if e['originalAnswer'] != source_val:
+                        problems.append('%s: originalAnswer %r does not match the dump value %r'
+                                        % (key, e['originalAnswer'], source_val))
+                if e.get('answer') == box.get('srcValue', box.get('value')):
+                    problems.append('%s: CORRECTED but the answer is unchanged' % key)
+            else:
+                if e.get('answer'):
+                    problems.append('%s: %s must not set answer/boxLabel on a match item'
+                                    % (key, status))
+            continue
+
         letters = [l for l in (item.get('a') or '').split() if l]
         n_opts = len(item.get('o') or [])
         if status == 'CORRECTED':
@@ -119,6 +147,13 @@ def merge(item, entry):
         text = review['explanation'].strip()
         if not text.startswith(CORRECTION_BANNER):
             review['explanation'] = CORRECTION_BANNER + '\n\n' + text
-        item['srcA'] = item.get('a') or ''      # what the dump said, kept for the audit
-        item['a'] = entry['answer']
+        boxes = item.get('boxes')
+        if boxes:
+            review['boxLabel'] = entry['boxLabel']  # which box this correction names
+            box = next(b for b in boxes if b.get('label') == entry['boxLabel'])
+            box['srcValue'] = box.get('value')  # what the dump said, kept for the audit
+            box['value'] = entry['answer']
+        else:
+            item['srcA'] = item.get('a') or ''  # what the dump said, kept for the audit
+            item['a'] = entry['answer']
     item['review'] = review
