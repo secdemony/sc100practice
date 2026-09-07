@@ -4784,7 +4784,16 @@
     {
      "p": "Adaptive Network Hardening: ht tps://docs.microsoft.com/en-us/security/benchmark/azure/security-controls- v3-network-security#ns-7-simplify-network-security-configurati on"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, and the reason is worth learning because it settles all three questions in this family. Secure score is organised into controls, and a recommendation only moves the control it belongs to. Microsoft describes Secure management ports, worth 8 points, as recommendations that \"reduce your exposure with tools like just-in-time VM access and network security groups\". Adaptive network hardening belongs to a different control: Restrict unauthorized network access, worth 4 points, which Microsoft describes as where you \"manage adaptive network hardening in Defender for Cloud\". Enabling it improves that control, not this one. To move Secure management ports, close the management ports, put the VMs behind NSGs, and turn on just-in-time VM access.",
+    "source": {
+     "title": "Secure score in Microsoft Defender for Cloud (security controls table)",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
+    }
+   }
   },
   {
    "n": 24,
@@ -4890,7 +4899,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/power-platform/admin/restrict-access-online-trusted-ip-rules"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Blocking by country is a Conditional Access named location. You define a countries-and-regions named location, then write a policy that targets the enterprise applications and blocks access when the sign-in comes from that location. Standalone 12 is the identical question with the options reordered, so recognise the pattern rather than the letter.",
+    "whyWrong": [
+     "A. Activity policies in Defender for Cloud Apps act on activity in a session after access is granted, and only for connected apps.",
+     "B and E. Risk policies in ID Protection respond to a calculated risk level, not to a list of countries you choose.",
+     "C. Device compliance policies decide whether a device meets your standard; they say nothing about where the user is."
+    ],
+    "source": {
+     "title": "Network conditions in Conditional Access policy (named locations, countries)",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/location-condition"
+    }
+   }
   },
   {
    "n": 27,
@@ -4958,7 +4981,16 @@
     "Yes",
     "No"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes, and it is the rotation requirement that makes customer-managed keys necessary rather than merely acceptable. All Azure Storage data is encrypted with 256-bit AES whichever key type you choose, so the AES-256 requirement is satisfied either way. What Microsoft-managed keys will not give you is control of the schedule: with a customer-managed key in Key Vault you own the key lifecycle and can rotate it monthly, manually or on an automated rotation policy, and Azure Storage can be set to pick up the new version automatically.",
+    "source": {
+     "title": "Customer-managed keys for Azure Storage encryption",
+     "url": "https://learn.microsoft.com/en-us/azure/storage/common/customer-managed-keys-overview"
+    }
+   }
   },
   {
    "n": 29,
@@ -4983,7 +5015,24 @@
     "Automate data classification.",
     "Create hunting queries in Microsoft 365 Defender."
    ],
-   "a": "A"
+   "a": "B",
+   "srcA": "A",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nRead the requirement literally: minimise the operational load on Tier 1 analysts. Microsoft's page on automated investigation and response answers it by name. \"Imagine having a virtual analyst in your Tier 1 or Tier 2 security operations team. The virtual analyst mimics the ideal steps that security operations would take to investigate and remediate threats\", working continuously and taking on \"a significant load of investigations and threat remediation\", which frees the team for other work. AIR, marketed as self-healing, triages the alert, reaches a verdict on each piece of evidence and applies remediation such as quarantining a file or isolating a device. Triage of routine alerts is precisely what Tier 1 does, which is why this and not a governance control is the answer.",
+    "whyWrong": [
+     "A. Built-in compliance policies in Azure Policy improve resource governance. They generate posture findings rather than removing analyst work, and they do not touch the SOC queue.",
+     "C. Automating data classification helps protect data and enriches investigations, but it does not triage alerts.",
+     "D. Hunting queries are proactive work done by Tier 3 hunters. They add work at the top of the SOC rather than removing it at the bottom."
+    ],
+    "source": {
+     "title": "Automated investigation and response in Microsoft Defender XDR",
+     "url": "https://learn.microsoft.com/en-us/defender-xdr/m365d-autoir"
+    },
+    "corrected": true,
+    "originalAnswer": "A"
+   }
   },
   {
    "n": 30,
@@ -5043,7 +5092,21 @@
     "device compliance policies in Microsoft Intune",
     "sign-in risk policies in Microsoft Entra ID Protection"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The same question as Standalone 7 with a different option order, and the same answer: a Conditional Access policy using a countries and regions named location. Watch the letters on these paired items. Reading the option text rather than remembering \"the answer was D\" is what protects you when the exam shuffles them.",
+    "whyWrong": [
+     "B and E. ID Protection risk policies react to risk signals, not to a chosen list of countries.",
+     "C. Activity policies in Defender for Cloud Apps govern in-session activity, not the initial connection.",
+     "D. Intune device compliance policies evaluate the device, not the location."
+    ],
+    "source": {
+     "title": "Network conditions in Conditional Access policy (named locations, countries)",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/location-condition"
+    }
+   }
   },
   {
    "n": 32,
@@ -5201,7 +5264,24 @@
     "the hybrid connectivity requirements",
     "geographical locations"
    ],
-   "a": "A"
+   "a": "C",
+   "srcA": "A",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe archetype management groups beneath Landing zones are Corp and Online, and what separates them is connectivity. Microsoft defines Corp as \"for workloads that require connectivity or hybrid connectivity with the corporate network via the hub in the connectivity subscription\", and Online as \"for workloads that might require direct internet inbound or outbound connectivity or for workloads that might not require a virtual network\". The guidance states the principle generally too: create management groups under the landing zone management group \"based on the security, compliance, connectivity, and feature needs of the workloads\". What makes this correction firm is that the same article rules out all three distractors explicitly.",
+    "whyWrong": [
+     "A. “Don’t create management groups for production, testing, and development environments.” Separate those into different subscriptions in the same management group instead.",
+     "B. “Use management groups for policy assignment versus billing and RBAC purposes.” Chargeback structure is the wrong axis.",
+     "D. “Don’t create management groups solely to model different Azure regions.” Geography is only a factor where data residency or sovereignty law forces it."
+    ],
+    "source": {
+     "title": "Management groups - Cloud Adoption Framework",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups"
+    },
+    "corrected": true,
+    "originalAnswer": "A"
+   }
   },
   {
    "n": 37,
@@ -6566,7 +6646,16 @@
     "Yes",
     "No"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes. Cloud Discovery is the half of Defender for Cloud Apps that scores apps, ranking more than 31,000 catalogued cloud apps against roughly 90 risk factors, which is where \"Microsoft has identified as high risk\" comes from. A cloud discovery policy can flag apps by risk score, and tagging an app Unsanctioned is what enforces the block: with the Defender for Endpoint integration turned on, network protection stops users on those devices from reaching unsanctioned apps, while apps left sanctioned or untagged stay reachable. Discovery supplies the risk score, the tag supplies the decision, and Defender for Endpoint supplies the enforcement.",
+    "source": {
+     "title": "Govern discovered apps using Microsoft Defender for Endpoint",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/mde-govern"
+    }
+   }
   },
   {
    "n": 67,
@@ -6953,7 +7042,22 @@
     "Yes",
     "No"
    ],
-   "a": "A"
+   "a": "B",
+   "srcA": "A",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nNo. SSPM answers a different question from the one in the stem. It \"offers detailed visibility into the security state of your software as a service (SaaS) applications\" by assessing their configuration against benchmarks, and Microsoft states the precondition plainly: those recommendations appear only \"after you connect the SaaS application by using an app connector\". So SSPM looks at apps you have already adopted and wired up, tells you their settings are weak, and recommends fixes. It does not enumerate the shadow-IT apps users have found for themselves, it does not carry Microsoft's catalogue risk score, and it blocks nothing. Access policies are also the wrong lever: they run through Conditional Access App Control, which you configure per app for apps you sanction, not as a sweep against every high-risk app on the internet. The solution that does meet the goal is the one in Standalone 47.",
+    "whyWrong": [
+     "A. Yes is not defensible: SSPM assesses connected apps and produces recommendations, and neither half of the stated requirement, identifying high-risk apps or blocking them, is something it does."
+    ],
+    "source": {
+     "title": "SaaS Security Posture Management (SSPM) in Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/posture-overview"
+    },
+    "corrected": true,
+    "originalAnswer": "A"
+   }
   },
   {
    "n": 75,
@@ -6980,7 +7084,19 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-getting-started?source=rec ommendations"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The Threat Modeling Tool works from a data flow diagram, and Microsoft's walkthrough says so in as many words: a user drawn as an outside entity, a web server as a process, a database as two parallel lines, and then \"what Ricardo just showed Cristina is a DFD, short for Data Flow Diagram\". The tool adds trust boundaries as red dotted lines and generates threats from where data crosses them, using STRIDE. Data flows and trust boundaries are what produce threats, which is why this diagram type and no other.",
+    "whyWrong": [
+     "B, C and D. System flow, process flow and network flow diagrams are not what the tool builds. Its stencils, its trust boundaries and its STRIDE analysis are all defined in terms of data flow diagram elements."
+    ],
+    "source": {
+     "title": "Getting started with the Microsoft Threat Modeling Tool",
+     "url": "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-getting-started"
+    }
+   }
   },
   {
    "n": 76,
@@ -7228,7 +7344,16 @@
     {
      "p": "Adaptive Network Hardening: https://docs.microsoft.com /en-us/security/benchmark/ azure/security-controls- v3-network-security#ns-7-simplify-network-security-configuration"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No. The VMAccess extension is an operations tool: it resets a local administrator password, resets the SSH key or configuration, and can add a user to a VM that has become unreachable. It opens nothing, closes nothing, and appears in no recommendation under Secure management ports. The recommendations in that control are about closing management ports, protecting internet-facing VMs with network security groups, and gating RDP and SSH with just-in-time access, which opens the port only for an approved user, from an approved source IP, for a limited time.",
+    "source": {
+     "title": "Just-in-time machine access in Microsoft Defender for Cloud",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+    }
+   }
   },
   {
    "n": 81,
@@ -7311,7 +7436,19 @@
     "Yes",
     "No"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "No, and it is a close-looking miss. Web content filtering in Defender for Endpoint does block sites on managed devices, but it decides what to block by content category (adult content, gambling, and so on), which is what Standalone 83 tests. The requirement here is to allow or block by Microsoft's risk assessment of the app, and there is no category called \"high risk\". The mechanism that does read the risk score is unsanctioning an app in Defender for Cloud Apps, which then blocks it through the same Defender for Endpoint network protection plumbing. Same enforcement engine, different decision input.",
+    "whyWrong": [
+     "A. Yes would require a category-based policy to know Microsoft’s app risk score, and it does not."
+    ],
+    "source": {
+     "title": "Govern discovered apps using Microsoft Defender for Endpoint",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/mde-govern"
+    }
+   }
   },
   {
    "n": 83,
@@ -7735,7 +7872,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/key-vault/keys/how-to-configure-key-rotation"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, and this is the companion to Standalone 9. An encryption scope is a real feature and it can indeed be protected by either a Microsoft-managed key or a customer-managed key, so the mechanism in the stem exists. The problem is the key type. Microsoft manages the rotation of its own keys on its own schedule, and you cannot drive it. Only the customer-managed key option lets you choose to \"update the key version either automatically or manually\", which is what a monthly rotation requirement demands.",
+    "source": {
+     "title": "Encryption scopes for Blob storage",
+     "url": "https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview"
+    }
+   }
   },
   {
    "n": 94,
@@ -7803,7 +7949,21 @@
     "Microsoft Defender for Cloud DevOps security",
     "Microsoft Dev Box"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "GitHub Advanced Security is the bundle that adds code scanning and secret scanning to repositories, and secret scanning is the capability that finds credentials committed into source. The stem says the source is in Git repositories and the pipeline is Azure DevOps, which GitHub Advanced Security covers in both homes: GitHub Enterprise for GitHub-hosted repositories, and GitHub Advanced Security for Azure DevOps for Azure Repos.",
+    "whyWrong": [
+     "A. Defender for Key Vault detects unusual access to a vault at runtime. It never sees your code.",
+     "C. DevOps security in Defender for Cloud gives security teams a single view of findings across pipelines, but the scanning itself is done by GitHub Advanced Security. The question asks what to implement to do the scanning.",
+     "D. Dev Box provisions developer workstations."
+    ],
+    "source": {
+     "title": "Set up secret scanning for GitHub Advanced Security",
+     "url": "https://learn.microsoft.com/en-us/azure/devops/repos/security/github-advanced-security-secret-scanning"
+    }
+   }
   },
   {
    "n": 96,
@@ -7868,7 +8028,24 @@
     "Azure Bastion",
     "Microsoft Entra Private Access"
    ],
-   "a": "C"
+   "a": "D",
+   "srcA": "C",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nServer1 is on-premises, and that is what decides it. Microsoft Entra Private Access is the Global Secure Access capability built for this: you specify \"the fully qualified domain names (FQDNs) and IP addresses that you consider private or internal\", a private network connector inside your network brokers the connection outbound, and \"remote workers don't need to use a VPN to access these resources if they have the Global Secure Access Client installed\". Because the resource is published as an enterprise application, you assign User1 and apply a Conditional Access policy requiring MFA, which is the second half of the requirement. RDP is just a port and an IP address to Private Access. One honest caveat: Azure Bastion's IP-based connection can reach a machine outside the virtual network, but only one your Bastion virtual network can already route to over ExpressRoute or a site-to-site VPN. The stem offers no such link and says the connection is over the internet, so Bastion would need infrastructure the question does not give you.",
+    "whyWrong": [
+     "A. Entra Internet Access secures outbound traffic to internet and SaaS destinations. It is the other half of Global Secure Access and points the wrong way.",
+     "B. Windows Admin Center is a management console. It does not publish RDP to the internet or enforce MFA.",
+     "C. Azure Bastion is a service you deploy into an Azure virtual network to reach machines it can route to. It is not a remote access gateway for an on-premises server reached over the internet."
+    ],
+    "source": {
+     "title": "Learn about Microsoft Entra Private Access",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-private-access"
+    },
+    "corrected": true,
+    "originalAnswer": "C"
+   }
   },
   {
    "n": 98,
@@ -7945,7 +8122,19 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions#restrict-access-to-a-specific- azure- front-door-instance"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, because virtual network integration governs the wrong direction. It gives the app outbound access into a virtual network so it can reach private resources such as a database or a storage account behind a private endpoint. It does not filter who may call the app. Restricting inbound callers to Front Door is what access restrictions are for, which is the subject of Standalone 97 and 129.",
+    "whyWrong": [
+     "A. Yes confuses outbound integration with inbound access control. The app’s public endpoint stays open to the internet."
+    ],
+    "source": {
+     "title": "Set up Azure App Service access restrictions",
+     "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
+    }
+   }
   },
   {
    "n": 100,
@@ -7973,7 +8162,24 @@
     "an Azure firewall",
     "an Azure virtual network gateway"
    ],
-   "a": "A"
+   "a": "B",
+   "srcA": "A",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe question asks what belongs in every landing zone, platform and application alike, and Cloud Adoption Framework answers it for key vaults directly: \"Don't use centralized instances of Key Vault for application keys or secrets\", and \"to avoid secret sharing across environments, don't share Key Vault instances between applications.\" Microsoft gives the reasons: multiple vaults reduce the blast radius of a compromise, avoid throttling from noisy neighbours, and align key management to application boundaries. The other three options are all platform resources. The landing zone architecture puts them in the connectivity subscription, which \"hosts the Azure networking resources, like Azure Virtual WAN, Azure Firewall, and Azure DNS private zones, that the platform requires\" - deployed once and shared, not repeated per landing zone.",
+    "whyWrong": [
+     "A. Private DNS zones are centralised in the connectivity subscription so that name resolution is consistent across the estate.",
+     "C. Azure Firewall is a shared platform service in the connectivity subscription. One per landing zone would be expensive and would fragment egress policy.",
+     "D. Virtual network gateways are hub resources in the connectivity subscription."
+    ],
+    "source": {
+     "title": "Encryption and key management in Azure - Cloud Adoption Framework",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/encryption-and-keys"
+    },
+    "corrected": true,
+    "originalAnswer": "A"
+   }
   },
   {
    "n": 101,
@@ -8247,7 +8453,21 @@
     "Publish the web apps by using Azure AD Application Proxy.",
     "Configure the VPN to use Azure AD authentication."
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The VPN is the attack surface the question wants removed. Application Proxy publishes an internal web app through Microsoft Entra ID without opening any inbound port: a lightweight connector inside the network makes an outbound connection to the service, and every request is authenticated by Entra ID first, so Conditional Access, MFA and device state all apply before a packet reaches Server1 or Server2. That is explicit verification in front of the app rather than network-level trust behind a tunnel, which is the MCRA Zero Trust position.",
+    "whyWrong": [
+     "A. Defender for Cloud Apps is a CASB for SaaS sessions, not a publishing mechanism for on-premises web apps.",
+     "B. Web protection in Defender for Endpoint governs which sites the device may reach outbound. It does not secure inbound access to your apps.",
+     "D. Adding Entra authentication to the VPN improves the tunnel but keeps the tunnel, and with it broad network access. Zero Trust wants access to the application, not to the network."
+    ],
+    "source": {
+     "title": "What is Microsoft Entra application proxy?",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/app-proxy/overview-what-is-app-proxy"
+    }
+   }
   },
   {
    "n": 109,
@@ -8321,7 +8541,21 @@
     "Microsoft Sentinel",
     "Microsoft Defender for Cloud Apps"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The regulatory compliance dashboard in Defender for Cloud is the service that assesses Azure resources against published frameworks, and NIST is among the standards you can add to a subscription alongside the Microsoft cloud security benchmark that is applied by default. The assessments underneath are Azure Policy definitions, which is why Defender for Cloud can report a per-control pass or fail for your actual resources.",
+    "whyWrong": [
+     "A. Compliance Manager scores your Microsoft 365 and organisational posture, largely through assessments you complete. It is not the tool that evaluates Azure resource configuration.",
+     "C. Sentinel is a SIEM. Compliance posture is not what it measures.",
+     "D. Defender for Cloud Apps assesses SaaS apps, not Azure resources."
+    ],
+    "source": {
+     "title": "Regulatory compliance standards in Microsoft Defender for Cloud",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-regulatory-compliance-standards"
+    }
+   }
   },
   {
    "n": 111,
@@ -8567,7 +8801,19 @@
     "Yes",
     "No"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, and the reason is practical rather than conceptual. Filtering by IP address is a legitimate technique, but Front Door does not call your origin from one stable backend address. It is a globally distributed service whose egress addresses change as the platform scales, so a rule pinned to today's address is a future outage. That is exactly why Azure publishes the AzureFrontDoor.Backend service tag, which resolves to the whole current set and is maintained for you. Standalone 129 is the version of this question that uses it.",
+    "whyWrong": [
+     "A. Yes would require Front Door to have a fixed backend IP address, which it does not."
+    ],
+    "source": {
+     "title": "Set up Azure App Service access restrictions",
+     "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
+    }
+   }
   },
   {
    "n": 117,
@@ -8879,7 +9125,24 @@
     "Dependabot alerts",
     "app governance in Microsoft Defender for Cloud Apps"
    ],
-   "a": "B"
+   "a": "C",
+   "srcA": "B",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe risk named in the stem is the third-party and open-source components, and Dependabot is the control aimed at it. The Microsoft cloud security benchmark's DevOps security guidance says to \"use Dependabot to ensure that the vulnerable dependency is tracked and remediated\" and to keep the repository up to date with the latest releases of the packages it depends on. Dependabot alerts fire when a new advisory affects something in your dependency graph, and the ecosystems it covers line up with the three languages in the stem: Maven for Java, NuGet for C#, pip for Python. Secret scanning is a genuine GitHub Advanced Security capability, but it finds credentials committed into your own code, which is a different failure. That is what Standalone 76 tests.",
+    "whyWrong": [
+     "A. NuGet Audit covers .NET packages only, so it leaves the Python and Java components unwatched.",
+     "B. Secret scanning finds exposed credentials in the repository. Valuable, but not the compromised-dependency risk the stem describes.",
+     "D. App governance in Defender for Cloud Apps governs OAuth apps consented into your Microsoft 365 tenant. It has no view of your build dependencies."
+    ],
+    "source": {
+     "title": "Microsoft cloud security benchmark - DevOps Security",
+     "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-devops-security"
+    },
+    "corrected": true,
+    "originalAnswer": "B"
+   }
   },
   {
    "n": 124,
@@ -8955,7 +9218,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No. Onboarding machines to Defender for Endpoint is a real improvement, but it lands in the Enable endpoint protection control, worth 2 points, which Microsoft describes as checking \"your organization's endpoints for active threat detection and response solutions\" and recommending you deploy Defender for Endpoint if none is present. Secure management ports is a network exposure control. EDR detects an attacker who has already reached the machine; it does not reduce the brute-force surface that the control measures.",
+    "source": {
+     "title": "Secure score in Microsoft Defender for Cloud (security controls table)",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
+    }
+   }
   },
   {
    "n": 126,
@@ -9197,7 +9469,20 @@
     "Azure Firewall application rules",
     "Azure Firewall network rules"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The problem is not that a rule is missing but that owners can add their own, so the fix has to sit above network security groups. Security admin rules in Azure Virtual Network Manager do exactly that: they are evaluated before NSG rules and a Deny there cannot be overridden by an NSG, so a subscription owner who adds an allow rule for RDP from the internet no longer gets one. Deny inbound 3389 from the internet at the network manager and the only remaining path to the VMs is bastion1.",
+    "whyWrong": [
+     "A. Connectivity configurations build the topology, mesh or hub and spoke. They do not filter traffic.",
+     "C and D. Azure Firewall rules only apply to traffic routed through the firewall. Direct RDP that an NSG permits never reaches it, so neither rule type closes the bypass."
+    ],
+    "source": {
+     "title": "Security admin rules in Azure Virtual Network Manager",
+     "url": "https://learn.microsoft.com/en-us/azure/virtual-network-manager/concept-security-admins"
+    }
+   }
   },
   {
    "n": 132,
@@ -9905,7 +10190,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions#restrict-access-to-a-specific- azure-f ront-door-instan ce"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "Yes. An access restriction rule built on the AzureFrontDoor.Backend service tag allows the app to accept traffic only from Front Door's backend address ranges, and Azure keeps the tag current as those ranges change, so nothing breaks when the platform scales. One refinement is worth carrying into the exam: a service tag admits any Front Door instance, not only yours, so Microsoft's own guidance pairs the rule with a check on the X-Azure-FDID header carrying your Front Door ID. The keyed answer is the mechanism the question is testing; the header is what pins it to your instance.",
+    "source": {
+     "title": "Set up Azure App Service access restrictions",
+     "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
+    }
+   }
   },
   {
    "n": 149,
@@ -10406,7 +10700,19 @@
     "Yes",
     "No"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "No. Neither piece of this solution knows anything about app risk scores. Intune app protection policies are data-protection policies applied inside managed apps: they stop copy and paste to personal apps, require a PIN, and can wipe corporate data. Conditional Access can block access to a cloud app, but only to apps you name in the policy, one at a time, and it has no view of the Defender for Cloud Apps catalogue. Blocking by Microsoft's risk assessment across thousands of apps needs Cloud Discovery and the Unsanctioned tag.",
+    "whyWrong": [
+     "A. Yes would require these two controls to act on Microsoft’s risk rating of SaaS apps. Neither has access to it."
+    ],
+    "source": {
+     "title": "Govern discovered apps using Microsoft Defender for Endpoint",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/mde-govern"
+    }
+   }
   },
   {
    "n": 162,
@@ -10525,7 +10831,25 @@
     "machine isolation",
     "user isolation"
    ],
-   "a": "B"
+   "a": "D",
+   "srcA": "B",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThis is a post-breach plan for computers that are already compromised, so the answer has to be a containment action, and in Defender for Endpoint that is device isolation. Microsoft's description matches the ransomware case exactly: \"Depending on the severity of the attack and the sensitivity of the device, you might want to isolate the device from the network. Device isolation can help prevent the attacker from controlling the compromised device and performing further activities such as data exfiltration and lateral movement.\" The isolated device stays connected to the Defender service so investigation continues while the attacker's path is cut. The keyed answer, application isolation, is not a Defender for Endpoint response action at all; the nearest real feature, Application Guard, is a pre-breach hardening control.",
+    "whyWrong": [
+     "A. Controlled folder access is preventive. It stops untrusted apps writing to protected folders before an attack succeeds, which is what Standalone 176 and 130 test.",
+     "B. Application isolation is not a response action in Defender for Endpoint. Application Guard hardens browsing and documents in advance.",
+     "C. Memory scanning is a detection technique, not a containment step.",
+     "E. There is no user isolation action. The identity-side equivalents are disabling the account or forcing a sign-out, which are separate controls."
+    ],
+    "source": {
+     "title": "Take response actions on a device in Microsoft Defender for Endpoint",
+     "url": "https://learn.microsoft.com/en-us/defender-endpoint/respond-machine-alerts"
+    },
+    "corrected": true,
+    "originalAnswer": "B"
+   }
   },
   {
    "n": 165,
@@ -10601,7 +10925,12 @@
     "Microsoft Defender for Cloud Apps",
     "Microsoft Sentinel D. Compliance Manager connectors"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged for a defect in the source rather than a dispute about the answer. In the published exam dump the option list for this question is broken: what should be four options appears as three, because option D ran into option C on the page and was extracted as the single string \"Microsoft Sentinel D. Compliance Manager connectors\". The intended fourth option, Compliance Manager connectors, is very likely the answer, since it is the mechanism that brings assessment data from AWS and GCP into Compliance Manager, monitors it continuously and supplies improvement actions with implementation guidance. But because the option cannot be selected on its own, the item is not answerable as printed and the key is left untouched. This is the only merged-option defect in the whole bank; the remaining 309 questions parse cleanly."
+   }
   },
   {
    "n": 167,
