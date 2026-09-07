@@ -6883,7 +6883,21 @@
     "Microsoft Defender for Cloud Apps",
     "Microsoft Sentinel"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Defender for Cloud already knows which of your machines face the internet: it evaluates network exposure as part of its posture assessment and raises recommendations such as internet-facing virtual machines should be protected with network security groups, and surfaces internet exposure as a risk factor in attack paths and the cloud security explorer. That inventory arrives with no agent work beyond onboarding, across Linux and Windows alike.",
+    "whyWrong": [
+     "A. Network Watcher diagnoses connectivity and captures traffic for a resource you already suspect. It does not inventory exposure across a subscription.",
+     "C. Defender for Cloud Apps covers SaaS usage, not Azure virtual machines.",
+     "D. Sentinel could be queried for this, but it is a SIEM you would first have to feed and write queries against. The posture tool already answers it."
+    ],
+    "source": {
+     "title": "Secure score in Microsoft Defender for Cloud (security controls table)",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
+    }
+   }
   },
   {
    "n": 72,
@@ -7602,7 +7616,21 @@
     "Install the Microsoft Entra private network connector on the file server.",
     "Configure an Intune policy to onboard Microsoft Defender for Endpoint to each device."
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The phrase \"in each branch office\" points at a site-level action, and the requirement that all web traffic from the branch is controlled rules out a per-device answer. Global Secure Access offers exactly two connectivity models, and the site-level one is remote network connectivity: \"set up an Internet Protocol Security (IPsec) tunnel between your on-premises equipment and the Global Secure Access endpoint\". Microsoft describes the case in the stem directly, connecting an entire branch by creating an IPsec tunnel between the branch's core router and the Global Secure Access endpoint, which also covers devices that cannot run the client. The Internet Access traffic forwarding profile is supported on remote networks, so web filtering works.",
+    "whyWrong": [
+     "A. Deploying the client to each device is the other connectivity model, and it leaves out anything that cannot run the client. It is also not something you do “in each branch office”.",
+     "C. The private network connector is for Private Access, publishing internal resources outward. This requirement is internet traffic going the other way.",
+     "D. Onboarding to Defender for Endpoint gives you web content filtering, but that is a different product from Global Secure Access, and the stem names the service to use."
+    ],
+    "source": {
+     "title": "Global Secure Access remote network connectivity",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-remote-network-connectivity"
+    }
+   }
   },
   {
    "n": 87,
@@ -8203,7 +8231,23 @@
     "The updates must first be applied to the image used to provision the nodes.",
     "The nodes must restart after the updates are applied."
    ],
-   "a": "B"
+   "a": "C",
+   "srcA": "B",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe word that decides this is \"deployed\". Microsoft states that on AKS \"security updates are automatically applied to Linux nodes\", including kernel updates, and that the nodes check for and install them every day without you doing anything. What does not happen automatically is the restart: \"Some security updates, such as kernel updates, require a node reboot to finalize the process. AKS doesn't automatically reboot these Linux nodes.\" A node that needs one writes /var/run/reboot-required, and the minimal-effort way to act on that is to deploy kured, which watches for the file, cordons and drains the node, and reboots it. So on already-deployed nodes the missing piece is the reboot, not the patch. The keyed answer describes node image upgrade, which is a real and useful mechanism, but Microsoft is explicit that it affects the image used to create nodes: an existing node keeps running its current image and gets its kernel updates in place. Node image upgrade is the answer to a differently worded question about newly provisioned nodes.",
+    "whyWrong": [
+     "A. Upgrading the cluster version moves you to a new Kubernetes release and replaces nodes. It is a much larger change than applying kernel updates, and Microsoft notes you cannot stay on the same version during an upgrade.",
+     "B. Updates do not have to be applied to the image first. Unattended upgrades patch the running Linux node directly; the image only governs nodes created later."
+    ],
+    "source": {
+     "title": "Apply security and kernel updates to Linux nodes in AKS (kured)",
+     "url": "https://learn.microsoft.com/en-us/azure/aks/upgrade-node-image-kured"
+    },
+    "corrected": true,
+    "originalAnswer": "B"
+   }
   },
   {
    "n": 102,
@@ -8841,7 +8885,20 @@
     "a Microsoft Entra application proxy connector group",
     "an access package"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "AMBIGUOUS",
+    "confidence": "MEDIUM",
+    "explanation": "Flagged because the word \"first\" pulls against the keyed answer, and the stem does not say which reading is intended. The control that enforces the requirement is certainly a Conditional Access policy: target App1, scope it to Group1, and require a Microsoft Entra joined device. But a Conditional Access policy can only target an application that already exists in the tenant as an enterprise application, and the stem describes App1 as an external SaaS app that supports Microsoft Entra credentials, which reads as capable of single sign-on rather than already integrated. On that reading the enterprise application is what you create first and the policy second, which is the only reading in which the word \"first\" does any work. If App1 is already registered, the keyed answer stands and nothing else is needed. Both readings are defensible, so the key is left alone.",
+    "whyWrong": [
+     "C. An application proxy connector group publishes on-premises apps. App1 is external SaaS.",
+     "D. An access package governs who may request access over time. It does not restrict the device a user signs in from."
+    ],
+    "source": {
+     "title": "Add an enterprise application to your Microsoft Entra tenant",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal"
+    }
+   }
   },
   {
    "n": 118,
@@ -10404,7 +10461,19 @@
     {
      "p": "When using Azure-provided PaaS services (e.g., Azure Storage, Azure Cosmos DB, or Azure Web App, use the PrivateLink connectivity option to ensure all data exchanges are over the private IP space and the traffic never leaves the Microsoft network."
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "No, and this one is the most tempting of the three wrong answers. Key Vault is the right place for a secret, and storing the database credentials there is better than a config file. But it does not secure the connection: the database still listens on a public endpoint, the app still authenticates with a password, and anyone who obtains that password can connect from anywhere. The Zero Trust answer removes the credential and the public path, using a private endpoint (Standalone 218) with a managed identity for authentication.",
+    "whyWrong": [
+     "A. Yes improves secret handling rather than the connection, and Zero Trust here means eliminating the shared secret and the public route, not storing the secret more carefully."
+    ],
+    "source": {
+     "title": "What is Azure Private Link?",
+     "url": "https://learn.microsoft.com/en-us/azure/private-link/private-link-overview"
+    }
+   }
   },
   {
    "n": 154,
@@ -10423,7 +10492,24 @@
     "the accepted domains in Exchange Online",
     "the Exchange Online transport rule"
    ],
-   "a": "B"
+   "a": "A",
+   "srcA": "B",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nWhat decides where mail is scanned is where mail is delivered, and that is the MX record. While the MX points at the third-party service, every message reaches that service first no matter how the Exchange Online connectors are configured. Microsoft's migration guidance treats the DNS change as the moment protection actually transfers: the bypass spam filtering rule is disabled \"before or during the cutover of your MX record to Microsoft 365\", which is what turns on the full Microsoft filtering stack for all recipients. Modifying the connector is a real step in the migration, but it is the earlier one: Enhanced Filtering for Connectors exists so that Defender can see the true internet source while mail is still arriving through the third party. It makes filtering accurate, not exclusive, and the question asks for scanning by Defender for Office 365 only.",
+    "whyWrong": [
+     "B. Enhanced Filtering for Connectors improves accuracy while mail still routes through the other service. It cannot stop that service receiving the mail first.",
+     "C. Accepted domains tell Exchange Online which domains it is authoritative for. They do not choose the inbound path.",
+     "D. A transport rule can bypass or force filtering inside Exchange Online, but only for mail that has already been delivered there."
+    ],
+    "source": {
+     "title": "Migrate to Microsoft Defender for Office 365 Phase 2: Setup",
+     "url": "https://learn.microsoft.com/en-us/defender-office-365/migrate-to-defender-for-office-365-setup"
+    },
+    "corrected": true,
+    "originalAnswer": "B"
+   }
   },
   {
    "n": 155,
@@ -10572,7 +10658,21 @@
     {
      "p": "Note: Azure Logic Apps is a cloud-based platform for creating and running automated workflows that integrate your apps, data, services, and systems. With this platform, you can quickly develop highly scalable integration solutions for your enterprise and business-to-business (B2B) scenarios."
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Workflow automation in Defender for Cloud is built on Azure Logic Apps: you create a Logic App with the Defender for Cloud connector as its trigger, then an automation rule that fires it on matching alerts or recommendations. The designer is low-code with hundreds of prebuilt connectors, which is what satisfies the requirement to minimise development effort.",
+    "whyWrong": [
+     "A. Azure Monitor webhooks can carry an alert somewhere, but you still have to build the thing that receives it.",
+     "C. Event Hubs is a streaming ingestion service, useful for export to a third-party SIEM, not for remediation.",
+     "D. Functions means writing and maintaining code, which is more development effort, not less."
+    ],
+    "source": {
+     "title": "Automate remediation responses with workflow automation in Defender for Cloud",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/workflow-automation"
+    }
+   }
   },
   {
    "n": 159,
@@ -11133,7 +11233,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/frontdoor/front-door-faq#how-do-i-lock-down-the-access-to-my- backend-to-only-azure-front-door-"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes, and this is the strictest of the four solutions in the family. Every Front Door instance stamps requests with an X-Azure-FDID header carrying its own Front Door ID, and an App Service access restriction rule can match on that header. Because the ID is unique to your instance, this closes the gap left by the service tag in Standalone 129, which admits traffic from any customer's Front Door. Microsoft's guidance is to use both together: the service tag narrows the source to Front Door, the header pins it to yours.",
+    "source": {
+     "title": "Set up Azure App Service access restrictions",
+     "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
+    }
+   }
   },
   {
    "n": 172,
@@ -11202,7 +11311,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-security-configuration- framework/security-compliance-toolkit-10"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Policy Analyzer is the tool in the Security Compliance Toolkit built for this comparison. It reads Group Policy Objects, including the baseline GPOs shipped in the toolkit and the effective policy on a local machine, and reports redundancies, internal inconsistencies and differences between sets, which is how you see where a device drifts from the baseline.",
+    "whyWrong": [
+     "A. Intune deploys and reports on its own security baselines. It is not what compares the Security Compliance Toolkit baselines to existing configuration.",
+     "C. LGPO is the toolkit’s companion utility for applying and exporting local policy. It writes settings; Policy Analyzer compares them.",
+     "D. Autopilot provisions new devices."
+    ],
+    "source": {
+     "title": "Microsoft Security Compliance Toolkit",
+     "url": "https://learn.microsoft.com/en-us/windows/security/operating-system-security/device-management/windows-security-configuration-framework/security-compliance-toolkit-10"
+    }
+   }
   },
   {
    "n": 174,
@@ -11827,7 +11950,21 @@
     "Contact law enforcement.",
     "From Microsoft Defender for Endpoint perform a security scan."
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Order is the whole question here, and the playbook settles it. Disabling Exchange ActiveSync and OneDrive sync is a containment step, under Prevent the spread, and Microsoft explains why: pausing OneDrive sync stops cloud data being overwritten by an already infected device. Everything else on the list belongs to eradication and recovery, which comes afterwards: remove the malware by running a full antivirus scan (step 5), then recover files on a cleaned device (step 6), and only at the very end re-enable the sync you disabled (step 9). Stop the encryption spreading into the cloud copies before you try to recover anything from them.",
+    "whyWrong": [
+     "B. Recovering files to a cleaned device is step 6 of eradication and recovery, well after containment.",
+     "C. Contacting law enforcement may be right for your organisation, but it appears nowhere in Microsoft’s technical playbook and does nothing to contain the attack.",
+     "D. Running a security scan is step 5, part of removing the malware, and it comes after containment."
+    ],
+    "source": {
+     "title": "Responding to ransomware attacks (Microsoft Defender XDR playbook)",
+     "url": "https://learn.microsoft.com/en-us/defender-xdr/playbook-responding-ransomware-m365-defender"
+    }
+   }
   },
   {
    "n": 189,
@@ -12114,7 +12251,21 @@
     "a private endpoint",
     "an authorized IP range"
    ],
-   "a": "D"
+   "a": "D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The AKS API server is a managed endpoint outside your virtual network, so the usual network controls do not apply to it. Authorized IP ranges is the feature made for this: you supply a list of CIDR ranges and the API server accepts requests only from them, which is exactly restricting access to your datacentre's public addresses. Remember to include the egress address of the cluster itself and of anything else that calls the API server.",
+    "whyWrong": [
+     "A. A network security group filters traffic in your virtual network. The API server endpoint is not in it.",
+     "B. A service endpoint extends a virtual network identity to a PaaS service. It is not an inbound filter on the API server.",
+     "C. A private endpoint is the private cluster answer, which removes the public endpoint altogether. The stem asks to restrict the public endpoint, not to eliminate it."
+    ],
+    "source": {
+     "title": "Secure access to the API server using authorized IP address ranges in AKS",
+     "url": "https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges"
+    }
+   }
   },
   {
    "n": 197,
@@ -12183,7 +12334,20 @@
     "Azure, AWS. and OCI only",
     "Azure, AWS, GCP. and OCI"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Defender for Cloud's multicloud coverage is Azure, AWS and GCP, and custom security standards can be created and assigned across all three. Oracle Cloud Infrastructure is not a Defender for Cloud connector, which is what makes it the distractor in every option that includes it.",
+    "whyWrong": [
+     "A and B. Both omit one of the three supported clouds.",
+     "D and E. Both include OCI, which Defender for Cloud does not connect to."
+    ],
+    "source": {
+     "title": "Create custom security standards and recommendations in Defender for Cloud",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/custom-security-policies"
+    }
+   }
   },
   {
    "n": 199,
@@ -12306,7 +12470,16 @@
     "the DREAD model",
     "OWASP threat modeling"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged: no Microsoft source establishes the keyed answer, and Microsoft's own methodology points elsewhere. The threat modelling Microsoft documents is the Security Development Lifecycle approach, which starts from a data flow diagram of the system and categorises what it finds with STRIDE, and the Threat Modeling Tool generates its threats that way. That is a top-down decomposition of an architecture, which fits the wording of the stem. OWASP threat modelling is a genuine body of work, but nothing in the Cloud Adoption Framework nominates it as the way to start, and Microsoft's Well-Architected guidance on threat analysis does not name it either. The option list is also short, three choices rather than four, which suggests something was lost in the source. DREAD is a risk-rating scheme rather than a starting point, so it is not the answer whatever else is true. The key is left untouched pending a citable source.",
+    "source": {
+     "title": "Architecture strategies for threat analysis (Well-Architected Framework)",
+     "url": "https://learn.microsoft.com/en-us/azure/well-architected/security/threat-model"
+    }
+   }
   },
   {
    "n": 202,
@@ -12555,7 +12728,19 @@
     {
      "p": "When using Azure-provided PaaS services (e.g., Azure Storage, Azure Cosmos DB, or Azure Web App, use the PrivateLink connectivity option to ensure all data exchanges are over the private IP space and the traffic never leaves the Microsoft network."
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No. Application Gateway with WAF is a sound control, but it sits in front of the web app and inspects inbound requests from users. The question asks about the connection between the web app and the database, which is behind it. A WAF never sees that traffic and does nothing to remove the database's public endpoint. Standalone 209 makes the same mistake with a different product, and Standalone 218 has the answer.",
+    "whyWrong": [
+     "A. Yes confuses protecting the front door of the application with protecting the link behind it."
+    ],
+    "source": {
+     "title": "What is Azure Private Link?",
+     "url": "https://learn.microsoft.com/en-us/azure/private-link/private-link-overview"
+    }
+   }
   },
   {
    "n": 208,
@@ -12592,7 +12777,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/security/benchmark/azure/security-controls-v3-privileged-access#pa-2- avoid-standing-access-for-user-accounts-and-permissions"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes, and this is the one solution in the family that works. Microsoft's own description of the Secure management ports control names the tool: these recommendations \"reduce your exposure with tools like just-in-time VM access and network security groups\". Just-in-time access keeps RDP and SSH closed in the network security group by default and opens them only for an approved user, from an approved source IP, for a limited window, which is exactly the brute-force exposure the control measures. Compare Standalone 4, 61 and 106, which propose adaptive network hardening, the VMAccess extension and Defender for Endpoint onboarding: all real controls, all counted under a different control.",
+    "source": {
+     "title": "Just-in-time machine access in Microsoft Defender for Cloud",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+    }
+   }
   },
   {
    "n": 209,
@@ -13420,7 +13614,19 @@
     {
      "p": "https://www.varonis.com/blog/securing-access-azure-webapps"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, for the same reason as Standalone 188: Front Door with WAF is an inbound edge control for user traffic to the web app, not a control on the app-to-database connection. Worth noticing how this family is built. Three of its four solutions name genuinely good security products, and all three are wrong because they act somewhere else in the architecture. Read the sentence that states the requirement, not the product names.",
+    "whyWrong": [
+     "A. Yes protects the wrong leg of the architecture."
+    ],
+    "source": {
+     "title": "What is Azure Private Link?",
+     "url": "https://learn.microsoft.com/en-us/azure/private-link/private-link-overview"
+    }
+   }
   },
   {
    "n": 229,
@@ -13817,7 +14023,19 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-configure-private-endpoints"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes, and it is the only solution in this family that touches the connection the question asks about. A private endpoint gives the database a private IP inside your virtual network, so the web app reaches it over the Microsoft backbone and the database's public endpoint can be switched off entirely. Microsoft frames Private Link exactly this way: traffic between your virtual network and the service travels the Microsoft backbone, eliminating exposure to the public internet. Removing the public path is the Zero Trust move here.",
+    "whyWrong": [
+     "B. No would require some other mechanism in the family to secure the app-to-database link, and none of the others do."
+    ],
+    "source": {
+     "title": "What is Azure Private Link?",
+     "url": "https://learn.microsoft.com/en-us/azure/private-link/private-link-overview"
+    }
+   }
   },
   {
    "n": 238,
@@ -14190,7 +14408,21 @@
     "Azure Firewall",
     "Azure Application Gateway"
    ],
-   "a": "D"
+   "a": "D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Only one option here is an ingress controller. Application Gateway Ingress Controller runs in the AKS cluster, watches Kubernetes ingress resources and configures an Application Gateway in front of them, and because that gateway can carry a WAF policy the hosted services get OWASP rule inspection, TLS termination and path-based routing from one component.",
+    "whyWrong": [
+     "A. Load Balancer is layer 4. It distributes connections and inspects nothing.",
+     "B. Front Door is a global edge service, not a cluster ingress controller. It can sit in front of an ingress, but it is not one.",
+     "C. Azure Firewall filters network traffic; it does not terminate and route HTTP ingress for Kubernetes services."
+    ],
+    "source": {
+     "title": "What is Application Gateway Ingress Controller?",
+     "url": "https://learn.microsoft.com/en-us/azure/application-gateway/ingress-controller-overview"
+    }
+   }
   },
   {
    "n": 247,
@@ -14293,7 +14525,21 @@
     {
      "p": "https://www.microsoft.com/en-us/security/business/privacy/microsoft-priva-risk-management"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "All three requirements are Priva Privacy Risk Management policies. Its data minimisation policy finds personal data kept longer than needed, which is the unused personal data requirement; its data transfer and oversharing policies detect personal data moving where it should not, and can show the user a policy tip in Teams and Outlook at the moment they send it; and the solution surfaces recommendations for reducing privacy risk rather than only reporting it. The user-facing nudge is the detail that rules the alternatives out.",
+    "whyWrong": [
+     "A. Viva Insights reports on productivity and wellbeing patterns.",
+     "B. eDiscovery finds and preserves content for legal matters.",
+     "D. Communication compliance detects inappropriate messages against a policy, and is aimed at conduct risk rather than personal-data handling. Priva is the privacy solution."
+    ],
+    "source": {
+     "title": "Privacy Risk Management in Microsoft Priva",
+     "url": "https://learn.microsoft.com/en-us/privacy/priva/risk-management"
+    }
+   }
   },
   {
    "n": 249,
@@ -15534,7 +15780,16 @@
     "Yes",
     "No"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "No, for the same reason as Standalone 74. Transparent data encryption protects the database with AES-256 whichever key you use, so the algorithm requirement is met. The rotation requirement is not: with the service-managed key, Microsoft owns the key lifecycle and rotates on its own schedule, so you cannot commit to a monthly rotation. The customer-managed key variant in Standalone 276 is the one that gives you that control.",
+    "source": {
+     "title": "Transparent data encryption with customer-managed keys (BYOK)",
+     "url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/transparent-data-encryption-byok-overview"
+    }
+   }
   },
   {
    "n": 279,
@@ -15616,7 +15871,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/mem/intune/protect/compliance-policy-monitor#open-the-compliance- dashboard"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Compliance policies in Intune are the mechanism that evaluates devices against rules you define, minimum OS version, encryption, jailbreak status, antivirus health, and mark each device compliant or not. Intune covers all four platforms in the stem, Windows, iOS, Android and macOS, and the Windows devices being on-premises or in Azure makes no difference because compliance is evaluated by the device's own MDM channel. The compliance state then feeds Conditional Access.",
+    "whyWrong": [
+     "A. Information Protection classifies and protects content, not devices.",
+     "B. Defender for Endpoint reports device risk and threat detections. It contributes a signal to compliance but does not define or evaluate the customer’s rules.",
+     "C. Sentinel is a SIEM."
+    ],
+    "source": {
+     "title": "Use compliance policies to set rules for devices you manage with Intune",
+     "url": "https://learn.microsoft.com/en-us/mem/intune/protect/device-compliance-get-started"
+    }
+   }
   },
   {
    "n": 281,
@@ -15900,7 +16169,21 @@
     "a connector group that contains the connectors used to access the web apps and a single endpoint for the internal fully qualified domain names (FQDNs)",
     "an access policy that limits connections based on user groups"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Publishing internal apps through a Global Secure Access application has two required parts, and this option carries both: the connector group whose connectors sit next to the apps and broker the traffic outbound, and the application segment naming the internal FQDN or IP and ports to reach. Without them the app is an empty container and nothing routes.",
+    "whyWrong": [
+     "A. A Conditional Access policy controls who may use the app once it is published. Useful, but it publishes nothing.",
+     "B. A forwarding profile for outbound internet traffic is the Internet Access side of Global Secure Access, not Private Access.",
+     "D. An access policy limiting connections by user group is again about authorisation rather than connectivity."
+    ],
+    "source": {
+     "title": "Configure per-app access for Microsoft Entra Private Access",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-configure-per-app-access"
+    }
+   }
   },
   {
    "n": 288,
@@ -16237,7 +16520,16 @@
     "Yes",
     "No"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Yes. TDE with a customer-managed key, also called Bring Your Own Key, puts the TDE protector in your own Azure Key Vault, and Microsoft documents both manual and automatic key rotation for it, so a monthly schedule is yours to set. The encryption itself is AES-256. Read this family as a pair with Standalone 259: the algorithm never changes, only who controls the key lifecycle, and that is what a rotation requirement is testing.",
+    "source": {
+     "title": "Transparent data encryption with customer-managed keys (BYOK)",
+     "url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/transparent-data-encryption-byok-overview"
+    }
+   }
   },
   {
    "n": 296,
@@ -16265,7 +16557,21 @@
     "an Azure AD user account that has role assignments in Azure AD Privileged Identity Management (PIM)",
     "a managed identity in Azure"
    ],
-   "a": "D"
+   "a": "D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "A managed identity has no credential you can leak, because Azure issues and rotates the token and nothing is stored in the pipeline or a vault. That is the DevSecOps position on deployment credentials: remove the secret rather than protect it better. Azure DevOps supports managed identity and workload identity federation for Azure Resource Manager service connections precisely so pipelines stop holding secrets.",
+    "whyWrong": [
+     "A. A user account with a password in Key Vault still has a password, which can be extracted, replayed and used interactively.",
+     "B. A group managed service account is an Active Directory construct for on-premises Windows services. It cannot authenticate a pipeline to an Azure subscription.",
+     "C. PIM adds approval and time limits to a human account, but a pipeline needs unattended access, and this is still a user identity with a credential."
+    ],
+    "source": {
+     "title": "Connect to Azure by using an Azure Resource Manager service connection",
+     "url": "https://learn.microsoft.com/en-us/azure/devops/pipelines/library/connect-to-azure"
+    }
+   }
   },
   {
    "n": 297,
@@ -16440,7 +16746,16 @@
     "Exchange Online only",
     "both SharePoint Online and Exchange Online"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged: the key says SharePoint Online only, and no Microsoft source supports excluding Exchange Online. Microsoft describes continuous access evaluation as implemented by services that subscribe to critical Microsoft Entra events, and names Exchange Online, SharePoint Online and Teams together. The Global Secure Access compliant network article says data plane enforcement \"works with services integrated with Global Secure Access that support Continuous Access Evaluation (CAE)\" without singling out one workload, and the known limitations page lists nothing that removes Exchange Online from this scenario. Note also that Standalone 282 in this same bank keys continuous access evaluation for Exchange Online as supported, so the two items contradict each other. Something in the source is wrong here, but which of the two cannot be settled from documentation, so both keys are left untouched and both are flagged. One real limitation is worth carrying away: Conditional Access for Microsoft and internet traffic is enforced only when the user has the Global Secure Access client, not through a remote network alone, which matters because this stem mentions both.",
+    "source": {
+     "title": "Known limitations for Global Secure Access",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/reference-current-known-limitations"
+    }
+   }
   },
   {
    "n": 301,
@@ -16483,7 +16798,16 @@
     "connections to the third-party SaaS app",
     "connections to the on-premises apps"
    ],
-   "a": "B C"
+   "a": "B C",
+   "review": {
+    "status": "AMBIGUOUS",
+    "confidence": "MEDIUM",
+    "explanation": "Two of the keyed options are well supported and one distractor is not clearly excluded, so this is flagged rather than confirmed. Option C is documented outright: compliant network check protects \"Microsoft apps, third-party SaaS apps, and private line-of-business (LoB) apps\" that use Microsoft Entra single sign-on. Option B fits the data plane enforcement description, since Exchange Online is a continuous access evaluation service. Option D is genuinely excluded, because the known limitations state that \"compliant network check is currently not supported for Private Access applications\". The problem is option A. Compliant network is not compliant device: it depends on the user connecting through the Global Secure Access client or a configured remote network, not on Intune enrolment, so the branch office computers being unenrolled does not by itself rule them out. The stem never says whether they have the client, which leaves A defensible on the text as printed. The key is left as the source has it.",
+    "source": {
+     "title": "Enable compliant network check with Conditional Access",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-compliant-network"
+    }
+   }
   },
   {
    "n": 302,
