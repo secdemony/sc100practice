@@ -4,14 +4,14 @@
  "totals": {
   "questions": 310,
   "scorable": 222,
-  "examined": 130,
-  "notReviewed": 180,
+  "examined": 158,
+  "notReviewed": 152,
   "manual_review": 8,
-  "corrected": 21,
-  "outdated": 5,
   "not_reviewed": 0,
+  "outdated": 6,
   "ambiguous": 4,
-  "verified": 92
+  "corrected": 25,
+  "verified": 115
  },
  "findings": {
   "std/20": {
@@ -1828,6 +1828,434 @@
     "url": "https://learn.microsoft.com/en-us/azure/well-architected/security/threat-model"
    },
    "explanation": "Flagged: no Microsoft source establishes the keyed answer, and Microsoft's own methodology points elsewhere. The threat modelling Microsoft documents is the Security Development Lifecycle approach, which starts from a data flow diagram of the system and categorises what it finds with STRIDE, and the Threat Modeling Tool generates its threats that way. That is a top-down decomposition of an architecture, which fits the wording of the stem. OWASP threat modelling is a genuine body of work, but nothing in the Cloud Adoption Framework nominates it as the way to start, and Microsoft's Well-Architected guidance on threat analysis does not name it either. The option list is also short, three choices rather than four, which suggests something was lost in the source. DREAD is a risk-rating scheme rather than a starting point, so it is not the answer whatever else is true. The key is left untouched pending a citable source."
+  },
+  "std/13": {
+   "question": "Standalone 13",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Connect on-premises machines to Microsoft Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/quickstart-onboard-machines"
+   },
+   "explanation": "Vulnerability scanning of on-premises SQL Server needs Defender for SQL servers on machines, and that plan requires the machine to be an Azure resource first. Microsoft's onboarding guidance is explicit: a non-Azure machine has to be connected before Defender for Cloud can assess it, normally through Azure Arc-enabled servers, after which it appears in Defender for Cloud like any other resource and the SQL vulnerability assessment scanner can run against it. Configuring Microsoft Defender for Cloud is what starts that chain: enabling the Defender for SQL plan and onboarding the on-premises instances via Arc.",
+   "whyWrong": [
+    "B. Defender Vulnerability Management is the endpoint TVM engine; it does not connect SQL instances to Defender for Cloud or turn on SQL-specific scanning.",
+    "C. Purview data governance catalogues and classifies data; it has no vulnerability scanner.",
+    "D. Purview DLP prevents data leaving through defined channels. It never scans a database for security misconfigurations."
+   ]
+  },
+  "std/15": {
+   "question": "Standalone 15",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft cloud security benchmark - Identity Management (IM-3)",
+    "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-identity-management"
+   },
+   "explanation": "The benchmark's rule for application identities is a strict order of preference: \"Use Azure managed identities, which can authenticate to Azure services and resources that support Azure AD authentication… For services that don't support managed identities, use Azure AD to create a service principal.\" Azure API Management supports both system- and user-assigned managed identities, so under this rule a managed identity is the recommendation, not a fallback service principal.",
+   "whyWrong": [
+    "B. Device registrations represent devices, not service accounts for a PaaS resource.",
+    "C. A certificate-credentialed service principal is the benchmark's recommended fallback for services that cannot use a managed identity. API Management can, so this is a step down from best practice.",
+    "D. Password-based service principals are explicitly the least preferred option in the same guidance."
+   ]
+  },
+  "std/19": {
+   "question": "Standalone 19",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Develop secure applications on Azure (SDL implementation/verification, DAST/SAST)",
+    "url": "https://learn.microsoft.com/en-us/azure/security/develop/secure-develop"
+   },
+   "explanation": "The Microsoft SDL runs Requirements, Design, Implementation, Verification, Release and Response in order, and threat modeling is the signature Design-phase practice: it produces the data flow diagram and the list of threats that implementation and testing are then built to address. Microsoft's own Azure security-development guidance treats everything downstream of that, static analysis, dependency scanning, DAST, fuzzing, as Implementation or Verification activities that consume the design's threat model rather than produce it.",
+   "whyWrong": [
+    "A. SAST inspects code that already exists, which places it in implementation, after design.",
+    "B. DAST tests a running application, which is a verification-phase activity, later still.",
+    "D. Decomposing software into components is an implementation planning step, not the design-phase security activity threat modeling is."
+   ]
+  },
+  "std/22": {
+   "question": "Standalone 22",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Set and manage branch policies in Azure Repos",
+    "url": "https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies"
+   },
+   "explanation": "Branch policies in Azure Repos are the mechanism built for exactly this: Microsoft's own summary is to \"protect important branches by requiring pull requests, reviewers, builds, and other checks before changes merge.\" Setting a branch policy on main that requires completion through a pull request stops any push, including from a CI/CD workflow's own credentials, from landing without one.",
+   "whyWrong": [
+    "A. Custom roles in Azure Pipelines shape who can run or manage pipelines, not whether a PR is required before merge.",
+    "C. Azure Policy governs Azure resource configuration, not Git workflow in Azure Repos.",
+    "D. Custom Azure roles are an RBAC construct for Azure resources, unrelated to repository branch protection."
+   ]
+  },
+  "std/23": {
+   "question": "Standalone 23",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Web Application Firewall DRS rule groups and rules (Azure Front Door)",
+    "url": "https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-drs"
+   },
+   "explanation": "Five App Service instances spread across three regions is exactly the shape Front Door is built for: one global edge service in front of geographically distributed backends, with a single WAF policy giving centralized management and updates for protection rules across all of them. Because the inspection happens at the edge, the application code is untouched, and one global deployment costs less than replicating a regional control in every region.",
+   "whyWrong": [
+    "A. Application Gateway is regional. Protecting three regions would mean three separate gateways and three policies to keep in sync, which is the opposite of centralized management and adds cost.",
+    "C. DDoS Protection defends against volumetric and protocol attacks. It has no web application firewall rules for exploits.",
+    "D. Azure Firewall is a network firewall, not a WAF, and does not inspect HTTP(S) application traffic for web exploits."
+   ]
+  },
+  "std/26": {
+   "question": "Standalone 26",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "DevOps security considerations overview - Cloud Adoption Framework",
+    "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/considerations/security-considerations-overview"
+   },
+   "explanation": "CAF's DevOps security guidance calls for \"secure and scoped service identities\": either a user-assigned managed identity or an application registration (service principal) authenticated with OpenID Connect (workload identity federation), never a secret. Between the two, it flags a concrete advantage for the managed identity: \"user-assigned managed identities more easily integrate with your subscription vending process, ensuring they're decommissioned along with your other resources when no longer needed\", where a service principal is a separate Entra ID object someone has to remember to clean up. That is the least-privilege, least-residue choice the stem asks for.",
+   "whyWrong": [
+    "A. A system-assigned identity is tied to the lifecycle of a single resource and cannot be provisioned ahead of the pipeline the way a service connection needs; CAF's guidance for service connections specifically names user-assigned identities.",
+    "B. Secrets are what workload identity federation exists to eliminate; the guidance says to avoid them wherever possible.",
+    "D. Workload identity federation with a service principal is also a documented option and is not wrong, but the source material calls out the extra subscription-vending benefit only for the user-assigned managed identity, which is what the key selects."
+   ]
+  },
+  "std/33": {
+   "question": "Standalone 33",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "WAF on Azure Application Gateway bot protection overview",
+    "url": "https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/bot-protection-overview"
+   },
+   "explanation": "Microsoft's bot protection ruleset, which blocks or logs requests from IP addresses on the Microsoft Threat Intelligence feed, ships specifically for Application Gateway WAF v2, so it is the control built for \"malicious bots scanning for vulnerabilities.\" It also fits the stated scope: a single-region deployment serving only Europe and US customers has no need for Front Door's global point-of-presence footprint, and attaching a regional Layer-7 firewall directly in front of the app keeps the exposed surface to one edge rather than a globally anycast one.",
+   "whyWrong": [
+    "A. Azure Firewall Premium inspects network and TLS traffic; it has no bot management ruleset for HTTP requests.",
+    "C. NSGs filter by IP and port. They cannot recognize a bot's request pattern against known-bad IP intelligence.",
+    "D. Traffic Manager is DNS-based routing, and application security groups tag NICs for NSG rules. Neither inspects HTTP traffic for bots."
+   ]
+  },
+  "std/38": {
+   "question": "Standalone 38",
+   "status": "OUTDATED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "External tenant overview - Microsoft Entra External ID (retirement of Azure AD B2C)",
+    "url": "https://learn.microsoft.com/en-us/entra/external-id/customers/overview-customers-ciam"
+   },
+   "explanation": "The scenario, requirements and options all still make sense, and Azure AD B2C is still the best fit among the four choices, so the key is left as the source has it. But the product itself has a closing door: \"Effective May 1, 2025, Azure AD B2C is no longer available for purchase by new customers... Microsoft Entra External ID is the next-generation CIAM solution from Microsoft.\" A design for a brand-new customer-facing app today would specify Microsoft Entra External ID for customers, which offers the same external-identity federation, separate customer directory and per-app branding B2C did. Existing B2C tenants keep working, so this is a product-availability change rather than a feature gap, and it is exactly the kind of detail the exam may not yet reflect.",
+   "whyWrong": [
+    "B. Azure AD B2B is for inviting known partner-organization users into your own tenant, not for anonymous consumers using Google or Facebook identities.",
+    "C. Azure AD Connect synchronizes an on-premises AD DS directory to Entra ID. It has nothing to do with external consumer identities.",
+    "D. Azure AD Domain Services provides a managed, domain-joinable directory for legacy workloads; it does not support social identity providers or per-app branding."
+   ]
+  },
+  "std/46": {
+   "question": "Standalone 46",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Prepare for ransomware attacks with a backup and recovery plan (Phase 1)",
+    "url": "https://learn.microsoft.com/en-us/security/ransomware/protect-against-ransomware-phase1"
+   },
+   "explanation": "Microsoft's ransomware series is explicitly ordered, and the first article states its purpose in its opening line: \"Always prepare a ransomware attack recovery plan, starting with an alternative to ransom payment.\" The three-part list that follows confirms the order: \"Have a recovery plan\", then \"A plan to limit the harm done\", then \"Make it hard to get in\". A recovery plan is priority one precisely so an organization is never forced to pay because it has no other way back to its data.",
+   "whyWrong": [
+    "A. Data protection controls like Protected Folders belong to the recovery-plan phase's supporting detail, but the plan itself, and specifically immutable, tested backups, is what phase 1 leads with.",
+    "B. A privileged access strategy is phase 2 work, limiting how far an attacker can move once they are in.",
+    "D. A privileged identity strategy is also phase 2 territory, after the recovery plan is in place."
+   ]
+  },
+  "std/73": {
+   "question": "Standalone 73",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Hybrid Connections in Azure App Service",
+    "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-hybrid-connections"
+   },
+   "explanation": "Hybrid Connections is the one option here that opens nothing to the internet at all. Microsoft's description is direct: it \"can be used to access application resources in any network that can make outbound calls to Azure over port 443\", through a relay agent that itself only calls outward to Azure Relay. With no Site-to-Site VPN or ExpressRoute in place, and the requirement to minimize internet-accessible endpoints on-premises, an outbound-only relay is the only one of the four that adds zero inbound exposure.",
+   "whyWrong": [
+    "A. A private endpoint brings an Azure PaaS resource into your virtual network; it does nothing to connect an App Service instance outward to an on-premises SQL Server with no existing network path.",
+    "C. A NAT gateway provides outbound internet connectivity for resources inside a virtual network. It does not create a reachable path back to on-premises SQL Server at all.",
+    "D. Virtual network integration gives the web app a presence in a virtual network, but without a VPN or ExpressRoute from that network to on-premises, there is still no route to the database, and building one would add the very endpoints the requirement seeks to avoid."
+   ]
+  },
+  "std/84": {
+   "question": "Standalone 84",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "A",
+   "answer": "C",
+   "source": {
+    "title": "Global Secure Access traffic forwarding profiles",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-traffic-forwarding"
+   },
+   "explanation": "App1 is a third-party SaaS app reachable over the public internet, and Microsoft is explicit about which Global Secure Access profile that belongs to: \"With the internet access profile, you can route traffic to the public internet, including traffic to SaaS apps.\" The same page states that \"both the Microsoft and Internet access forwarding profiles use Microsoft Entra ID Conditional Access policies to authorize access to their tunnels,\" which is exactly how the requirement, users must authenticate with their Entra credentials before connecting, gets enforced. A Global Secure Access app is a Private Access construct: it publishes an internal resource, reached by FQDN or IP through a private network connector inside your own network. App1 has no presence on your network for a connector to reach, so Private Access has nothing to publish here.",
+   "whyWrong": [
+    "A. A Global Secure Access app requires a private network connector reaching the target resource. App1 is external SaaS with no such internal presence.",
+    "B. The private access traffic forwarding profile is the client-side counterpart to Private Access apps and is equally scoped to internal, connector-reachable resources, not public SaaS.",
+    "D. A Quick Access app is the primary group of private FQDNs and IPs to always tunnel through Private Access. It is the same internal-resource model as option A, one level up."
+   ]
+  },
+  "std/100": {
+   "question": "Standalone 100",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "A",
+   "source": {
+    "title": "Network topology considerations for Microsoft Entra application proxy",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/app-proxy/application-proxy-network-topology"
+   },
+   "explanation": "The application proxy connector never accepts a connection from the internet at all. Microsoft describes the traffic flow as three hops, user to the application proxy cloud service, cloud service to connector, connector to the target application, and states plainly that \"connectors only send outbound requests\" and can run with no perimeter network because everything is outbound. That makes Rule1, which allows inbound TCP 443 from Azure to Server1, a rule the connector's architecture never uses: closing it removes an open inbound port to the internet-facing perimeter server with zero effect on how the connector talks to Azure. Rule3, TCP 80 outbound, is not spare capacity: connectors validate certificates by checking revocation, and Microsoft's own documentation lists port-80 destinations (mscrl.microsoft.com, crl.microsoft.com, ocsp.msocsp.com) that must stay reachable for CRL and OCSP checks. Removing that rule, the source's key, would degrade certificate validation on the very connector the change is meant to protect, which fails the requirement to minimize impact on the connector.",
+   "whyWrong": [
+    "B. Rule2, outbound 443, carries the connector's primary channel to the application proxy service and to Microsoft Entra ID. Removing it disables the connector outright.",
+    "C. Rule3 supports certificate revocation checking over port 80. It is needed, not surplus, so removing it does not maximize security and does affect the connector.",
+    "D. Rule4, outbound LDAP to the domain controllers, is required for Kerberos constrained delegation SSO to App1. Removing it breaks the single sign-on the design calls for."
+   ]
+  },
+  "std/114": {
+   "question": "Standalone 114",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft cloud security benchmark - Identity Management (IM-3)",
+    "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-identity-management"
+   },
+   "explanation": "The failure here is that SRV1 is an ordinary Entra user account with a password, so anyone who knows that password, such as the developer who used it directly, can authenticate as it from anywhere. A managed identity has no extractable secret: Entra ID issues and rotates its credential internally, and only the specific Azure resource the identity is assigned to, App1's web app, can obtain a token with it. There is no password for a developer to reuse outside the app, and no administrative overhead to rotate one either.",
+   "whyWrong": [
+    "A. A group managed service account is an on-premises Active Directory construct for Windows services; it authenticates to AD DS resources, not to Azure SQL Database over Entra ID.",
+    "C. A federated identity credential lets an external workload (for example a GitHub Actions or Azure DevOps pipeline) exchange its own token for an Entra token. It solves a different problem, a workload outside Entra ID needing access, not an in-tenant user account being reused.",
+    "D. A delegated managed service account is also an on-premises AD DS feature (the modern successor to gMSA for migration scenarios). It has no role in an Azure App Service to Azure SQL Database connection."
+   ]
+  },
+  "std/117": {
+   "question": "Standalone 117",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "A",
+   "source": {
+    "title": "Configure OIDC SSO for gallery and custom applications",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal-setup-oidc-sso"
+   },
+   "explanation": "The stem does the work here: App1 \"supports authenticating users by using Azure AD credentials\" already. Microsoft's guide to configuring SSO draws the line precisely at this point, distinguishing \"app registrations vs. enterprise applications\": an enterprise application \"represents instances\" of an app in your tenant, whether it comes from the gallery or is added as a custom (non-gallery) registration, and that is how you turn on Entra sign-in for an app that speaks OIDC or SAML. Application Proxy solves the opposite problem: publishing an on-premises app that does not natively support modern authentication, by putting a connector in front of it. App1 needs no connector and no publishing, only registration.",
+   "whyWrong": [
+    "B. An AD FS relying party trust is an on-premises federation mechanism, superseded here since App1 already speaks Entra ID directly.",
+    "C. Application Proxy exists to bring legacy on-premises apps into modern auth. App1 is already there; there is nothing on-premises to proxy.",
+    "D. Azure AD B2C (now Entra External ID for customers) is for consumer-facing apps needing their own separate customer directory, not for wiring an existing SaaS app into the workforce tenant."
+   ]
+  },
+  "std/118": {
+   "question": "Standalone 118",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Azure Virtual Network Peering (service chaining)",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview"
+   },
+   "explanation": "Routing a landing zone's outbound traffic through the hub firewall is precisely what Azure calls service chaining: \"Service chaining enables you to direct traffic from one virtual network to a virtual appliance or gateway in a peered network through user-defined routes.\" Microsoft's own description of the pattern is the enterprise-scale default: a hub virtual network hosts the firewall or NVA, spokes peer to it, and \"traffic flows through network virtual appliances… in the hub virtual network\", which is exactly how landing zones get centralized internet-bound inspection without every spoke needing its own edge.",
+   "whyWrong": [
+    "B. Local network gateways represent an on-premises VPN endpoint definition in Azure. They configure a site-to-site tunnel; they do not route internet traffic through a hub firewall.",
+    "C. Forced tunneling sends traffic all the way back to an on-premises edge over VPN or ExpressRoute. It is a valid but different pattern, used when policy requires on-premises inspection, not the landing zone's own hub-and-spoke routing.",
+    "D. A VNet-to-VNet connection is a gateway-based link between two networks, an older alternative to peering, and is not how UDR-based routing to a hub NVA is described or configured."
+   ]
+  },
+  "std/131": {
+   "question": "Standalone 131",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is Azure Virtual Desktop?",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-desktop/overview"
+   },
+   "explanation": "Every requirement lines up with Azure Virtual Desktop plus its access controls. Temporary staff reach full desktops or published apps through a browser or a thin client, never touching corporate data locally, so the no personal device rule is enforced by design rather than by policy alone. Microsoft's overview highlights autoscale that increases or decreases capacity based on demand, which is the scale-on-demand requirement, and Conditional Access plus Defender for Cloud Apps layer session controls and risk-based access on top of the AVD session itself.",
+   "whyWrong": [
+    "A. Migrating applications to the cloud is a multi-year undertaking, not a response to a near-term hiring need, and does not by itself solve the personal-device restriction.",
+    "B. Split tunneling changes which VPN traffic goes direct versus through the tunnel; it does not stop use of personal devices or scale independently of VPN infrastructure.",
+    "C. Endpoint Manager (Intune) with Conditional Access manages and enrolls devices, which assumes a company-issued or enrollable device. It does not remove the need for a device at all the way a remote session does."
+   ]
+  },
+  "std/133": {
+   "question": "Standalone 133",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Istio-based service mesh add-on for Azure Kubernetes Service",
+    "url": "https://learn.microsoft.com/en-us/azure/aks/istio-about"
+   },
+   "explanation": "Istio is the option that meets all four requirements from one control plane. Microsoft's AKS add-on page describes Istio as enabling “load balancing, service-to-service authentication, and monitoring – with few or no service code changes”, built around “secure service-to-service communication in a cluster with TLS encryption, strong identity-based authentication, and authorization.” That TLS layer is Istio's mesh-wide mutual TLS, turned on with a single policy rather than per-service code changes, and the add-on goes further by having Microsoft handle scaling, configuration and lifecycle of the Istio control plane itself — which is exactly the “minimizes administrative effort” half of the requirement.",
+   "whyWrong": [
+    "A. Flux is a GitOps delivery agent. It reconciles manifests against a cluster; it has no service mesh or mTLS capability.",
+    "B. Envoy is the proxy Istio itself is built on. Using it directly, without Istio's control plane, means hand-configuring TLS and certificate distribution yourself, which is far more administrative effort, not less.",
+    "C. Dapr's building blocks do support mTLS between Dapr-enabled services and a secrets API, but each service must be written against the Dapr SDK or sidecar API to get those benefits. Istio’s mesh-wide policy secures existing services transparently, which is the lower-effort path the requirement asks for."
+   ]
+  },
+  "std/138": {
+   "question": "Standalone 138",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft Purview Data Security Posture Management for AI",
+    "url": "https://learn.microsoft.com/en-us/purview/dspm-for-ai"
+   },
+   "explanation": "Monitoring what users do with third-party generative AI sites depends on Purview seeing the browser traffic in the first place, and that visibility comes from the endpoint. Microsoft's setup guidance for DSPM for AI puts device onboarding first: devices must be onboarded to Microsoft Purview, and the Purview browser extension installed, before any insider risk or DLP policy for third-party AI sites can detect a visit or a paste of sensitive content. Only after that plumbing exists does DSPM for AI have anything to alert or act on.",
+   "whyWrong": [
+    "A. Insider risk management policies for AI site visits are configured after onboarding, and depend on the device signal already being onboarded to fire at all.",
+    "C. There are no first-party data connectors for arbitrary third-party generative AI apps; visibility into them comes from endpoint/browser signals, which is exactly what device onboarding provides.",
+    "D. Licensing users for Copilot governs Microsoft's own AI assistant. It does nothing to observe usage of external generative AI sites."
+   ]
+  },
+  "std/146": {
+   "question": "Standalone 146",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is Azure Lighthouse?",
+    "url": "https://learn.microsoft.com/en-us/azure/lighthouse/overview"
+   },
+   "explanation": "Azure Lighthouse is purpose-built for a managing organization's users to act inside customer tenants under precisely scoped roles, using delegated resource management rather than guest accounts: Group1 can be delegated the Security Operator role directly in each customer tenant, and Group2 can be delegated a role capable of managing that assignment, both without inviting anyone as a B2B guest. Because delegation is defined once as infrastructure (typically an ARM template applied per customer), administrative effort stays low as customers are added.",
+   "whyWrong": [
+    "A. PIM manages eligible-to-active role activation within a single tenant. It has no mechanism for projecting roles into a different customer's tenant.",
+    "B. Multi-user authorization gates specific high-risk operations (like disabling backup protection) behind a second approver. It is not a cross-tenant delegation model.",
+    "C. B2B collaboration is exactly the guest-account pattern the requirement says to minimize; inviting Group1's users as guests in every customer tenant is the opposite of what Lighthouse avoids."
+   ]
+  },
+  "std/157": {
+   "question": "Standalone 157",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Learn about Endpoint data loss prevention",
+    "url": "https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about"
+   },
+   "explanation": "The leak path in this question runs from OneDrive sync to the local device to an external website in the browser, and stopping it needs a policy that can see that browser upload. That is endpoint DLP's Devices location, whose upload-to-a-restricted-cloud-service-domain rule blocks exactly this action regardless of what label the document carries. Sensitivity labels classify and can encrypt the document, but a labeled file a user is authorized to open can still be dragged into a browser and uploaded; DLP is the control that stops the action itself.",
+   "whyWrong": [
+    "A. Information Protection creates and applies the labels. It does not enforce what a user may do with a file they are permitted to open.",
+    "C. Web content filtering blocks sites by content category (gambling, adult content, and so on); it has no concept of a specific document being uploaded.",
+    "D. A generic endpoint security policy covers device hardening, not content-aware upload blocking, which is a DLP capability specifically."
+   ]
+  },
+  "std/173": {
+   "question": "Standalone 173",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Connect to a VM using Bastion - Linux native client (file transfer over SSH)",
+    "url": "https://learn.microsoft.com/en-us/azure/bastion/connect-vm-native-client-linux"
+   },
+   "explanation": "Azure Bastion satisfies all three requirements from one service. Native client sign-in supports Microsoft Entra credentials for the connection, which meets the authentication requirement, and Microsoft documents that \"file transfer over SSH isn't supported using the native client SSH method\" at all, which is exactly the restriction the stem wants, achieved as an inherent property of the connection path rather than a setting to configure. Because Bastion is the connection point and no NSG rule permits direct access to the VMs' public IP addresses, the third requirement is met by the same design.",
+   "whyWrong": [
+    "B. A NAT gateway provides outbound internet access for a subnet; it has no bearing on inbound SSH, authentication, or file transfer.",
+    "C. Just-in-time VM access narrows when a port is open and to whom, but it does not itself authenticate with Entra credentials or block SSH file transfer.",
+    "D. A point-to-site VPN gives the user network-level reachability to the VNet, after which they could still connect directly to a VM's IP with ordinary SSH file transfer available, so it does not meet either the block-file-transfer or the block-public-IP-access requirement."
+   ]
+  },
+  "std/192": {
+   "question": "Standalone 192",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "B",
+   "answer": "C",
+   "source": {
+    "title": "Guidance about how to configure protected accounts (built-in Administrator exemption)",
+    "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/how-to-configure-protected-accounts"
+   },
+   "explanation": "The stem names the built-in Administrator account specifically, and that is what rules out the keyed answer: \"the builtin domain Administrator (S-1-5-<domain>-500) is always exempt from Authentication Policies, even when they are assigned to an Authentication Policy Silo.\" A control the account is documented to ignore cannot be the mechanism that restricts it. Microsoft's own guidance for this exact account instead points to Appendix D's User Rights Assignment approach: modify the Default Domain Controllers GPO to add the domain's Administrator account to Deny access to this computer from the network, Deny log on as a batch job, Deny log on as a service, and Deny log on through Remote Desktop Services. Microsoft states directly what this produces: \"these settings will ensure that the domain's Built-in Administrator account cannot be used to connect to a domain controller [remotely], although the account can log on locally to domain controllers\" - interactive sign-in at the DC console remains available, every remote path does not.",
+   "whyWrong": [
+    "A. The Protected Users group changes which authentication protocols and ticket lifetimes an account may use; it does not restrict which hosts an account can sign in to, and offers no exemption-free path for this specific account either.",
+    "B. Authentication policies are the mechanism the account is expressly excluded from, which is the crux of this correction.",
+    "D. An authentication policy silo is a container for accounts governed by authentication policies. Since the built-in Administrator is exempt from those policies, being placed in a silo built on them changes nothing for this account."
+   ]
+  },
+  "std/200": {
+   "question": "Standalone 200",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Landing zone accelerator - Cloud Adoption Framework",
+    "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/app-platform/app-services/landing-zone-accelerator"
+   },
+   "explanation": "Deploying network security groups, Key Vault and Bastion consistently across four subscriptions by hand is exactly the repeated, error-prone work the landing zone accelerators exist to remove. Microsoft describes them as infrastructure-as-code templates that \"deploy Azure environments based on recommended practices\" and give \"the fastest path to deployment that aligns with Microsoft's recommended practices\", covering the shared platform components as well as the per-application landing zone resources in one consistent, repeatable deployment.",
+   "whyWrong": [
+    "B. The Well-Architected Framework is guidance and a review methodology, not something you deploy; it does not itself provision NSGs, Key Vault or Bastion.",
+    "C. Azure Security Benchmark v3 is a set of security recommendations assessed after resources exist. It is not a deployment mechanism.",
+    "D. Azure Advisor analyzes already-deployed resources and suggests improvements. It has no role in the initial deployment."
+   ]
+  },
+  "std/213": {
+   "question": "Standalone 213",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft cloud security benchmark - Privileged Access (PA-5 emergency access)",
+    "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-privileged-access"
+   },
+   "explanation": "\"Limit the scope of damage… without being locked out\" is almost a direct paraphrase of the benchmark's emergency access control: \"set up emergency access to ensure that you are not accidentally locked out of your critical cloud infrastructure… in an emergency\", using break-glass accounts reserved for exactly the scenario where normal administrative accounts have been compromised or disabled by an attacker. It is the safety net that lets an organization respond to and recover from a ransomware attack on its identity plane without permanently losing the ability to administer the tenant.",
+   "whyWrong": [
+    "A. Privileged access workstations reduce the chance of compromise; they are a prevention control, not the answer to being locked out once an incident is under way.",
+    "C. Device compliance policies gate access by device health. They neither limit blast radius during an active incident nor provide a way back in if administrators are locked out.",
+    "D. Customer Lockbox governs Microsoft support's access to customer data. It has no role in an organization's own ransomware recovery access."
+   ]
+  },
+  "std/216": {
+   "question": "Standalone 216",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Network topology considerations for Microsoft Entra application proxy",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/app-proxy/application-proxy-network-topology"
+   },
+   "explanation": "Application Proxy is built for exactly this: an internal, Kerberos-authenticated web app reached remotely, with no VPN client, full Conditional Access, and access to that app only, nothing else on the network. A connector inside the corporate network makes the outbound connection and performs Kerberos constrained delegation to the app, so remote users on unmanaged personal devices reach the published application through the proxy service without ever gaining a route onto the internal network, and every request passes through Entra ID sign-in first, where Conditional Access applies.",
+   "whyWrong": [
+    "B. Azure Virtual WAN is a networking backbone service for connecting sites and virtual networks; it is not a per-application publishing or access-control layer for remote users.",
+    "C. Microsoft Tunnel is a full VPN gateway. Even configured as a per-app VPN, it still requires deploying a Linux VPN server, ExpressRoute if hosted in the cloud, and a VPN client experience for users, which is more moving parts and a less simplified end-user experience than Application Proxy's connector model.",
+    "D. Web content filtering in Defender for Endpoint controls which sites a managed device may browse to. It has no mechanism for publishing an internal app to remote users at all."
+   ]
+  },
+  "std/221": {
+   "question": "Standalone 221",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Develop secure applications on Azure (SDL implementation/verification, DAST/SAST)",
+    "url": "https://learn.microsoft.com/en-us/azure/security/develop/secure-develop"
+   },
+   "explanation": "Microsoft's own account of DAST folds penetration testing directly into it: perform DAST \"preferably with the assistance of a security professional (a penetration tester or vulnerability assessor)\", and CAF's DevSecOps guidance for the release phase likewise pairs the two, describing automated penetration testing with manual assisted validation as part of dynamic testing in the CI/CD pipeline. Of the four options, penetration testing is the only one that operates the same way DAST does, against a running, deployed instance of the application, which is why it is the one folded into the same pipeline stage.",
+   "whyWrong": [
+    "A. Unit testing runs against code, typically before the application is even built into a deployable artifact, which is earlier and unrelated to DAST’s runtime scope.",
+    "C. Dependency testing (SCA) inspects the declared package graph for known-vulnerable versions. It requires no running application and belongs with SAST-adjacent static checks.",
+    "D. Threat modeling is a design-phase activity, conducted before code exists to run at all, and is the answer to Standalone 19, not this one."
+   ]
+  },
+  "std/241": {
+   "question": "Standalone 241",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Apps & service principals in Microsoft Entra ID",
+    "url": "https://learn.microsoft.com/en-us/entra/identity-platform/app-objects-and-service-principals"
+   },
+   "explanation": "When a user in one tenant is the first to authenticate to (or consent to) an application registered in a different tenant, Microsoft Entra ID creates a local representation of that application in the consuming tenant: \"a Service Principal is automatically created in the tenant when the first user from a tenant authenticates to the app… a representation of the application called a service principal is created in the user's tenant.\" That service principal in contoso.com is what makes App1 addressable for Conditional Access, permission grants and sign-in there, so it is what you'd deliberately pre-create rather than leave to happen on a user's first sign-in.",
+   "whyWrong": [
+    "B. A system-assigned managed identity is tied to a specific Azure resource in your own tenant. It has no relationship to authenticating your users to somebody else's multi-tenant application.",
+    "C. An application object is the global definition of App1, and it lives in fabrikam.com, the tenant where App1 is registered, not in contoso.com.",
+    "D. A user-assigned managed identity is likewise a workload identity for your own resources, not a mechanism for consuming an external multi-tenant app."
+   ]
+  },
+  "std/243": {
+   "question": "Standalone 243",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Adaptive scopes in Microsoft Purview",
+    "url": "https://learn.microsoft.com/en-us/purview/purview-adaptive-scopes"
+   },
+   "explanation": "Adaptive scopes are built for scoping compliance policies by directory attribute rather than by static group membership, which is exactly the requirement here. They run a query against user or group attributes, including custom Exchange Online attributes, on a recurring schedule, and because one policy can carry one or several adaptive scopes at once, several groups that would otherwise need their own policy can be covered by a single communication compliance policy. That directly satisfies both minimize the number of policies and minimize administrative effort, since there is no distribution group to build and maintain either.",
+   "whyWrong": [
+    "A. Information Protection labels classify and protect content; they play no role in scoping which users a communication compliance policy covers.",
+    "B. Defender user tags group entities for filtering and reporting in Defender, an unrelated product surface from Purview communication compliance policy scoping.",
+    "D. Administrative units scope Entra ID administrative delegation. They are not a scoping mechanism communication compliance policies read from."
+   ]
   }
  }
 }
