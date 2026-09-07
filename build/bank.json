@@ -513,7 +513,21 @@
     "a resource group",
     "a management group"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The requirement names four specific resource types, NSGs, Azure Firewall, virtual machines, and Front Door, and nothing broader: InfraSec must be able to configure exactly those, in Sub1. None of Azure's built-in roles line up with that exact set (Network Contributor covers NSGs and some networking but not VMs; Contributor covers everything, which is far more than the four named types), so the tool built for this is a custom RBAC role: \"Azure custom roles\" exist precisely to combine a specific set of permissions when the built-in roles don't fit, and one scoped to Sub1 grants InfraSec exactly the configure rights on these four resource types and nothing else, satisfying least privilege as well.",
+    "whyWrong": [
+     "A. \"A subscription\" describes a scope you assign a role at, not a mechanism for delegating a specific, narrow set of permissions.",
+     "C. A resource group is also only a scope. Placing all of NSGs, Firewall, VMs and Front Door in one resource group and using a built-in role there still over- or under-grants relative to the exact four resource types named.",
+     "D. A management group sits above subscriptions; there is only one subscription here; going up a level widens scope in the wrong direction for a single-subscription requirement."
+    ],
+    "source": {
+     "title": "Azure custom roles",
+     "url": "https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles"
+    }
+   }
   },
   {
    "n": 3,
@@ -753,7 +767,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/learn/modules/introduction-github-advanced-security/2-what-is-github- advanced-security"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Every element of the requirement is what GitHub Advanced Security is built for on code hosted in GitHub Enterprise: it scans code for known vulnerabilities and, specifically, scans for secrets committed in clear text, both triggered automatically at push time as part of the repository's normal workflow, which matches \"scanning must be done at the time the code is pushed.\"",
+    "whyWrong": [
+     "A. Key Vault stores secrets; it does not scan code for vulnerabilities or for secrets accidentally committed to a repository.",
+     "C. Application Insights monitors a running application's performance and telemetry. It has nothing to do with scanning source code before deployment.",
+     "D. Azure DevTest Labs provisions test/dev environments for developers. It is even named elsewhere in the case study for that purpose, not for code scanning."
+    ],
+    "source": {
+     "title": "About secret scanning (GitHub Advanced Security)",
+     "url": "https://learn.microsoft.com/en-us/azure/devops/repos/security/github-advanced-security-secret-scanning"
+    }
+   }
   },
   {
    "n": 4,
@@ -1243,7 +1271,22 @@
     {
      "p": "https://docs.microsoft.com/en-us/learn/modules/protect-data-transit-rest/4-explain-object-encryption-secure- enclaves"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The Contoso developers hold the db_owner role on ClaimsDB, which is exactly the case dynamic data masking does not cover: Microsoft documents that members of the db_owner role (and other privileged database roles) can always see unmasked data regardless of any masking rule, because masking is a display-layer control that highly privileged roles bypass by design. Always Encrypted works differently: the MedicalHistory column is encrypted client-side, and the database engine, including a db_owner querying it directly, only ever sees ciphertext. Only client applications configured with the correct column encryption key can decrypt it, which is what actually keeps the Contoso developers, who need db_owner for their broader testing role, from reading the plaintext values.",
+    "whyWrong": [
+     "A. Transparent Data Encryption protects data at rest on disk; once a query engine or a db_owner reads the data through T-SQL, TDE is fully transparent and the plaintext is visible.",
+     "C. Row-level security restricts which rows a principal can see. The requirement is about hiding a specific column's values, not entire rows, and RLS does not encrypt or mask column contents.",
+     "D. Dynamic data masking is exactly the mechanism that fails here, because db_owner membership bypasses the mask and the requirement explicitly cannot be met against a db_owner.",
+     "E. Data classification labels and reports on sensitive columns; it applies no access restriction or encryption at all."
+    ],
+    "source": {
+     "title": "Dynamic data masking in Azure SQL Database",
+     "url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview"
+    }
+   }
   },
   {
    "n": 6,
@@ -2004,7 +2047,21 @@
     {
      "p": "The security requirement this question wants us to meet is \" The secure host must be provisioned from a custom operating system image. \" https://docs.microsoft.com/en-us/azure/virtual-desktop/set-up-golden-image"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The detail that decides this is \"the secure host must be provisioned from a custom operating system image,\" and that rules out the one option that sounds most obviously like a secure jump host. Azure Bastion is a fully managed PaaS gateway: there is no VM, and therefore no image, for a customer to provision or customize. Azure Virtual Desktop, by contrast, is built around exactly this pattern: administrators \"bring your own image for production workloads,\" building session hosts from a custom, hardened image that they control. The case study's own environment already includes an Azure Virtual Desktop host pool with personally assigned session hosts, which is the secure, custom-image administration host the requirement describes.",
+    "whyWrong": [
+     "A. Azure Bastion provides browser-based RDP/SSH without a public IP, but it is a managed service with no VM or image of its own, so it cannot satisfy \"provisioned from a custom operating system image.\"",
+     "B. A network security group filters traffic; it is not a host at all, secure or otherwise, and provisions nothing from an image.",
+     "C. Just-in-time VM access narrows when a management port is open. It doesn't provide a secure administrative host or involve a custom image."
+    ],
+    "source": {
+     "title": "What is Azure Virtual Desktop?",
+     "url": "https://learn.microsoft.com/en-us/azure/virtual-desktop/overview"
+    }
+   }
   },
   {
    "n": 9,
@@ -2244,7 +2301,20 @@
     {
      "p": "https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/switch-to-mde-phase-3? view=o365-worldwide"
     }
-   ]
+   ],
+   "review": {
+    "status": "OUTDATED",
+    "confidence": "MEDIUM",
+    "explanation": "The case study names its own tool directly, \"Qualys is used as the standard vulnerability assessment tool for servers,\" which is why enabling the Qualys scanner in Defender for Cloud was the correct way, at the time this question was written, to resolve the \"machines should have a vulnerability assessment solution\" recommendation and bring the twenty unonboarded VMs into compliance. Since then, Defender for Cloud's Qualys-based scanning integration has been retired and replaced by Microsoft Defender Vulnerability Management as the built-in scanner, so a design written today would specify enabling MDVM (delivered through the Defender for Servers plan) rather than Qualys specifically. The key is left as the source has it, because Defender for Endpoint onboarding (A) still stands as the other half of a correct pair; only the Qualys-specific half of the pair has been overtaken by the product's own evolution.",
+    "whyWrong": [
+     "B. Azure Arc onboards non-Azure (on-premises or multicloud) machines into Azure. These twenty VMs are already Azure resources; Arc has no role in bringing them into Defender for Cloud.",
+     "C. A device compliance policy in Microsoft Endpoint Manager (Intune) evaluates mobile and Windows client devices, not server VM posture in Defender for Cloud."
+    ],
+    "source": {
+     "title": "Enable vulnerability scanning with Microsoft Defender Vulnerability Management (Qualys retirement)",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/deploy-vulnerability-assessment-defender-vulnerability-management"
+    }
+   }
   },
   {
    "n": 10,
@@ -3413,7 +3483,20 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/active-directory/app-proxy/application-proxy-configure-custom- domain"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Litware plans to publish internal applications through Application Proxy for SSO, and Microsoft documents exactly four supported single sign-on methods for it: \"SAML single sign-on…, password-based sign-on…, Kerberos Constrained Delegation for integrated Windows authentication, and header-based sign-on.\" Of the four options given, only SAML and Kerberos appear on that list, so an application published through Application Proxy has to support one of those (or password-based or header-based, neither of which is offered here) to get single sign-on at all.",
+    "whyWrong": [
+     "B. NTLMv2 is not one of Application Proxy's documented SSO mechanisms; KCD, not raw NTLM, is how it achieves integrated Windows authentication SSO.",
+     "C. Certificate-based authentication is not among Application Proxy's supported SSO methods either."
+    ],
+    "source": {
+     "title": "Understand single sign-on with an on-premises app using Application Proxy",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/app-proxy/how-to-configure-sso"
+    }
+   }
   },
   {
    "n": 15,
@@ -3863,7 +3946,7 @@
     "Microsoft Defender for Endpoint",
     "access reviews in Azure AD"
    ],
-   "a": "B C",
+   "a": "A B",
    "e": [
     {
      "p": "https://docs.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-sess ion#conditional-access-application-control"
@@ -3871,7 +3954,24 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/active-directory/app-proxy/application-proxy-integrate-with- microsoft-cloud-application-security"
     }
-   ]
+   ],
+   "srcA": "B C",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe requirement is to \"monitor and control access to Microsoft SharePoint Online and Exchange Online data in real time,\" which is precisely what a Defender for Cloud Apps session policy delivers for these two SaaS workloads. But a session policy cannot act alone: Microsoft states directly that \"in order for your session policy to work, you must also have a Microsoft Entra ID Conditional Access policy\" routing the session through Defender for Cloud Apps via Conditional Access App Control. Conditional Access is therefore the other required half, not Microsoft Defender for Cloud, which is an Azure resource security posture and workload-protection service with no visibility into SharePoint Online or Exchange Online content or sessions at all.",
+    "whyWrong": [
+     "C. Microsoft Defender for Cloud assesses the configuration and threat posture of Azure resources (VMs, storage, databases, and so on). It has no connection to SharePoint Online or Exchange Online data.",
+     "D. Defender for Endpoint protects devices, not SaaS data access.",
+     "E. Access reviews in Entra ID periodically re-certify who holds an assignment. They are a governance control, not a real-time session monitoring and control mechanism."
+    ],
+    "source": {
+     "title": "Create session policies in Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/session-policy-aad"
+    },
+    "corrected": true,
+    "originalAnswer": "B C"
+   }
   },
   {
    "n": 17,
@@ -4320,7 +4420,7 @@
     "Microsoft Defender for Cloud",
     "an ExpressRoute gateway"
    ],
-   "a": "D",
+   "a": "C",
    "e": [
     {
      "p": "One of the stipulations is to meet the business requirements of minimizing costs. ExpressRoute is expensive."
@@ -4334,7 +4434,24 @@
     {
      "p": "2) \" Ensure that the Azure virtual machines in each landing zone communicate with Azure App Service web apps in the same zone over the Microsoft backbone network, rather than over public endpoints \""
     }
-   ]
+   ],
+   "srcA": "D",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe landing zone requirements state plainly, \"provide a secure score scoped to the landing zone,\" and secure score is a Defender for Cloud concept: Microsoft's own description of it is scored and tracked \"per subscription,\" which lines up exactly with the case study's own architecture, where \"each landing zone will be created in a dedicated subscription.\" Enabling Microsoft Defender for Cloud on each landing zone's dedicated subscription is what produces a secure score scoped to that landing zone specifically, which is the one requirement in this bullet list that names \"secure score\" outright.",
+    "whyWrong": [
+     "A. DDoS Protection Standard defends against volumetric network attacks. It contributes nothing toward a secure score scoped to the landing zone and doesn't address any requirement stated for this specific question.",
+     "B. A private DNS zone supports name resolution for private endpoints, which serves the separate \"communicate over the Microsoft backbone rather than public endpoints\" requirement, not the secure-score requirement this question is built around.",
+     "D. An ExpressRoute gateway is a hub-level hybrid connectivity resource. The case study's own architecture puts hybrid and internet connectivity in the single dedicated hub subscription, not duplicated into each landing zone, and a gateway does nothing to produce a secure score at all."
+    ],
+    "source": {
+     "title": "Secure score in Microsoft Defender for Cloud (security controls table, per-subscription)",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
+    },
+    "corrected": true,
+    "originalAnswer": "D"
+   }
   },
   {
    "n": 19,
@@ -4841,7 +4958,7 @@
     "A new Azure Active Directory (Azure AD) Conditional Access policy is enforced.",
     "The client access tokens are refreshed."
    ],
-   "a": "C D",
+   "a": "B D",
    "e": [
     {
      "p": "https://www.microsoft.com/security/blog/2022/02/17/4-best-practices-to-implement-a-comprehensive-zero- trust-security-approach/"
@@ -4849,7 +4966,23 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/active-directory/develop/refresh-tokens"
     }
-   ]
+   ],
+   "srcA": "C D",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe documented flow makes clear which product actually issues the compliance verdict: \"Microsoft Defender for Endpoint detects threat activity on a device and classifies it as high-risk. Intune receives the risk signal and automatically marks the device as noncompliant… when the risk is removed… the device returns to a compliant state and access to applications is granted.\" Defender for Endpoint supplies the risk signal; Intune is the one that reports compliant or noncompliant, which Conditional Access then reads. Getting back in also needs a fresh evaluation of that signal rather than reuse of a session issued while the device was still blocked, which is what refreshing the client's access tokens forces: a new token request re-evaluates Conditional Access against the device's current, now-compliant state. No new or different Conditional Access policy is required anywhere in this flow; the existing policy simply re-evaluates once it sees updated inputs.",
+    "whyWrong": [
+     "A. Defender for Endpoint reports a device risk level, not a compliance verdict. Compliant/noncompliant is Intune's determination, built from that risk signal together with the rest of the compliance policy.",
+     "C. Restoring access does not require enforcing a new Conditional Access policy. The policy that suspended access is still in force and simply needs to see the device's updated compliance state."
+    ],
+    "source": {
+     "title": "Enable Conditional Access to better protect users, devices, and data (Defender for Endpoint)",
+     "url": "https://learn.microsoft.com/en-us/defender-endpoint/conditional-access"
+    },
+    "corrected": true,
+    "originalAnswer": "C D"
+   }
   },
   {
    "n": 25,
@@ -5774,7 +5907,25 @@
     "Traffic to https://www.adatum.com:8433 will be allowed from compliant devices only.",
     "Traffic to https://www.fabrikam.com will be blocked from noncompliant devices only."
    ],
-   "a": "A E"
+   "a": "A C",
+   "srcA": "A E",
+   "review": {
+    "status": "CORRECTED",
+    "confidence": "MEDIUM",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nBoth of the test URLs turn out to sit outside what this deployment actually controls, which is the point of the question. fabrikam.com is never named in any rule: WCFPolicy1's only rule targets *.adatum.com, so fabrikam.com falls through to the baseline profile with no compliance gate attached to it at all, and is allowed from every device. adatum.com:8433 looks like it should be caught by the same WCFPolicy1 rule, but Microsoft documents that the platform's default web-traffic handling \"assumes standard ports for HTTP/S traffic (ports 80 and 443)\"; reaching a non-standard port such as 8433 requires a Custom Acquire configuration that this deployment never sets up. Traffic on that port is therefore never pulled into the Internet Access tunnel in the first place, never reaches WCFPolicy1's rule, and never passes through the Conditional Access check tied to Profile1 — so it, too, goes out unfiltered and is allowed from every device, compliant or not.",
+    "whyWrong": [
+     "B. adatum.com:8433 is not blocked; because it never enters the GSA tunnel at all on this non-standard port, it is simply unaffected by the deployment, which behaves as allowed rather than blocked.",
+     "D. fabrikam.com traffic is not gated by device compliance. No rule in Profile1 references fabrikam.com, and the CAPolicy1 compliance check only applies to sessions that Profile1 is invoked for.",
+     "E. The same reasoning that rules out D applies here: adatum.com:8433 traffic never reaches Profile1's rule or the Conditional Access check behind it, because the standard-ports assumption keeps it out of the tunnel altogether.",
+     "F. This restates the same wrong premise as D and E for fabrikam.com in the opposite direction; fabrikam.com is not gated on compliance in either direction."
+    ],
+    "source": {
+     "title": "Global Secure Access traffic forwarding profiles (default port assumptions)",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-traffic-forwarding"
+    },
+    "corrected": true,
+    "originalAnswer": "A E"
+   }
   },
   {
    "n": 45,
@@ -16253,7 +16404,21 @@
     "business resilience",
     "network isolation"
    ],
-   "a": "A"
+   "a": "A",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The phrase in the stem tracks Microsoft's own description of the benchmark almost word for word: \"The Azure Security Benchmark focuses on cloud-centric control areas.\" Those control areas map directly onto the resource types named in the question: Endpoint Security covers endpoint detection and response, and Data Protection covers protecting data at rest and in transit across storage, databases and files. Security baselines built on this benchmark are exactly the recommendation for an operational model organized around those resource-centric protections.",
+    "whyWrong": [
+     "B. Modern access control is an identity-centric Zero Trust concept (explicit verification, least privilege), not a resource-type-centric control area for endpoints, databases, files and storage accounts specifically.",
+     "C. Business resilience concerns continuity and recovery planning at the organizational level, not per-resource-type security controls.",
+     "D. Network isolation is one control among many (it would sit inside the benchmark's Network Security domain), not the umbrella that covers endpoints, databases, files and storage accounts together."
+    ],
+    "source": {
+     "title": "Overview of the Azure Security Benchmark v3 (\"cloud-centric control areas\")",
+     "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/overview-v3"
+    }
+   }
   },
   {
    "n": 271,
