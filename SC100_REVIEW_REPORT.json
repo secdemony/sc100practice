@@ -4,13 +4,13 @@
  "totals": {
   "questions": 310,
   "scorable": 222,
-  "examined": 52,
-  "notReviewed": 258,
-  "not_reviewed": 0,
-  "verified": 34,
+  "examined": 78,
+  "notReviewed": 232,
   "ambiguous": 2,
-  "corrected": 7,
-  "manual_review": 4,
+  "corrected": 12,
+  "verified": 54,
+  "not_reviewed": 0,
+  "manual_review": 5,
   "outdated": 5
  },
  "findings": {
@@ -741,6 +741,396 @@
     "A. An authenticated scan reaches unmanaged devices; these devices are already onboarded.",
     "B. Microsoft Secure Score for Devices is an aggregate posture score, not a per-device CIS compliance result.",
     "C. Attack surface reduction rules harden the device against specific attack techniques; they do not measure benchmark drift."
+   ]
+  },
+  "std/64": {
+   "question": "Standalone 64",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Ingest syslog and CEF messages to Microsoft Sentinel with the Azure Monitor Agent",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/connect-cef-syslog-ama"
+   },
+   "explanation": "There is no direct path from an arbitrary firewall into Sentinel, so you put a collector in between. Microsoft's documented pattern is a Linux machine running a syslog daemon (rsyslog or syslog-ng) that the appliances forward CEF messages to; the Azure Monitor Agent on that machine parses them and sends them to the workspace as CommonSecurityLog. The absence of a built-in connector for this particular firewall is exactly why the generic CEF-over-Syslog path exists.",
+   "whyWrong": [
+    "A. A logic app automates a response to an incident. It is not a log ingestion path for on-premises appliances.",
+    "C. The on-premises data gateway bridges Power BI, Logic Apps and Power Automate to on-premises data sources. It does not collect syslog.",
+    "D. Data Factory moves data for analytics pipelines, not security event streams into a SIEM."
+   ]
+  },
+  "std/127": {
+   "question": "Standalone 127",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Visualize and monitor your data by using workbooks in Microsoft Sentinel",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/monitor-your-data"
+   },
+   "explanation": "Workbooks are Sentinel's visualisation layer: interactive reports and dashboards built from workspace data, with a library of built-in templates and full support for custom views. The words in the stem, custom views and a dashboard for analysing events, map onto workbooks and nothing else here.",
+   "whyWrong": [
+    "A. Playbooks automate a response. Compare Standalone 40, where the requirement is action rather than analysis.",
+    "C. Notebooks host Jupyter-based hunting and data science investigations, not an operational dashboard.",
+    "D. Threat intelligence brings in indicators of compromise; it is a data source, not a view."
+   ]
+  },
+  "std/165": {
+   "question": "Standalone 165",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Log Analytics workspace data export in Azure Monitor",
+    "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-data-export"
+   },
+   "explanation": "The direction of travel decides this. Data connectors bring data into Sentinel; getting data out to a third-party SIEM goes the other way, and the supported mechanism is a Log Analytics workspace data export rule with an event hub as the destination. Splunk then reads from the event hub using the Splunk Add-on for Microsoft Cloud Services. Event Hubs is the standard hand-off point between Azure Monitor and any external consumer.",
+   "whyWrong": [
+    "B. Data Factory is an ETL and data movement service for analytics workloads, not a streaming egress for security events.",
+    "C. A workbook renders data inside Sentinel. It exports nothing.",
+    "D. A data connector is inbound. This is the trap in the question: it is the right noun pointing the wrong way."
+   ]
+  },
+  "std/170": {
+   "question": "Standalone 170",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "What is Microsoft Sentinel?",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/overview"
+   },
+   "explanation": "Read the four requirements together: centrally manage incidents, analyse logs, audit activity, and hunt, all across every deployed service. That is a SIEM, and Sentinel is the only option that spans both the Azure subscription and the Microsoft 365 estate. The cost requirement is about not standing up several overlapping tools, not about picking the cheapest product in the list.",
+   "whyWrong": [
+    "A. Microsoft 365 Defender (now Defender XDR) correlates across the Microsoft 365 workloads, but does not cover the Azure subscription resources.",
+    "B. Defender for Cloud is CSPM and cloud workload protection for Azure resources; it is not where you audit Microsoft 365 activity.",
+    "C. Defender for Cloud Apps covers SaaS usage only."
+   ]
+  },
+  "std/183": {
+   "question": "Standalone 183",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "View MITRE ATT&CK coverage in Microsoft Sentinel",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/mitre-coverage"
+   },
+   "explanation": "Sentinel's MITRE ATT&CK page presents the framework as a matrix and shades each technique by how many active detections you have for it, which makes the gaps the visible thing on the screen. That is what the question is asking for: not a list of your rules, but the techniques your rules do not cover. Because the matrix is refreshed as Sentinel tracks new framework versions, it also keeps answering the question as ATT&CK evolves.",
+   "whyWrong": [
+    "A. The Health Summary dashboard reports connector and rule health, not detection coverage.",
+    "B. There is no Sentinel feature by the name MITRE analytics explorer.",
+    "D. The Analytics blade lists the rules you have. It tells you what is covered, not what is missing."
+   ]
+  },
+  "std/290": {
+   "question": "Standalone 290",
+   "status": "MANUAL_REVIEW",
+   "confidence": "LOW",
+   "source": {
+    "title": "Threat intelligence report in Microsoft Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/threat-intelligence-reports"
+   },
+   "explanation": "Flagged: half of this key is well supported and half is not. Threat intelligence reports in Defender for Cloud (option B) are exactly what the stem describes. Microsoft's page says they help you learn more about the threat that triggered an alert and give incident response teams information about the detected threat, including how to remediate it. No Microsoft source, however, establishes that Sentinel threat intelligence workbooks (option D) supply remediation guidance for an alert; a threat intelligence workbook visualises indicators of compromise. Option A, workload protections in Defender for Cloud, arguably has a better claim, since the alert detail there carries remediation steps. Because the question says each correct answer is a complete solution, and only one of the keyed pair can be defended from documentation, the key is left as the source has it and the item is flagged rather than guessed at."
+  },
+  "std/108": {
+   "question": "Standalone 108",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Get started using Attack simulation training",
+    "url": "https://learn.microsoft.com/en-us/defender-office-365/attack-simulation-training-get-started"
+   },
+   "explanation": "Note the verb: identify which users are susceptible, not block the phishing. Attack simulation training in Defender for Office 365 runs benign simulated phishing campaigns against your own mailboxes and reports who clicked, who entered credentials and who reported the message, which is how you measure susceptibility and then assign training to the people who need it.",
+   "whyWrong": [
+    "A. Spoof intelligence tells you which external senders are spoofing your domain. That is about the senders, not about your users.",
+    "B. Attack path analysis models exploitable paths through Azure resources; it has nothing to do with mailboxes.",
+    "D. Insider risk management scores risky behaviour by your own users, which is a different risk from being taken in by an attacker."
+   ]
+  },
+  "std/115": {
+   "question": "Standalone 115",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is entitlement management?",
+    "url": "https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-overview"
+   },
+   "explanation": "All three requirements are entitlement management features, and entitlement management is part of Microsoft Entra ID Governance. An access package for App1 gives users a self-service request through the My Access portal; the request policy can attach requestor questions, which is the extra information demanded at request time; and an access review on the assignments, run every three months with the manager as reviewer, is the recurring attestation.",
+   "whyWrong": [
+    "A. Application Proxy publishes on-premises web applications. App1 is already SaaS and already integrated.",
+    "B. Connected apps in Defender for Cloud Apps give you visibility and control over a SaaS app, not a request and approval lifecycle.",
+    "D. Access policies in Defender for Cloud Apps allow or block a session; they do not govern who is entitled to the app."
+   ]
+  },
+  "std/211": {
+   "question": "Standalone 211",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "D",
+   "source": {
+    "title": "Delegation and roles in entitlement management",
+    "url": "https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-delegate"
+   },
+   "explanation": "The second requirement is what decides this, and it is easy to read past. Keeping an access package out of My Access is the Hidden setting: set to Yes, the access package is not listed in the user's My Access portal. Microsoft's delegation table maps both requirements onto roles precisely. Directly assign and directly remove an identity are permitted to the Access package assignment manager, but Hide an access package is not; that row is granted only to the Identity Governance Administrator, the Catalog owner and the Access package manager. So the assignment manager satisfies the first bullet and fails the second. The least privileged role that satisfies both is Access package manager, which Microsoft describes as able to create new access packages from existing resources in the catalog, and edit and manage all existing access packages within the catalog.",
+   "whyWrong": [
+    "A. Identity Governance Administrator can do all of this, but tenant-wide across every catalog, which is more privilege than a department team leader needs.",
+    "B. Catalog owner also covers both actions, but adds the ability to add and remove resources and to delegate the catalog itself. Still more than required.",
+    "C. Access package assignment manager is the tempting least-privilege answer and covers the first bullet only. It cannot change the Hidden setting."
+   ]
+  },
+  "std/223": {
+   "question": "Standalone 223",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "B",
+   "answer": "A",
+   "source": {
+    "title": "Get started with content explorer",
+    "url": "https://learn.microsoft.com/en-us/purview/data-classification-content-explorer"
+   },
+   "explanation": "The requirement is to identify documents that contain sensitive information, and content explorer is the tool that answers it. Microsoft describes it as showing a current snapshot of the items that have a sensitivity label, a retention label, or are classified as a sensitive information type in your organization, and you can drill into Exchange, SharePoint, OneDrive and Teams locations, which is the exact scope in the stem. DLP is a preventive control: it acts when someone tries to share or move content that matches a sensitive information type. It protects, it does not inventory. Read the verb in these questions. Identify or discover points at content explorer and the data classification pages; prevent, block or restrict points at DLP.",
+   "whyWrong": [
+    "B. DLP enforces policy on sensitive content in motion. It is the answer when the requirement is to stop something, as in Standalone 224.",
+    "C. eDiscovery searches and preserves content for a legal matter or investigation. It is case-driven, not a standing inventory of sensitive data.",
+    "D. Information governance (now data lifecycle management) is about retention and disposal, not classification discovery."
+   ]
+  },
+  "std/224": {
+   "question": "Standalone 224",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Learn about Endpoint data loss prevention",
+    "url": "https://learn.microsoft.com/en-us/purview/endpoint-dlp-learn-about"
+   },
+   "explanation": "The action to be blocked, uploading a file to a website, happens in a browser on the device, so the policy has to reach the device. That is the Devices location, which is endpoint DLP. Its Upload to a restricted cloud service domain or access from an unallowed browser activity works from a list of service domains: allow the Microsoft OneDrive domains and block the rest, and you get exactly the pair of requirements in the stem. Applying the policy to the SharePoint location would govern the file while it sits in SharePoint, which is not where the leak happens.",
+   "whyWrong": [
+    "B. The OneDrive accounts location governs content in OneDrive itself; it does not control uploads to third-party sites.",
+    "C. The SharePoint sites location governs sharing from SharePoint. Once the file is on the endpoint, that policy no longer applies.",
+    "D. Defender for Cloud Apps can block uploads to unsanctioned cloud apps through a session policy, but the question asks which DLP location to use, and browser upload control is the Devices location."
+   ]
+  },
+  "std/236": {
+   "question": "Standalone 236",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "D",
+   "source": {
+    "title": "Use Intune to remediate vulnerabilities found by Microsoft Defender for Endpoint",
+    "url": "https://learn.microsoft.com/en-us/intune/device-security/microsoft-defender/remediate-vulnerabilities"
+   },
+   "explanation": "Security tasks is the node that carries Defender Vulnerability Management findings into Intune. Microsoft's instruction is literally the question: Sign in to the Microsoft Intune admin center, select Endpoint security > Security tasks, choose a security task to view its details. A security task states the type of vulnerability, priority, status and steps for remediation, and one of the two remediation types is Configuration, for example configuring a setting in the Microsoft Defender Antivirus profile. That is the recommended configuration change the stem asks about, and the Intune admin accepts or rejects it there.",
+   "whyWrong": [
+    "A. Device compliance evaluates devices against your own compliance policy and drives Conditional Access. It does not surface vulnerability findings.",
+    "B. Endpoint detection and response policy onboards devices to Defender for Endpoint and tunes EDR. It is a configuration you author, not a list of recommendations you review.",
+    "C. Attack surface reduction is the node where you author ASR, controlled folder access and exploit protection policies. Hardening settings you deploy, not recommendations coming back from Defender Vulnerability Management."
+   ]
+  },
+  "std/42": {
+   "question": "Standalone 42",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "GitOps with Flux v2 in Azure Arc-enabled Kubernetes and AKS",
+    "url": "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2"
+   },
+   "explanation": "Declarative configuration held in a repository and continuously reconciled onto clusters is the definition of GitOps, and in Azure the GitOps agent is Flux v2, deployed as a cluster extension on AKS and Arc-enabled Kubernetes. The Flux controllers pull the manifests from the repository and keep the cluster matching them, which is what keeps twenty clusters consistent without anyone applying anything by hand.",
+   "whyWrong": [
+    "A. Gatekeeper (used by Azure Policy for Kubernetes) admits or rejects resources against policy. It enforces rules about configuration; it does not deliver the configuration.",
+    "B and C. Dependency Tracker and Dependency are not the mechanism here; dependency scanning is about vulnerable packages in code."
+   ]
+  },
+  "std/51": {
+   "question": "Standalone 51",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Always Encrypted with secure enclaves",
+    "url": "https://learn.microsoft.com/en-us/sql/relational-databases/security/encryption/always-encrypted-enclaves"
+   },
+   "explanation": "Work through the requirements and only one option survives. Pattern matching on encrypted columns server-side needs Always Encrypted with secure enclaves, which rules out plain Always Encrypted. Of the two enclave technologies, Intel SGX is the hardware-based one and is the type used by Azure SQL Database with attestation through Microsoft Azure Attestation; VBS enclaves are virtualization-based, that is, software. Hardware-based encryption plus Azure Attestation therefore points at SGX. The enclave is also what keeps the DBA and privileged malware out: the plaintext only ever exists inside it.",
+   "whyWrong": [
+    "A. SQL Server on Azure VMs with VBS enclaves is IaaS and the enclave is software-based, failing the hardware requirement.",
+    "B. Azure SQL Database with VBS enclaves meets most requirements but again is not hardware-based.",
+    "C. Azure SQL Managed Instance with Always Encrypted but no enclave cannot do the server-side pattern matching."
+   ]
+  },
+  "std/72": {
+   "question": "Standalone 72",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Entity tags in Microsoft Defender for Identity",
+    "url": "https://learn.microsoft.com/en-us/defender-for-identity/entity-tags"
+   },
+   "explanation": "Both halves of the requirement are one Defender for Identity feature. The Sensitive entity tag supports users, devices and groups, and Microsoft notes that some detections, like sensitive group changes, rely on this tag. Tag Group1 as sensitive and any modification to it raises a Defender for Identity alert, which reaches Sentinel through the connector with no rule to write. That is what minimises administrative effort. Worth remembering: Defender for Identity marks a fixed list of groups (Domain Admins, Enterprise Admins, Backup Operators and so on) sensitive automatically, but Exchange Organization Management is not on it, so this one has to be tagged by hand.",
+   "whyWrong": [
+    "A. ID Protection scores risky sign-ins and users. It says nothing about group membership changes in AD DS.",
+    "C. Defender for Office 365 protects mail and collaboration content, not directory objects.",
+    "D. PIM governs eligibility and activation for Entra roles and Azure resources. Group1 is an on-premises AD DS group in an Exchange role group, which is outside its scope."
+   ]
+  },
+  "std/123": {
+   "question": "Standalone 123",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Dynamic data masking in Azure SQL Database",
+    "url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview"
+   },
+   "explanation": "Minimise patching effort and minimise cost together push you to the most managed, least expensive option that still supports the feature, and dynamic data masking is available in Azure SQL Database. Being a PaaS database, Microsoft handles the patching entirely, and a single database is cheaper than Managed Instance or a VM.",
+   "whyWrong": [
+    "A. Managed Instance also removes patching but costs considerably more; it is the answer when you need instance-scoped features such as SQL Agent or cross-database queries.",
+    "B. Synapse dedicated SQL pools are for data warehousing, and are neither the cheapest nor the natural landing place for a migrated OLTP database.",
+    "D. SQL Server on Azure VMs leaves the operating system and SQL patching with you, which is exactly what the stem asks you to avoid."
+   ]
+  },
+  "std/125": {
+   "question": "Standalone 125",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Develop secure applications on Azure",
+    "url": "https://learn.microsoft.com/en-us/azure/security/develop/secure-develop"
+   },
+   "explanation": "The vulnerability list in the stem is copied almost word for word from Microsoft's definition of dynamic application security testing: DAST tools analyse programs while they are executing, to find security vulnerabilities such as memory corruption, insecure server configuration, cross-site scripting, user privilege issues, SQL injection, and other critical security concerns. Insecure server configuration in particular can only be seen at runtime, which is what settles it against SAST.",
+   "whyWrong": [
+    "A. IAST instruments the running application from the inside. It is a real technique, but Microsoft frames this exact vulnerability list as the DAST case.",
+    "B. SAST analyses source code or compiled code when it is not executing, so it cannot see how the deployed server is configured.",
+    "C. RASP defends the application at runtime; it is a protective control, not a test."
+   ]
+  },
+  "std/136": {
+   "question": "Standalone 136",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Authorize access to blobs using Microsoft Entra ID",
+    "url": "https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory"
+   },
+   "explanation": "Blob containers and Data Lake Storage Gen2 are the same service (Gen2 is Blob storage with a hierarchical namespace), and both authorize requests with an OAuth 2.0 token issued by Microsoft Entra ID, so Entra security applies directly to data operations. Disk Storage has no such data-plane identity model at all; a managed disk is reached through the VM. Worth knowing where the line has moved: Azure Files does now support identity-based access, but it works differently. Azure Files uses the Kerberos protocol to authenticate with an identity source, whether on-premises AD DS, Entra Domain Services or Entra Kerberos, rather than presenting an Entra OAuth token the way blob does. The examinable pair is still blob and Data Lake Storage Gen2; treat Azure Files as the case to think twice about.",
+   "whyWrong": [
+    "A. Azure Disk Storage is attached to a virtual machine and has no identity-based data-plane authentication.",
+    "C. Azure Files supports identity-based authentication over SMB, but through Kerberos tickets from a domain source, not direct Entra ID token authorization."
+   ]
+  },
+  "std/143": {
+   "question": "Standalone 143",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Entity tags in Microsoft Defender for Identity",
+    "url": "https://learn.microsoft.com/en-us/defender-for-identity/entity-tags"
+   },
+   "explanation": "Microsoft's description of the honeytoken tag is the requirement restated: tag honeytoken accounts to set traps for malicious actors, these accounts are usually dormant, and any sign-in from a honeytoken account triggers an alert. Because the accounts have no legitimate use, any authentication at all is suspicious, which makes them a very low false-positive detection. Contrast Standalone 60, which asks for fake credentials planted on client computers: that is deception in Defender for Endpoint, and a honeytoken plants nothing on an endpoint.",
+   "whyWrong": [
+    "A. Standalone sensors are a deployment option for the sensor software, not a detection feature.",
+    "C. Sensitivity labels are a Purview classification control for content.",
+    "D. Custom user tags let you group entities for filtering and reporting. Only the Honeytoken tag creates the alerting trap."
+   ]
+  },
+  "std/149": {
+   "question": "Standalone 149",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Rapidly modernize your security infrastructure (privileged access RaMP)",
+    "url": "https://learn.microsoft.com/en-us/security/privileged-access-workstations/security-rapid-modernization-plan"
+   },
+   "explanation": "Microsoft opens the RaMP article with its purpose: this rapid modernization plan will help you quickly adopt Microsoft's recommended privileged access strategy. It is a prioritised roadmap of initiatives, separate privileged accounts, turn on PIM, require phishing-resistant MFA for admins, block legacy authentication, deploy privileged access workstations, and it is the Zero Trust guidance for privileged identity specifically.",
+   "whyWrong": [
+    "A. ESAE, the red forest, is the legacy on-premises hardened forest model. Microsoft has retired it in favour of the modern privileged access strategy.",
+    "B. The Security Development Lifecycle governs how software is built.",
+    "D. Operational Security Assurance is about how Microsoft runs its own services, not a customer design framework for privileged identity."
+   ]
+  },
+  "std/166": {
+   "question": "Standalone 166",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Malware scanning in Microsoft Defender for Storage",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/introduction-malware-scanning"
+   },
+   "explanation": "Malware scanning in Defender for Storage is triggered on upload: a blob written to a container is scanned in near real time and the result is surfaced as a scan result and an alert, which is precisely detect threats in files after the files are uploaded. It is an add-on capability of the Defender for Storage plan, enabled per storage account.",
+   "whyWrong": [
+    "A and B. Both Defender for Containers capabilities protect Kubernetes and container images, not a blob container. The word container in the stem is storage terminology and this is the trap.",
+    "D. Sensitive data threat detection tells you the blob holds sensitive data and raises the severity of alerts about it. It is about the sensitivity of the content, not about the file being malicious."
+   ]
+  },
+  "std/181": {
+   "question": "Standalone 181",
+   "status": "CORRECTED",
+   "confidence": "MEDIUM",
+   "originalAnswer": "B C",
+   "answer": "C E",
+   "source": {
+    "title": "Azure Monitor Logs reference: CDBDataPlaneRequests",
+    "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/cdbdataplanerequests"
+   },
+   "explanation": "Auditing who touched the data needs two things: every request must be attributable to an identity, and every request must be recorded. Disabling local authentication is the first half. While the account keys work, any caller holding a key is indistinguishable from any other, so no log can name a user. Sending the Cosmos DB diagnostic logs to a Log Analytics workspace is the second half. The DataPlaneRequests category captures every data plane operation for the Cosmos DB account, and its table carries AadPrincipalId, the AAD Principal ID of the caller issuing the data plane request, alongside the operation, the container and the client IP. Entra sign-in logs were the keyed choice but they record token issuance, not the individual reads and writes against a container, so they cannot show which users accessed the data.",
+   "whyWrong": [
+    "A. Defender for Cosmos DB detects anomalous and potentially malicious access. It is threat detection, not an audit trail of all access.",
+    "B. Entra sign-in logs show authentication events, not per-request data plane activity against the account.",
+    "D. Defender for Identity monitors Active Directory and identity infrastructure. It has no view of Cosmos DB."
+   ]
+  },
+  "std/234": {
+   "question": "Standalone 234",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is Conditional Access in Microsoft Entra ID?",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview"
+   },
+   "explanation": "Zero Trust has three principles, and each maps onto a control: verify explicitly, use least privilege access, assume breach. Conditional Access is the enforcement point for verify explicitly. It is the policy engine that takes the signals gathered at sign-in, user, device, location, application, risk, and decides whether to grant access, block it, or require another factor. In the MCRA, Conditional Access sits in front of resources as exactly that gate.",
+   "whyWrong": [
+    "A. Defender for Cloud gives you posture and workload protection. It is an assume-breach control rather than the verification gate.",
+    "C. Identity Governance handles entitlements and reviews, which serves least privilege, not explicit verification at access time.",
+    "D. Defender for Identity detects attacks against identity infrastructure. Detection, not verification."
+   ]
+  },
+  "std/249": {
+   "question": "Standalone 249",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Web Application Firewall DRS rule groups and rules (Azure Front Door)",
+    "url": "https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-drs"
+   },
+   "explanation": "Three requirements, and only one service satisfies all three. Front Door is a global service that routes each user to the nearest healthy backend, which Application Gateway, being regional, cannot do for apps spread across regions. The WAF policy attached to Front Door uses the Default Rule Set, which is based on the OWASP Core Rule Set. And Front Door issues and renews Microsoft-managed TLS certificates for custom domains, which is where minimise administrative effort is decided.",
+   "whyWrong": [
+    "A and C. Azure Firewall, in either tier, is a network firewall. Even Premium with IDPS is not an OWASP CRS web application firewall.",
+    "D. Application Gateway with WAF does the OWASP inspection well, but it is regional, so meeting the routing requirement would mean one per region plus something in front of them. That is more administrative effort, not less."
+   ]
+  },
+  "std/265": {
+   "question": "Standalone 265",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is Zero Trust?",
+    "url": "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview"
+   },
+   "explanation": "Both keyed controls are the Zero Trust principles applied directly. Blocking sign-ins from unknown locations is verify explicitly, using location as a signal in the access decision. Blocking sign-ins from non-compliant devices is device health as a condition of access, which is the same principle plus assume breach. The two distractors are useful precisely because they are the pre-Zero-Trust habits the model rejects.",
+   "whyWrong": [
+    "B. Always allowing connections from the on-premises network is the network perimeter assumption that Zero Trust exists to replace. Location does not confer trust.",
+    "C. Disabling passwordless sign-in for sensitive accounts moves in the wrong direction. Zero Trust calls for stronger, phishing-resistant authentication on privileged accounts, not weaker."
+   ]
+  },
+  "std/286": {
+   "question": "Standalone 286",
+   "status": "CORRECTED",
+   "confidence": "MEDIUM",
+   "originalAnswer": "D",
+   "answer": "C",
+   "source": {
+    "title": "Encryption scopes for Blob storage",
+    "url": "https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview"
+   },
+   "explanation": "The mechanism here is an encryption scope, and Microsoft states its two levels plainly: encryption scopes enable you to manage encryption with a key that is scoped to a container or an individual blob. The question asks for the most granular level, and the individual blob, which in a Data Lake Storage Gen2 account is a file, is more granular than the container. A scope set on a container is only the default for blobs uploaded into it, and unless the container prohibits overrides, an individual blob can be uploaded with a different scope. Encryption scopes are fully supported on accounts with a hierarchical namespace, so the Data Lake Gen2 detail in the stem does not push the answer back up to the container.",
+   "whyWrong": [
+    "A. The account level is where the default key applies. It is the least granular option, not the most.",
+    "B. A folder is a hierarchical namespace construct. It is not an encryption boundary; encryption scopes know about containers and blobs.",
+    "D. The container is the keyed answer and is a real level, but it is the default for the blobs inside it rather than the finest one available."
    ]
   }
  }
