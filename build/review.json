@@ -484,5 +484,128 @@
       "B. Access reviews in ID Governance cover group and application access; privileged role assignments are reviewed through PIM.",
       "D. Defender EASM discovers your internet-facing attack surface. It has nothing to do with role assignments."
     ]
+  },
+  "std/113": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Overview of Azure Policy",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "explanation": "Azure Policy evaluates resources whenever one is created or updated in a scope with an assignment, and again on a compliance cycle every 24 hours — so a newly deployed non-compliant resource is detected automatically. ISO 27001 ships as a built-in initiative, which is a group of policy definitions assigned together. Note the pairing with Standalone 258: same standard, and Azure Policy is the answer to both, because it is the engine that does the evaluating whichever product surfaces the result.",
+    "whyWrong": [
+      "A. Azure Blueprints is deprecated and packaged artefacts for deployment rather than evaluating ongoing compliance.",
+      "B. The regulatory compliance dashboard in Defender for Cloud is where results are read. The evaluation underneath it is Azure Policy, and the question asks what to use to enforce.",
+      "C. Azure RBAC governs who may act, not whether the resulting resource is compliant."
+    ]
+  },
+  "std/258": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Overview of Azure Policy",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "explanation": "The word that decides this is “remediated”. Azure Policy “helps to bring your resources to compliance through bulk remediation for existing resources and automatic remediation for new resources”, using the deployIfNotExists and modify effects with a remediation task. No other option here changes a resource at all.",
+    "whyWrong": [
+      "A. The regulatory compliance dashboard reports compliance; it remediates nothing on its own.",
+      "C. Azure Blueprints is deprecated and deploys artefacts rather than remediating drift.",
+      "D. Azure RBAC controls permissions, not resource configuration."
+    ]
+  },
+  "std/137": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Overview of Azure Policy",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "explanation": "Restricting which regions resources may be created in is the textbook Azure Policy case — Microsoft lists “Ensure your team deploys Azure resources only to allowed regions” as a headline governance action, and ships a built-in **Allowed Locations** definition with a Deny effect “used to enforce your geo-compliance requirements”.",
+    "whyWrong": [
+      "A. Regulatory compliance standards in Defender for Cloud assess against published frameworks; they do not enforce a company-specific region rule.",
+      "B. A custom Azure role decides who can create a resource, not where it may live.",
+      "D. Management groups are the scope you assign a policy to, not the mechanism that enforces anything."
+    ]
+  },
+  "std/242": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Overview of Azure Policy",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "explanation": "Every recommendation in the list — restrict network access, use virtual network rules, require a private link, disallow public access — is a resource configuration, and Azure Policy is the service that evaluates and enforces resource configuration at scale. Each of these has a built-in definition, and assigning them stops the drift returning rather than just reporting it again next week.",
+    "whyWrong": [
+      "A. Storage Analytics is metrics and logging for a storage account.",
+      "B. Network Watcher diagnoses network connectivity and traffic.",
+      "C. Sentinel is a SIEM: it would alert on the misconfiguration, not prevent it."
+    ]
+  },
+  "std/163": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Overview of Azure Policy",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "explanation": "The Microsoft cloud security benchmark is delivered as an Azure Policy initiative, so keeping deployed App Service apps compliant with it means assigning that initiative and letting Azure Policy evaluate each app as it is created or updated. The distractors are all about the pipeline rather than the deployed resource.",
+    "whyWrong": [
+      "A. DevOps security in Defender for Cloud assesses the repositories and pipelines, not the running App Service.",
+      "B. Defender for App Service detects threats against the running app; it does not enforce a benchmark.",
+      "C. A branch policy gates code review before merge, well before anything is deployed."
+    ]
+  },
+  "std/250": {
+    "status": "OUTDATED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Enable vulnerability scanning with Microsoft Defender Vulnerability Management",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/deploy-vulnerability-assessment-defender-vulnerability-management"
+    },
+    "explanation": "The product in the key is still right; the requirement in the stem is not. Defender for Servers does provide vulnerability assessment, but it no longer uses the Qualys engine — “Defender for Cloud uses Microsoft Defender Vulnerability Management to scan your machines”, in agentless and agent-based modes, and the Qualys-based solution has been retired. A question that asks you to pick a product *because it uses Qualys* can no longer be answered as written. Remember the current pairing: Defender for Servers is the plan, Defender Vulnerability Management is the scanner inside it."
+  },
+  "std/187": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Enable vulnerability scanning with Microsoft Defender Vulnerability Management",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/deploy-vulnerability-assessment-defender-vulnerability-management"
+    },
+    "explanation": "Hardware and firmware assessment is a premium Defender Vulnerability Management capability, not part of the vulnerability scanning included with Defender for Servers Plan 1. Adding the Defender Vulnerability Management add-on is what turns it on for servers already covered by Plan 1 — which is also why upgrading the plan is not the minimal answer.",
+    "whyWrong": [
+      "A. Moving every server to Plan 2 is a far larger change and is not what gates firmware assessment.",
+      "C. Azure Update Manager reports and installs operating system updates; drivers and firmware are not its job.",
+      "D. The Intune Suite add-on extends endpoint management features, not server vulnerability assessment."
+    ]
+  },
+  "std/176": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Protect folders from ransomware with controlled folder access",
+      "url": "https://learn.microsoft.com/en-us/defender-endpoint/controlled-folders"
+    },
+    "explanation": "Controlled folder access exists for exactly this: “Ransomware encrypts your files and holds them hostage. CFA counters this threat by allowing only trusted apps to change files in protected folders.” It is an attack surface reduction capability in Defender for Endpoint, delivered by Microsoft Defender Antivirus, and it protects the user profile folders by default.",
+    "whyWrong": [
+      "B. Azure Files is cloud file storage, not a control on the endpoint.",
+      "C. Device Guard (now App Control for Business) controls which code may run, a different control from guarding a folder’s contents.",
+      "D. Defender for Endpoint is the platform that contains the feature. The question asks which control to use, and CFA is the specific one.",
+      "E. BitLocker encrypts the volume at rest. It does not stop a process running on the signed-in device from encrypting files."
+    ]
+  },
+  "std/130": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Protect folders from ransomware with controlled folder access",
+      "url": "https://learn.microsoft.com/en-us/defender-endpoint/controlled-folders"
+    },
+    "explanation": "“Protected folders” names the controlled folder access element that does the work — Microsoft defines them as “the folders that CFA guards. Untrusted apps can't modify or delete files in these folders.” This is the same question as Standalone 176 with the option worded differently, and the same reasoning picks it out: the specific control beats the platform it lives in.",
+    "whyWrong": [
+      "A. Defender for Endpoint is the platform; the question asks for the control.",
+      "B. Device Guard restricts which code can execute.",
+      "D. Azure Files is storage, not an endpoint control.",
+      "E. BitLocker protects data if the device is lost or stolen; it is transparent to a process running as the signed-in user."
+    ]
   }
 }
