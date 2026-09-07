@@ -5890,7 +5890,21 @@
     {
      "p": "You can use sensitivity labels to: Provide protection settings that include encryption and content markings. For example, apply a \" Confidential \" label to a document or email, and that label encrypts the content and applies a \" Confidential \" watermark. Content markings include headers and footers as well as watermarks, and encryption can also restrict what actions authorized people can take on the content. Protect content in Office apps across different platforms and devices. Supported by Word, Excel, PowerPoint, and Outlook on the Office desktop apps and Office on the web. Supported on Windows, macOS, iOS, and Android. Protect content in third-party apps and services by using Microsoft Defender for Cloud Apps. With Defender for Cloud Apps, you can detect, classify, label, and protect content in third-party apps and services, such as SalesForce, Box, or DropBox, even if the third-party app or service does not read or support sensitivity labels."
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Watermarks are a content marking, and content markings are a sensitivity label setting in Microsoft Purview Information Protection: a label can “mark the content … by adding watermarks, headers, or footers”. Note the scope detail worth remembering — watermarks apply to documents, not to the body of an email, which is why the question asks about attachments.",
+    "whyWrong": [
+     "A. Defender for Cloud Apps is a CASB. It can apply labels to files in third-party services, but it is not what defines the watermark.",
+     "B. Insider risk management scores risky user behaviour; it marks nothing.",
+     "D. Azure Purview (now the Microsoft Purview Data Map) discovers and catalogues data estates. Content marking belongs to Information Protection."
+    ],
+    "source": {
+     "title": "Learn about sensitivity labels",
+     "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+    }
+   }
   },
   {
    "n": 52,
@@ -7122,7 +7136,12 @@
     "a Honeytoken tag in Microsoft Defender for Identity",
     "a user risk policy in Microsoft Entra ID Protection"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "LOW",
+    "explanation": "Flagged: the key looks wrong but the documentation that would settle it has been retired. The requirement is to plant fake cached credentials on client computers. That is the deception capability, whose lures are fake content — documents, configuration files, cached credentials — planted on specific devices, and which is delivered through Defender for Endpoint (option B). A Defender for Identity honeytoken tag does something different: it marks an existing account as a decoy so any authentication to it alerts, and it plants nothing on any endpoint. That distinction is what Standalone 143 tests correctly. Microsoft's deception articles now redirect to the attack-disruption page, so no citable source establishes it and the source's key is left alone."
+   }
   },
   {
    "n": 80,
@@ -8085,7 +8104,16 @@
     "sensitivity label policies",
     "retention policies"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "AMBIGUOUS",
+    "confidence": "MEDIUM",
+    "explanation": "Flagged as genuinely contestable rather than wrong. The source keys sensitivity label policies, and that defends well: a label applies encryption whose usage rights follow the file, so an external recipient cannot open it wherever it ends up. But DLP policies are the control literally designed to prevent sharing outside the organisation, and the near-identical Standalone 235 keys the two together as a pair. Either is defensible as written. On the exam, read for the verb: “classify and protect” points at labels, “prevent from being shared” points at DLP, and where both appear the intended answer is usually both.",
+    "source": {
+     "title": "Learn about sensitivity labels",
+     "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+    }
+   }
   },
   {
    "n": 108,
@@ -8693,7 +8721,16 @@
     "adaptive application controls in Defender for Servers",
     "app governance in Microsoft Defender for Cloud Apps"
    ],
-   "a": "C"
+   "a": "C",
+   "review": {
+    "status": "OUTDATED",
+    "confidence": "HIGH",
+    "explanation": "The feature this question is built on no longer exists. Adaptive application controls in Defender for Cloud were deprecated in August 2024, alongside the Log Analytics agent they depended on — Microsoft's retirement table lists the feature with no replacement. The key is left as the source has it because it was right when written, but do not carry this into the exam as a live product: application allowlisting on Windows servers today is App Control for Business, surfaced through Microsoft Defender for Endpoint. The behaviour the stem describes — an allowlist, automatic blocking of anything not on it, and admin approval to promote an app — is what adaptive application controls used to do.",
+    "source": {
+     "title": "Prepare for retirement of the Log Analytics agent — feature functionality table",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepare-deprecation-log-analytics-mma-agent"
+    }
+   }
   },
   {
    "n": 123,
@@ -9469,7 +9506,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/microsoft-365/compliance/ediscovery?view=o365-worldwide"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "The phrase that decides this is “regardless of where the data is stored”. Microsoft describes sensitivity labels as protecting content “wherever it's stored”, because the label is written into the file's metadata and the encryption travels with it — across Windows, macOS, iOS and Android, which matches the mixed device estate in the stem. Classification plus encryption in one control is Information Protection.",
+    "whyWrong": [
+     "A. eDiscovery finds and preserves content for legal matters; it neither classifies nor encrypts.",
+     "B. Retention policies decide how long content is kept, not who can open it.",
+     "C. Compliance Manager scores your posture against regulations. It is an assessment tool, not a protection control."
+    ],
+    "source": {
+     "title": "Learn about sensitivity labels",
+     "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+    }
+   }
   },
   {
    "n": 144,
@@ -13695,7 +13746,20 @@
     {
      "p": "https://motionwave.com.au/keeping-your-confidential-data-secure-with-microsoft-office-365/https://docs. microsoft.com/en-us/microsoft- 365/solutions/information-protection-deploy-protect-information?view=o365- worldwide#sensitivity -labels"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "These two work as a pair, which is why the question asks for two components. Sensitivity labels classify the PII and carry the protection with the file; DLP policies act on that classification to stop it leaving — blocking the share, the upload, or the send. Labels decide what something is; DLP decides what may happen to it.",
+    "whyWrong": [
+     "C. Retention labels govern how long content is kept and what happens at the end of its life, not whether it can be shared.",
+     "D. eDiscovery cases search and preserve content for investigations and legal hold. They prevent nothing."
+    ],
+    "source": {
+     "title": "Learn about sensitivity labels",
+     "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+    }
+   }
   },
   {
    "n": 255,
@@ -15205,7 +15269,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control /select-types-of-rules-to-create#windows-defender-application-control-policy-rules"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "Application control policies in Defender for Endpoint (App Control for Business, formerly WDAC) enforce an allowlist on the machine: anything not explicitly allowed is blocked until an administrator authorizes it. Note the contrast with Standalone 103 and 283, which key adaptive application controls in Defender for Cloud — the historically expected answer for this exact scenario, but deprecated in August 2024. Defender for Endpoint's application control is the surviving mechanism, and it is the only option here that controls what executes on a server.",
+    "whyWrong": [
+     "A. Conditional Access App Control proxies SaaS sessions through Defender for Cloud Apps. It governs web sessions, not processes on a virtual machine.",
+     "B. OAuth app policies govern third-party apps consented into your tenant, not executables on a server.",
+     "C. Intune app protection policies protect corporate data inside mobile apps. They do not allowlist software on Windows Server."
+    ],
+    "source": {
+     "title": "Prepare for retirement of the Log Analytics agent — feature functionality table",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepare-deprecation-log-analytics-mma-agent"
+    }
+   }
   },
   {
    "n": 295,
@@ -15496,7 +15574,16 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/defender-for-cloud/recommendations-reference#compute- recommendations"
     }
-   ]
+   ],
+   "review": {
+    "status": "OUTDATED",
+    "confidence": "HIGH",
+    "explanation": "Same retired feature as Standalone 103, and the two are the same question with different option lists. Adaptive application controls in Defender for Cloud were deprecated in August 2024 with no replacement in that product. The key stands as the source recorded it, but the current answer to this scenario is application control in Microsoft Defender for Endpoint — which is exactly what Standalone 275 keys, and why those two apparently contradictory items are both defensible on their own option lists.",
+    "source": {
+     "title": "Prepare for retirement of the Log Analytics agent — feature functionality table",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepare-deprecation-log-analytics-mma-agent"
+    }
+   }
   },
   {
    "n": 303,

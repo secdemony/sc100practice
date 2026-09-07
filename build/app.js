@@ -858,10 +858,11 @@ function renderExam(app){
   const bodyWrap = el('div',{class:'qtext'});
   renderNodes(bodyWrap, q.body);
   card.appendChild(bodyWrap);
-  if(q.review && (q.review.status === 'MANUAL_REVIEW' || q.review.status === 'AMBIGUOUS')){
+  if(q.review && ['MANUAL_REVIEW','AMBIGUOUS','OUTDATED'].includes(q.review.status)){
     card.appendChild(el('div',{class:'warn-note'},[
-      'This item is flagged: its answer key looks doubtful and Microsoft’s documentation ' +
-      'does not settle it. The source’s key is kept and graded as-is. See the note with the answer.'
+      q.review.status === 'OUTDATED'
+        ? 'This item tests a feature that has since been retired. The source’s key is kept and graded as-is; see the note with the answer for what replaced it.'
+        : 'This item is flagged: its answer key is doubtful or the question admits more than one defensible answer. The source’s key is kept and graded as-is. See the note with the answer.'
     ]));
   }
   if(q.warn){
