@@ -4,14 +4,14 @@
  "totals": {
   "questions": 310,
   "scorable": 222,
-  "examined": 31,
-  "notReviewed": 279,
-  "ambiguous": 1,
-  "verified": 18,
-  "corrected": 6,
-  "outdated": 2,
+  "examined": 38,
+  "notReviewed": 272,
+  "verified": 21,
   "not_reviewed": 0,
-  "manual_review": 4
+  "corrected": 7,
+  "manual_review": 4,
+  "ambiguous": 2,
+  "outdated": 4
  },
  "findings": {
   "std/20": {
@@ -438,6 +438,103 @@
     "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
    },
    "explanation": "Flagged as genuinely contestable rather than wrong. The source keys sensitivity label policies, and that defends well: a label applies encryption whose usage rights follow the file, so an external recipient cannot open it wherever it ends up. But DLP policies are the control literally designed to prevent sharing outside the organisation, and the near-identical Standalone 235 keys the two together as a pair. Either is defensible as written. On the exam, read for the verb: “classify and protect” points at labels, “prevent from being shared” points at DLP, and where both appear the intended answer is usually both."
+  },
+  "std/107": {
+   "question": "Standalone 107",
+   "status": "AMBIGUOUS",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Azure Policy definitions effect basics",
+    "url": "https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-basics"
+   },
+   "explanation": "Flagged, because the effect that actually answers this question is not on the list. To evaluate compliance without changing resources you use the **audit** effect, which reports a resource as non-compliant and does nothing else. The keyed answer, **disabled**, does something different: Microsoft's evaluation order says “disabled is checked first to determine whether the policy rule should be evaluated” — it switches the rule off, so nothing is assessed at all. The likely source of the confusion is that a policy *assignment* also has an enforcement mode whose portal label is **Disabled** (DoNotEnforce), and that one does exactly what the question asks: the policy is evaluated and compliance reported, but the effect is not enforced. Two different settings, one shared word. On the exam, keep effect `disabled` (stop evaluating) apart from enforcement mode `Disabled` (evaluate, don't enforce), and remember `audit` is the effect for reporting without changing anything.",
+   "whyWrong": [
+    "A. Deny blocks the request outright, so it very much changes what happens.",
+    "C. Modify alters resource properties, for example adding or changing tags.",
+    "D. Append adds fields to a resource during creation, so it also changes resources."
+   ]
+  },
+  "std/69": {
+   "question": "Standalone 69",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Configure multi-user authorization using Resource Guard",
+    "url": "https://learn.microsoft.com/en-us/azure/backup/multi-user-authorization"
+   },
+   "explanation": "This is the rogue-admin scenario, and multi-user authorization with a Resource Guard is the control built for it. The Resource Guard sits in a different subscription or tenant, and Microsoft requires that the backup admin have no Contributor or Backup MUA Operator rights on it — so a compromised backup admin cannot approve their own destructive action. Deleting backups, disabling soft delete and removing MUA protection are all protected operations, and the last two cannot even be exempted.",
+   "whyWrong": [
+    "A. A security PIN gates critical operations for MARS and MABS agents. It is the on-premises analogue, not the control for a Recovery Services vault in this scenario.",
+    "C. Registering MABS with a vault is a setup step; it protects nothing by itself.",
+    "D. A PIM role assignment for Backup Contributor grants the destructive permission rather than requiring a second party to approve its use."
+   ]
+  },
+  "std/233": {
+   "question": "Standalone 233",
+   "status": "CORRECTED",
+   "confidence": "MEDIUM",
+   "originalAnswer": "A B",
+   "answer": "B E",
+   "source": {
+    "title": "FAQ — Protect backups from ransomware with Azure Backup",
+    "url": "https://learn.microsoft.com/en-us/azure/backup/protect-backups-from-ransomware-faq"
+   },
+   "explanation": "The question asks which controls ensure you can still restore after an attack, and Microsoft answers it directly under “How to block intentional or unintentional deletion of backup data?” — enable soft delete, and require authorization for critical operations. Soft delete is the one that guarantees restorability: it retains deleted backup data for 14 days, and Microsoft warns that “if backups are deleted and soft delete isn't enabled, you or Microsoft can't recover the deleted backup data.” Requiring a PIN for critical operations is the authorization gate offered here. Azure Monitor notifications are a genuine best practice, but they are detective — being told that backups were disabled does not let you restore from them.",
+   "whyWrong": [
+    "A. Alerting on configuration change tells you an attack happened. It does not preserve a recovery point.",
+    "C. Offline copies to Data Box is not an Azure Backup control and is not part of Microsoft’s guidance here.",
+    "D. Customer-managed keys change who controls the encryption key. They do nothing to stop a backup being deleted."
+   ]
+  },
+  "std/195": {
+   "question": "Standalone 195",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "FAQ — Protect backups from ransomware with Azure Backup",
+    "url": "https://learn.microsoft.com/en-us/azure/backup/protect-backups-from-ransomware-faq"
+   },
+   "explanation": "For workloads protected by the MARS agent or Azure Backup Server, the security PIN is the authorization gate on critical operations — disabling backup, deleting backup data, changing a passphrase — so a compromised administrator on the server cannot quietly stop protection before encrypting the estate. That is what “increase the resiliency of the backup strategy” means here: keep the recovery points reachable.",
+   "whyWrong": [
+    "A. Geo-redundant storage protects against a regional outage, not against someone deleting the backups.",
+    "B. Customer-managed keys change key ownership; they neither prevent deletion nor preserve recovery points.",
+    "D. Site Recovery replicates workloads for disaster recovery. Replication faithfully copies encrypted data too, so it is not a ransomware control."
+   ]
+  },
+  "std/96": {
+   "question": "Standalone 96",
+   "status": "OUTDATED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What's Microsoft Entra Permissions Management? (archived — retired 1 November 2025)",
+    "url": "https://learn.microsoft.com/en-us/previous-versions/entra/permissions-management/overview"
+   },
+   "explanation": "The product this question keys no longer exists. Microsoft Entra Permissions Management stopped being available for purchase on 1 April 2025 and was retired on 1 November 2025; its documentation is archived. The key was right when written — Permissions Management was the CIEM tool giving “cross-cloud permissions discovery… for AWS, Azure, and GCP” — so it stands, but do not carry it to the exam as a live answer. Multicloud permission visibility now comes through Defender for Cloud's CIEM capabilities in Defender CSPM."
+  },
+  "std/262": {
+   "question": "Standalone 262",
+   "status": "OUTDATED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What's Microsoft Entra Permissions Management? (archived — retired 1 November 2025)",
+    "url": "https://learn.microsoft.com/en-us/previous-versions/entra/permissions-management/overview"
+   },
+   "explanation": "Same retired product as Standalone 96. Permissions Management was the tool that measured the gap between permissions granted and permissions used, and could automatically delete permissions unused for the past 90 days — which is why the key matched the stem so exactly. It was retired on 1 November 2025 and its documentation is archived, so treat the underlying idea (find unused entitlements, right-size them) as the examinable point rather than the product name."
+  },
+  "std/288": {
+   "question": "Standalone 288",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "What's Microsoft Entra Permissions Management? (archived — retired 1 November 2025)",
+    "url": "https://learn.microsoft.com/en-us/previous-versions/entra/permissions-management/overview"
+   },
+   "explanation": "Access reviews in Privileged Identity Management are the surviving answer. PIM covers Azure resource roles as well as directory roles, so it can enumerate who holds privileged assignments across subscriptions and drive a recurring review of whether they still need them. Note the distractor: option A names the Permissions Management analytics dashboard, which would have been a reasonable answer historically but was retired on 1 November 2025 — so on the current exam this pair is no longer a close call.",
+   "whyWrong": [
+    "A. Microsoft Entra Permissions Management was retired on 1 November 2025.",
+    "B. Access reviews in ID Governance cover group and application access; privileged role assignments are reviewed through PIM.",
+    "D. Defender EASM discovers your internet-facing attack surface. It has nothing to do with role assignments."
+   ]
   }
  }
 }
