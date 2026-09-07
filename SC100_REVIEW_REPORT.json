@@ -4,14 +4,14 @@
  "totals": {
   "questions": 310,
   "scorable": 222,
-  "examined": 174,
-  "notReviewed": 136,
-  "ambiguous": 4,
-  "manual_review": 9,
-  "verified": 126,
-  "corrected": 29,
+  "examined": 188,
+  "notReviewed": 122,
+  "outdated": 6,
+  "verified": 135,
+  "corrected": 32,
+  "manual_review": 10,
   "not_reviewed": 0,
-  "outdated": 6
+  "ambiguous": 5
  },
  "findings": {
   "std/20": {
@@ -2491,6 +2491,209 @@
     "A. Restricting NSGs to specific IP ranges is a network-perimeter control from the model Zero Trust is replacing, and static IP allowlisting for developers in France does nothing to reduce the latency of relaying through a single Seattle-based server.",
     "E. Deploying a second Remote Desktop server into a French Azure region still centralises access through a jump-box with locally installed admin tools, which is the pattern the redesign is meant to retire, not relocate."
    ]
+  },
+  "std/1": {
+   "question": "Standalone 1",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "App Service Environment overview",
+    "url": "https://learn.microsoft.com/en-us/azure/app-service/environment/overview"
+   },
+   "explanation": "The exhibit's dashed boundary sits around exactly the compute pieces, the Patient API and Audit API functions, that need to move into a private network, and an App Service Environment is the mechanism that does it: it \"is a single-tenant deployment of Azure App Service that hosts... function apps\" and \"you deploy the apps into a network-isolated environment that already resides in a virtual network\", with all inbound and outbound application traffic confined to that virtual network. Nothing else in the option list places compute inside a customer-controlled VNet at all.",
+   "whyWrong": [
+    "A. Enterprise applications represent an app for Entra sign-in and consent. They have no bearing on network placement of compute.",
+    "C. Service endpoints extend a VNet identity to a PaaS resource's public endpoint; they don't move the compute itself into the network.",
+    "D. Application Proxy publishes an on-premises app outward through a connector. It isolates nothing and doesn't apply to Azure Functions."
+   ]
+  },
+  "std/6": {
+   "question": "Standalone 6",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "B",
+   "source": {
+    "title": "VNet peering and Azure Bastion architecture",
+    "url": "https://learn.microsoft.com/en-us/azure/bastion/vnet-peering"
+   },
+   "explanation": "The five virtual networks form two separate, unconnected peering groups: Hub VNet peers with VNet1 and VNet2, and VNet3 peers only with VNet4, with no link at all between the two groups (peering is not transitive, so there is no path from the Hub group into the VNet3/VNet4 group). Microsoft states plainly that a single Bastion deployment covers this: \"when Virtual Network peering is configured, you don't have to deploy Azure Bastion in each peered VNet. If you have an Azure Bastion host configured in one virtual network, it can be used to connect to virtual machines deployed in a peered virtual network without deploying an additional bastion host.\" One Bastion host in the Hub VNet therefore reaches every VM in the Hub, VNet1 and VNet2 by peering, and a second Bastion host placed in either VNet3 or VNet4 reaches both of them the same way. Two peering groups need two Bastion subnets, not three.",
+   "whyWrong": [
+    "3, 4, 5. Each additional Bastion beyond the two peering groups is unnecessary: a peered VNet is already reachable from the Bastion host in its own group without deploying a second host into it.",
+    "1. A single Bastion cannot bridge the two groups, since VNet3/VNet4 have no peering relationship, direct or transitive, to the Hub, VNet1 or VNet2."
+   ]
+  },
+  "std/8": {
+   "question": "Standalone 8",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "B",
+   "source": {
+    "title": "Configure multi-user authorization using Resource Guard (region prerequisite)",
+    "url": "https://learn.microsoft.com/en-us/azure/backup/multi-user-authorization"
+   },
+   "explanation": "The one hard constraint Microsoft states for Resource Guard placement is region, not subscription: \"the Resource Guard and the Recovery Services vault must be in the same Azure region\" (and the same for a Backup vault). Keeping the Resource Guard in a different subscription from the vault is explicitly a recommendation, not a requirement, and Microsoft's own usage-scenario table lists same-subscription placement as a valid, if less isolated, configuration. A single Resource Guard resource can also protect more than one vault, and can mix vault types, since \"the excluded critical operations would apply to all vaults associated with Resource Guard\" describes one Resource Guard governing several vaults at once. With only two regions in play, one Resource Guard located in East US can protect both RSVault1 and BackupVault1 there (guarding the three RS-vault operations for one and the two Backup-vault operations for the other), and a second Resource Guard in West US can likewise cover RSVault2 and BackupVault2. That is two Resource Guards, the minimum the region constraint allows, not three.",
+   "whyWrong": [
+    "3, 4. Extra Resource Guards beyond one per region add no coverage the two regional Resource Guards don't already provide, since region is the only placement constraint the vaults actually share.",
+    "1. A single Resource Guard cannot serve both regions: it is a resource with one region of its own, and it must match the region of every vault it protects, so an East US vault and a West US vault can never share the same Resource Guard."
+   ]
+  },
+  "std/16": {
+   "question": "Standalone 16",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Automatic VM guest patching for Azure VMs and scale sets",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/automatic-vm-guest-patching"
+   },
+   "explanation": "Two independent facts settle every row in the table. First, custom images are excluded outright: \"automatic VM guest patching is supported only on VMs created from images with the exact combination of publisher, offer and sku... listed in the supported OS images. Custom images... aren't supported.\" That removes VMSS2 and VMSS4 regardless of anything else. Second, Flexible orchestration mode does support automatic guest patching (with the Application Health extension installed), so VMSS1 and VMSS3, which both use platform images, are supported whether the OS is Windows or Linux.",
+   "whyWrong": [
+    "A, B, D, E (any answer omitting one of VMSS1/VMSS3 or including VMSS2/VMSS4). VMSS2 and VMSS4 fail on the custom-image exclusion alone, and both VMSS1 and VMSS3 meet every requirement, so the pair has to be exactly those two."
+   ]
+  },
+  "std/43": {
+   "question": "Standalone 43",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "VNet peering and Azure Bastion architecture",
+    "url": "https://learn.microsoft.com/en-us/azure/bastion/vnet-peering"
+   },
+   "explanation": "Connecting \"over SSL from the Azure portal\" without exposing a public IP and without a VPN is Azure Bastion's whole design: it is a browser-based, TLS-tunnelled client built into the portal, and \"a public IP isn't required on the Azure VM.\" The two scale sets sit on different, presumably unpeered virtual networks, so a single Bastion instance can't reach both directly, but peering the two networks in a hub-and-spoke topology lets one Bastion deployment, in the hub, reach both, which is what keeps the cost to one Bastion host instead of two.",
+   "whyWrong": [
+    "B. Deploying Bastion to each virtual network works, but it doubles the cost of the one-Bastion-plus-peering design, which fails the requirement to minimize costs.",
+    "C. Just-in-time VM access narrows when a management port is open; it doesn't provide the portal-based SSL connection method or remove the public IP requirement by itself.",
+    "E. Azure Firewall NAT rules translate a public IP to a private one, which is the opposite of preventing public IP exposure, and does not provide a browser-based portal connection."
+   ]
+  },
+  "std/65": {
+   "question": "Standalone 65",
+   "status": "CORRECTED",
+   "confidence": "MEDIUM",
+   "originalAnswer": "C",
+   "answer": "D",
+   "source": {
+    "title": "Manage a public IP address by using Azure Firewall",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/configure-public-ip-firewall"
+   },
+   "explanation": "The exhibit's flows are outbound, not inbound: the diagram labels the path from the appAPI subnet back through the boundary box and the on-premises firewall to the on-premises app server as \"outbound traffic,\" and it is that path, the App Service Environment's own web apps calling out to an on-premises system, that the on-premises firewall administrator has to open a rule for. The requirement is to minimize how many public IP addresses are allowed through that on-premises firewall. Azure Firewall is the component that collapses many possible egress sources down to a small, fixed set of its own public IP addresses: route the ASE's outbound traffic through it, and the on-premises firewall only ever needs to allow that Firewall's IP addresses, regardless of how many app instances or IP addresses exist on the Azure side. Front Door with a WAF, by contrast, is an inbound accelerator and web firewall for traffic arriving from users on the public internet; it has no role in, and does nothing to reduce, the number of public IP addresses the ASE's own outbound connections present to the on-premises network. Standalone 257 poses the identical scenario and options and keys Azure Firewall, which is the internally consistent answer between the two.",
+   "whyWrong": [
+    "A. Traffic Manager is DNS-based routing between endpoints; it doesn't touch outbound connectivity to an on-premises network at all.",
+    "B. Application Gateway v2 with UDRs is an inbound reverse proxy; user-defined routes here would steer its own traffic, not consolidate the ASE's outbound IP footprint toward on-premises.",
+    "C. Front Door with WAF filters and accelerates inbound web traffic. It has no outbound path to on-premises and does not reduce the public IP addresses the on-premises firewall must allow."
+   ]
+  },
+  "std/71": {
+   "question": "Standalone 71",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Prevent Shared Key authorization for an Azure Storage account",
+    "url": "https://learn.microsoft.com/en-us/azure/storage/common/shared-key-authorization-prevent"
+   },
+   "explanation": "The alert names the exact mechanism being abused: MicroBurst's Get-AZStorageKeysREST module extracts storage account access keys, which are the shared-key credential Azure Storage accepts by default alongside Entra ID. The policy that removes this attack path going forward is \"Storage accounts should prevent shared key access\": once shared key authorization is disallowed, \"clients must use Azure AD or a user delegation SAS to authorize requests,\" so an attacker who extracts or already holds an account key has nothing left to authenticate with.",
+   "whyWrong": [
+    "A. Disallowing public network access closes anonymous/public access paths, but it does nothing about an attacker who already holds a valid account key and can reach the account through allowed networks.",
+    "B. Managed HSM purge protection guards key vault keys from permanent deletion; it is unrelated to a storage account key extraction attack.",
+    "D. Storage account keys not being expired is about key rotation hygiene. A key that hasn't expired yet is exactly what MicroBurst is extracting and using; expiration alone doesn't stop shared-key abuse the way disallowing shared keys entirely does."
+   ]
+  },
+  "std/111": {
+   "question": "Standalone 111",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft cloud security benchmark - Endpoint Security",
+    "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-endpoint-security"
+   },
+   "explanation": "The exhibit's expanded compliance-control list is organized by Microsoft cloud security benchmark domain, and the domain that covers deployment of endpoint threat protection, the very thing \"Defender for servers is installed\" asks about, is ES, Endpoint Security. Whether Defender for Endpoint (delivered through Defender for Servers) is present on a machine is exactly the kind of assessment the ES domain's recommendations report, which is why it appears failing (red) in the exhibit alongside the actual gap the scenario describes.",
+   "whyWrong": [
+    "A. Data Protection covers encryption and data handling controls, not endpoint agent deployment.",
+    "B. Incident Response covers response plans and playbooks, not whether an endpoint agent is installed.",
+    "C. Posture and Vulnerability Management covers scanning and remediation workflows generally, not the specific presence of the Defender for Servers/Endpoint agent.",
+    "D. Asset Management covers inventory and classification of resources, not their protection status."
+   ]
+  },
+  "std/164": {
+   "question": "Standalone 164",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Connect on-premises machines to Microsoft Defender for Cloud (Azure Arc)",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/quickstart-onboard-machines"
+   },
+   "explanation": "Nothing about a landing zone's workloads can be assessed until the relevant Defender for Cloud plans are switched on across the resource types in it; assessment is what those plans exist to produce. Enabling the Defender plan for all resource types is the one action that starts producing a security posture at all, for compute, storage, databases and everything else in the landing zone in one step, which is why it has to come first.",
+   "whyWrong": [
+    "A. Sentinel data connectors feed a SIEM with security events. They say nothing about the configuration posture of the landing zone's resources.",
+    "B. CI/CD vulnerability scanning checks code and images before deployment. It says nothing about the posture of resources already running in the landing zone.",
+    "D. Entra ID P2 licenses unlock ID Protection and PIM features. They have no bearing on assessing workload posture across a landing zone."
+   ]
+  },
+  "std/230": {
+   "question": "Standalone 230",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Connect on-premises machines to Microsoft Defender for Cloud (Azure Arc)",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/quickstart-onboard-machines"
+   },
+   "explanation": "Both keyed components are what the exhibit is already depicting: a Windows Server and a Linux Server on-premises being reached by Azure Monitor, Azure Policy and Azure Update Management. None of those services can see a non-Azure machine until it becomes an Azure resource, and Azure Arc-enabled servers is exactly what does that, making an on-premises server appear in Azure like any other resource. Guest configuration in Azure Policy is then what actually enforces standards inside that server's operating system once it is Arc-connected, which is the \"enforce standards for all the resources across all the environments across Azure Policy\" requirement.",
+   "whyWrong": [
+    "A. A VPN Gateway builds network-level connectivity between networks. It doesn't turn a server into a governable Azure resource or enforce configuration standards inside it.",
+    "C. The on-premises data gateway bridges Power Platform and Logic Apps services to on-premises data sources. It has no role in governing servers with Azure Policy.",
+    "D. Azure Bastion provides remote access to VMs. It plays no part in extending Azure Policy governance to on-premises machines."
+   ]
+  },
+  "std/257": {
+   "question": "Standalone 257",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Manage a public IP address by using Azure Firewall",
+    "url": "https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/configure-public-ip-firewall"
+   },
+   "explanation": "Read against the exhibit, this is the internally consistent answer: the diagram's \"outbound traffic\" path runs from the App Service Environment's subnet back through a boundary point to the on-premises firewall and app server, and minimizing how many public IP addresses that on-premises firewall must allow means consolidating the ASE's outbound connections behind a small, fixed set of addresses. Azure Firewall does exactly that: route the ASE's egress through it and configure network and NAT rules, and the on-premises side only ever needs to allow the Firewall's own public IP addresses, no matter how the Azure-side app tier scales.",
+   "whyWrong": [
+    "A. Traffic Manager is DNS-level routing between endpoints. It has no outbound path to an on-premises network.",
+    "B. Application Gateway v2 with UDRs is built for inbound traffic to web apps; user-defined routes here steer the gateway's own traffic rather than consolidating outbound egress to on-premises.",
+    "C. Front Door with WAF is an inbound accelerator and web firewall for public internet traffic. It has no outbound connection to on-premises at all, so it cannot affect how many public IP addresses the on-premises firewall must allow."
+   ]
+  },
+  "std/274": {
+   "question": "Standalone 274",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Configure auto provisioning of agents and extensions in Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/enable-data-collection"
+   },
+   "explanation": "AKS resources dropping out of secure score recommendations almost always trace back to the Defender for Containers plan, or the components it depends on, not being active on every one of the four subscriptions, and the fix is to turn both back on rather than merely observe the gap. Enabling the Defender plan for containers on the affected subscriptions is what restores the recommendations for those clusters, and configuring auto provisioning ensures the extensions and agents the plan needs to actually assess each cluster (the Azure Policy add-on, the Defender sensor, and related components) are deployed automatically going forward rather than depending on someone remembering to add them by hand to each of the ten clusters.",
+   "whyWrong": [
+    "B. Assigning regulatory compliance policies maps existing assessments to a compliance standard. It doesn't restore recommendations that are missing because the plan or its components aren't enabled.",
+    "C. Reviewing the inventory is a diagnostic step that can help find the gap, but it changes nothing by itself and doesn't fix the exclusion.",
+    "D. Workflow automation triggers an action when a recommendation or alert fires. With no recommendations being generated for these clusters, there is nothing yet for a workflow automation to act on."
+   ]
+  },
+  "std/253": {
+   "question": "Standalone 253",
+   "status": "AMBIGUOUS",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Containers support matrix in Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/support-matrix-defender-for-containers"
+   },
+   "explanation": "Flagged because the current Defender for Containers support matrix supports three of the five options, not two. Container registry vulnerability assessment for Azure Container Registry is listed as GA for both \"Linux release state\" and \"Windows release state,\" which supports both the keyed answers, Linux containers in ACR and Windows containers in ACR. But the matrix's registry-agnostic \"Runtime container VA\" feature, covering running container images across \"All\" supported resources including AKS, is also GA for Linux, which means Linux containers deployed to AKS is equally well supported by current documentation and not clearly inferior to the two keyed options. Only Windows containers on AKS (whose runtime scanning is explicitly unsupported) and Linux containers on Container Instances (which the matrix does not list among supported resources at all) are clearly excluded. With three of the five options independently well-supported by the current matrix and the question calling for exactly two, the key is left as the source has it and the item is flagged rather than adjudicated between three defensible choices."
+  },
+  "std/150": {
+   "question": "Standalone 150",
+   "status": "MANUAL_REVIEW",
+   "confidence": "LOW",
+   "source": {
+    "title": "Rapidly modernize your security posture for Zero Trust",
+    "url": "https://learn.microsoft.com/en-us/security/zero-trust/adopt/rapidly-modernize-security-posture"
+   },
+   "explanation": "Flagged because the specific framing this question tests no longer has a live, canonical source to check it against. Historically, Microsoft's Zero Trust Rapid Modernization Plan did group its guidance into three priority scenarios named user access and productivity, data/compliance/governance, and modernizing security operations, which is what the keyed answer selects, and archived versions of Microsoft's own RaMP documentation confirm this structure existed. But Microsoft has since reorganized this guidance: the current Zero Trust adoption content on Microsoft Learn is built around a broader set of technology pillars (identities, endpoints, data, apps, infrastructure, network and security operations) and a general adoption methodology, and no live page states this specific three-of-five prioritization in these terms any more. The underlying substance is very likely still an accurate historical answer, but because the exact claim can no longer be checked against a current Microsoft Learn source, and inventing a citation for a page that no longer says this is exactly what the review rules prohibit, the item is flagged for manual review rather than marked verified."
   }
  }
 }
