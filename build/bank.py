@@ -16,6 +16,7 @@ import json, os, re
 from collections import Counter
 
 import paths
+import review as review_mod
 
 parsed = json.load(open(paths.PARSED, encoding='utf-8'))
 imgmap = json.load(open(paths.IMGMAP, encoding='utf-8'))
@@ -118,6 +119,16 @@ for q in parsed['questions']:
         item['e'] = expl
     items.append(item)
 
+# The answer-key review is applied last, so a correction lands on the graded
+# key and the displayed explanation from the same place and cannot diverge.
+review_entries = review_mod.load()
+index = {'%s/%d' % (i['sec'], i['num']): i for i in items}
+problems = review_mod.validate(review_entries, index)
+if problems:
+    raise SystemExit('review.json is inconsistent:\n  ' + '\n  '.join(problems))
+for key, entry in review_entries.items():
+    review_mod.merge(index[key], entry)
+
 cases = {k: conv(v) for k, v in parsed['cases'].items()}
 for k, v in cases.items():
     CASE_META[k]['nodes'] = v
@@ -134,6 +145,9 @@ print('items carrying an explanation: %d' % sum(1 for i in items if i.get('e')))
 print('per section:', Counter(i['sec'] for i in items))
 print('per domain:', Counter(i['c'] for i in items))
 print('case narrative nodes:', {k: len(v) for k, v in cases.items()})
+from collections import Counter as _C
+_st = _C(e['status'] for e in review_entries.values())
+print('review: %d of %d examined -> %s' % (len(review_entries), len(items), dict(_st)))
 
 json.dump({'items': items, 'cases': CASE_META},
           open(paths.BANK, 'w', encoding='utf-8'),

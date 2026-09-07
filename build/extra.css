@@ -175,3 +175,44 @@
     .stat-grid.four{grid-template-columns:1fr 1fr;}
     .cat-row .name{flex:1 1 100%;}
   }
+
+  /* ---- answer-key review ---- */
+  .review-panel{
+    margin:16px 24px 0;padding:15px 18px;border-radius:8px;
+    border:1px solid var(--gray-300);background:#fff;
+  }
+  .review-panel.verified{border-color:#86c79b;background:#f4fbf6;}
+  .review-panel.corrected{border-color:#fcd34d;background:#fffbeb;}
+  .review-panel.flagged{border-color:#fdba74;background:#fff7ed;}
+  .review-panel .head{
+    font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    margin-bottom:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+  .review-panel.verified .head{color:#15803d;}
+  .review-panel.corrected .head{color:#92400e;}
+  .review-panel.flagged .head{color:#9a3412;}
+  .review-panel .head .conf{font-weight:600;letter-spacing:.03em;color:var(--gray-500);text-transform:none;}
+  .review-panel .label{
+    font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--gray-500);margin:12px 0 4px;
+  }
+  .review-panel .label:first-of-type{margin-top:0;}
+  .review-panel .answer{font-size:16px;font-weight:700;color:var(--navy);line-height:1.5;}
+  .review-panel .body .para{font-size:15.5px;line-height:1.65;color:var(--gray-700);margin-bottom:8px;}
+  .review-panel .body .para:last-child{margin-bottom:0;}
+  .review-panel .body a{color:var(--accent);word-break:break-all;}
+  /* Deliberately loud: this says the graded key differs from the source's. */
+  .review-panel .ai-banner{
+    display:inline-block;margin-bottom:8px;padding:5px 11px;border-radius:6px;
+    background:#b45309;color:#fff;
+    font-size:11.5px;font-weight:800;letter-spacing:.05em;
+  }
+  .review-panel .was{font-size:14px;color:#92400e;margin-bottom:8px;font-weight:600;}
+  .review-panel .why{margin:0;padding-left:20px;}
+  .review-panel .why li{font-size:14.5px;line-height:1.6;color:var(--gray-700);margin-bottom:5px;}
+  .review-panel .src{margin-top:12px;font-size:13px;color:var(--gray-500);}
+  .review-panel .src a{color:var(--accent);}
+
+  @media (max-width: 640px){
+    .review-panel{margin:14px 16px 0;padding:13px 15px;}
+  }

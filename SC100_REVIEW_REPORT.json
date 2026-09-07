@@ -1,0 +1,180 @@
+{
+ "reviewedOn": "2026-09-07",
+ "objectives": "SC-100 skills measured as of July 28, 2026",
+ "totals": {
+  "questions": 310,
+  "scorable": 222,
+  "examined": 11,
+  "notReviewed": 299,
+  "outdated": 0,
+  "manual_review": 1,
+  "verified": 7,
+  "not_reviewed": 0,
+  "corrected": 3,
+  "ambiguous": 0
+ },
+ "findings": {
+  "std/20": {
+   "question": "Standalone 20",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "C",
+   "answer": "B",
+   "explanation": "Tenant restrictions are what stop a user signing in to any tenant other than your own, and in Global Secure Access they are delivered as Universal Tenant Restrictions on the Microsoft traffic profile — that is Microsoft Entra Internet Access. The Global Secure Access feature comparison table lists Universal Tenant Restrictions under the Entra P1/P2 Microsoft traffic profile column only; the Private Access column is blank. Remember the split: Internet Access is the secure web gateway for internet, SaaS and Microsoft traffic, so anything about controlling where users authenticate outbound lives there.",
+   "whyWrong": [
+    "A. Microsoft Defender for Endpoint is endpoint detection and response. It does not govern which Entra tenant a user may authenticate to.",
+    "C. Microsoft Entra Private Access is the ZTNA half of Global Secure Access, for reaching private on-premises apps. It has no tenant-restriction capability.",
+    "D. Microsoft Defender for Cloud Apps is a CASB. It can govern SaaS session behaviour but does not enforce tenant restrictions at authentication."
+   ],
+   "source": {
+    "title": "What is Global Secure Access? — feature comparison table",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access"
+   }
+  },
+  "std/54": {
+   "question": "Standalone 54",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "Dangling DNS detection is a named capability of Microsoft Defender for App Service: it alerts when an App Service site is decommissioned and its custom domain (the CNAME) is left behind, which is exactly the subdomain-takeover risk the question describes. The trap here is matching the word 'DNS' in the question to the product with 'DNS' in its name.",
+   "whyWrong": [
+    "A. Defender for DevOps covers the pipeline and repositories, not published DNS records.",
+    "C. Defender for Cloud Apps is a CASB for SaaS usage.",
+    "D. Defender for DNS watches Azure resources for malicious DNS resolution — command-and-control, data exfiltration by DNS — not the lifecycle of a web app's CNAME record."
+   ],
+   "source": {
+    "title": "Microsoft Defender for App Service — Dangling DNS detection",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-app-service-introduction"
+   }
+  },
+  "std/85": {
+   "question": "Standalone 85",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "A",
+   "answer": "C",
+   "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nRegulatory standards such as NIST SP 800-53 are turned on as security standards in Defender for Cloud — Regulatory compliance > Manage compliance policies > Security policies, then toggle the standard On. Only then does the subscription get assessed and appear on the regulatory compliance dashboard. The original key, assigning a single built-in policy definition from Azure Policy, is wrong twice over: a regulatory standard is an initiative rather than one definition, and assessing it is driven from Defender for Cloud.",
+   "whyWrong": [
+    "A. A built-in policy definition is a single rule. NIST SP 800-53 is a whole initiative, and assigning one definition would not produce a compliance assessment.",
+    "B. Defender for Cloud Apps access policies govern SaaS sessions and have nothing to do with regulatory assessment.",
+    "D. Secure score recommendations measure general posture against the Microsoft Cloud Security Benchmark, not compliance with a named regulatory standard."
+   ],
+   "source": {
+    "title": "Assign regulatory compliance standards in Microsoft Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages"
+   }
+  },
+  "std/203": {
+   "question": "Standalone 203",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "Adding the regulatory compliance standard in Defender for Cloud is the first step: the standard has to be assigned to the scope before Defender for Cloud will assess the subscription against it or show anything on the regulatory compliance dashboard. Compare this with Standalone 85, which asks the same thing with 'turn on a security standard' as the wording.",
+   "whyWrong": [
+    "A. Secure score reflects the Microsoft Cloud Security Benchmark, not NIST SP 800-53.",
+    "B. A Sentinel data connector moves alerts into a SIEM; it does not assess compliance.",
+    "C. The Azure security baseline audit report is a different artefact and is not how a regulatory standard is assessed."
+   ],
+   "source": {
+    "title": "Assign regulatory compliance standards in Microsoft Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages"
+   }
+  },
+  "std/217": {
+   "question": "Standalone 217",
+   "status": "MANUAL_REVIEW",
+   "confidence": "LOW",
+   "explanation": "Flagged: the key is left as the source has it, but it looks wrong and the documentation does not settle the wording. This is the same NIST SP 800-53 scenario as Standalone 85 and 203, except the option 'add a regulatory compliance standard' is missing from the list. The stem already states the subscription has enhanced security enabled, which means the Defender plans in the keyed answer (D) are on — so it cannot be what you do first. Assigning the built-in initiative from Azure Policy (C) is the only remaining action that produces a NIST assessment, and regulatory standards are implemented as Azure Policy initiatives. Treat C as the more defensible answer and verify before relying on this item.",
+   "source": {
+    "title": "Assign regulatory compliance standards in Microsoft Defender for Cloud",
+    "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages"
+   }
+  },
+  "std/92": {
+   "question": "Standalone 92",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "B2B direct connect is the one feature built for Teams shared channels, and it satisfies every requirement in the stem: users collaborate with their home credentials so no guest object is created in contoso.com, inbound cross-tenant access settings can be scoped to a group in fabrikam.com, and the trust gives single sign-on. Microsoft's own wording: users 'work together using their home credentials and a shared channel in Teams, without having to be added to each other's organizations as guests.'",
+   "whyWrong": [
+    "A. B2B collaboration invites the external user as a guest object in your tenant — the opposite of the stated requirement — and guests cannot participate in shared channels.",
+    "B. Connect Sync synchronises on-premises AD DS to Entra ID; it is not a cross-tenant feature.",
+    "C. Cross-tenant synchronisation provisions external users as B2B collaboration users in your tenant, so it also creates the accounts the question forbids."
+   ],
+   "source": {
+    "title": "B2B direct connect overview",
+    "url": "https://learn.microsoft.com/en-us/entra/external-id/b2b-direct-connect-overview"
+   }
+  },
+  "std/95": {
+   "question": "Standalone 95",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "This is the core Global Secure Access split. Microsoft Entra Private Access is the ZTNA service for private, corporate resources — the on-premises App1 — and replaces VPN with per-app access. Microsoft Entra Internet Access is the identity-aware secure web gateway for internet and SaaS destinations, which is what App2 is. Map 'private/on-premises' to Private Access and 'internet/SaaS' to Internet Access and these questions become mechanical.",
+   "source": {
+    "title": "What is Global Secure Access?",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access"
+   }
+  },
+  "std/109": {
+   "question": "Standalone 109",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "An on-premises FTP server reached from the internet is a private resource on a non-HTTP protocol, and Private Access provides per-app access for TCP and UDP applications with Conditional Access applied per app — that is what makes it ZTNA rather than a VPN. Application proxy would be the older answer but is limited to web apps; Private Access is described as building on application proxy and extending it to any private resource, port and protocol.",
+   "whyWrong": [
+    "B. Microsoft Entra application proxy publishes web applications over HTTP/HTTPS, so it cannot publish FTP.",
+    "C. Internet Access secures outbound traffic to internet and SaaS destinations, not inbound access to your own server.",
+    "D. Azure Bastion gives RDP/SSH to Azure virtual machines through the portal; Server1 is on-premises and the protocol is FTP.",
+    "E. Application Gateway is a regional layer-7 load balancer for HTTP/HTTPS."
+   ],
+   "source": {
+    "title": "What is Global Secure Access? — Microsoft Entra Private Access",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access"
+   }
+  },
+  "std/214": {
+   "question": "Standalone 214",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "Legacy applications issuing LDAP queries need a directory that speaks LDAP. Microsoft Entra Domain Services (formerly Azure AD DS) provides managed domain services — domain join, Group Policy, LDAP, and Kerberos/NTLM — without you deploying or patching domain controllers, which is also what satisfies 'minimize the administrative effort'. Microsoft names this exact scenario: cloud-only organisations with third-party apps that still require LDAP.",
+   "whyWrong": [
+    "B. Azure AD B2C is a customer identity service for consumer sign-in.",
+    "C. Azure AD (Microsoft Entra ID) is not an LDAP directory — it speaks OIDC, OAuth and SAML.",
+    "D. Running AD DS yourself on Azure VMs works but means deploying, patching and monitoring domain controllers, which is the administrative effort the question tells you to minimise."
+   ],
+   "source": {
+    "title": "Overview of Microsoft Entra Domain Services",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/domain-services/overview"
+   }
+  },
+  "std/215": {
+   "question": "Standalone 215",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "originalAnswer": "B",
+   "answer": "C",
+   "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThis is word-for-word the same scenario as Standalone 214, which the source keys to Azure AD DS — so the source contradicts itself, and the Microsoft Entra ID key here is the wrong half of that contradiction. Microsoft Entra ID does not answer LDAP; it is a modern-protocol identity provider. Microsoft Entra Domain Services is the managed domain that provides LDAP, Kerberos/NTLM, Group Policy and domain join for legacy applications that cannot be modernised.",
+   "whyWrong": [
+    "A. AD DS on your own servers would work but is the maximum administrative effort, which the question rules out.",
+    "B. Microsoft Entra ID speaks OIDC, OAuth and SAML. Legacy LDAP binds and reads are not supported against it.",
+    "D. Microsoft Entra External ID is for external and customer identities."
+   ],
+   "source": {
+    "title": "Overview of Microsoft Entra Domain Services",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/domain-services/overview"
+   }
+  },
+  "std/280": {
+   "question": "Standalone 280",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "explanation": "An enterprise application that needs LDAP to look up attributes about Entra users needs a managed domain in front of Entra ID. Domain Services synchronises users, groups and credentials one way from Microsoft Entra ID and exposes them over LDAP and Kerberos/NTLM, giving the legacy app what it expects without any domain controllers to run.",
+   "whyWrong": [
+    "A. A Conditional Access trusted location is an access-policy condition and adds no directory protocol.",
+    "C. Private Access is network access to private apps; it does not make Entra ID answer LDAP.",
+    "D. Pass-through authentication validates passwords against on-premises AD DS during sign-in and is unrelated to LDAP lookups against Entra."
+   ],
+   "source": {
+    "title": "Overview of Microsoft Entra Domain Services",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/domain-services/overview"
+   }
+  }
+ }
+}

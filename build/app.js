@@ -37,15 +37,15 @@ function citation(q){
 // to domain 1 rather than silently vanishing from every weighted draw.
 //
 // Target counts are pre-computed from the midpoint of each published weight
-// range against a fixed 50-question exam (22.5/32.5/22.5/22.5% of 50 =
-// 11.25/16.25/11.25/11.25, rounded to 11/17/11/11 — which sums to exactly 50)
+// range against a fixed 50-question exam (22.5/27.5/27.5/22.5% of 50 =
+// 11.25/13.75/13.75/11.25, rounded to 11/14/14/11 — which sums to exactly 50)
 // rather than computed at draw time, so the breakdown shown on the setup
 // screen always matches what actually gets drawn.
 // ---------------------------------------------------------------------------
 const DOMAIN_WEIGHTS = [
   {num:1, name:'Design solutions that align with security best practices and priorities', pct:'20–25%', target:11},
-  {num:2, name:'Design security operations, identity, and compliance capabilities',        pct:'30–35%', target:17},
-  {num:3, name:'Design security solutions for infrastructure',                             pct:'20–25%', target:11},
+  {num:2, name:'Design security operations, identity, and compliance capabilities',        pct:'25–30%', target:14},
+  {num:3, name:'Design security solutions for infrastructure',                             pct:'25–30%', target:14},
   {num:4, name:'Design security solutions for applications and data',                      pct:'20–25%', target:11}
 ];
 
@@ -780,7 +780,8 @@ function renderSetup(app){
         el('li',{},[`The other ${UNSCORED_COUNT} are answer-area items whose answers the source records as pictures rather than text. There is nothing to click, so they are not scored — but the recorded answer is shown when you reveal it, and no answer is invented.`]),
         el('li',{},[`${EXHIBIT_COUNT} questions carry the diagrams, tables and screenshots they refer to, and ${EXPLAINED_COUNT} carry the source's explanation.`]),
         el('li',{},['Both case studies include their full scenario, which opens from a panel above the question.']),
-        el('li',{},['Answers and explanations are reproduced from the source as-is. Where the source contradicts itself or looks wrong, it is left alone rather than second-guessed.'])
+        el('li',{},[`Answer keys are being reviewed against Microsoft Learn. ${REVIEWED_COUNT} of ${TOTAL_Q} have been checked so far — ${CORRECTED_COUNT} were wrong and have been corrected, ${FLAGGED_COUNT} are flagged as doubtful. A reviewed question shows its verdict and a Microsoft Learn link with the answer.`]),
+        el('li',{},[`The remaining ${TOTAL_Q - REVIEWED_COUNT} keys are reproduced from the source as-is and have not been independently checked. Treat them as a dump, not as fact.`])
       ])
     ])
   ]));
@@ -857,6 +858,12 @@ function renderExam(app){
   const bodyWrap = el('div',{class:'qtext'});
   renderNodes(bodyWrap, q.body);
   card.appendChild(bodyWrap);
+  if(q.review && (q.review.status === 'MANUAL_REVIEW' || q.review.status === 'AMBIGUOUS')){
+    card.appendChild(el('div',{class:'warn-note'},[
+      'This item is flagged: its answer key looks doubtful and Microsoft’s documentation ' +
+      'does not settle it. The source’s key is kept and graded as-is. See the note with the answer.'
+    ]));
+  }
   if(q.warn){
     card.appendChild(el('div',{class:'warn-note'},[q.warn]));
   }
@@ -934,6 +941,11 @@ function renderExam(app){
     // the answer is revealed, since naming both keys would give the item away.
     // Two cases share this panel: a key corrected against the source, which
     // names both keys, and a key supplied where the source has none at all.
+    // The answer-key review, where this item has been checked against Microsoft
+    // Learn. It comes before the source's own explanation, because for a
+    // corrected item that explanation argues for the key we just overruled.
+    if(q.review) card.appendChild(reviewPanel(q));
+
     const suppliedKey = !!q.keynote;
     if(q.keynote){
       card.appendChild(el('div',{class:'key-note'},[
@@ -1070,6 +1082,77 @@ function renderInfoBody(card, q, checked){
       ? 'This is a hotspot, drag-and-drop or drop-down item. The source records its answer as a picture rather than as text, so there is nothing here to click and nothing to grade — work it out from the exhibit, then reveal the recorded answer. It never counts for or against your percentage.'
       : 'The source records neither options nor an answer for this item, so there is nothing to grade and nothing to reveal. Inventing an answer would be worse than leaving it blank. It is here so the bank matches the document, and never counts for or against your percentage.'
   ]));
+}
+
+
+// ---------------- ANSWER-KEY REVIEW ----------------
+// Rendered from q.review, which bank.py merges in from build/review.json. The
+// same record drives the graded key, so what is displayed here and what the
+// scoring engine believes can never disagree.
+const REVIEW_LABEL = {
+  VERIFIED: 'Verified against Microsoft Learn',
+  CORRECTED: 'Answer key corrected',
+  MANUAL_REVIEW: 'Flagged for manual review',
+  AMBIGUOUS: 'Ambiguous question',
+  OUTDATED: 'Outdated question'
+};
+
+function answerText(q){
+  if(isMatch(q)) return q.boxes.map(b => `${b.label}: ${b.value}`).join(' · ');
+  const letters = parseAnswerLetters(q.a);
+  if(!letters.length) return '—';
+  return letters.map(l => {
+    const i = l.charCodeAt(0) - 65;
+    const opt = (q.o || [])[i];
+    return opt ? `${l}. ${opt}` : l;
+  }).join('  |  ');
+}
+
+function reviewPanel(q){
+  const r = q.review;
+  const cls = r.status === 'CORRECTED' ? 'corrected'
+            : (r.status === 'VERIFIED' ? 'verified' : 'flagged');
+  const panel = el('div',{class:'review-panel ' + cls});
+  panel.appendChild(el('div',{class:'head'},[
+    REVIEW_LABEL[r.status] || r.status,
+    el('span',{class:'conf'},['confidence: ' + r.confidence])
+  ]));
+
+  panel.appendChild(el('div',{class:'label'},['Correct Answer']));
+  panel.appendChild(el('div',{class:'answer'},[answerText(q)]));
+
+  panel.appendChild(el('div',{class:'label'},['Explanation']));
+  // A corrected item leads with the banner on its own line, so it cannot be
+  // mistaken for part of the prose.
+  const body = el('div',{class:'body'});
+  let text = r.explanation;
+  if(r.corrected){
+    const banner = 'THIS ANSWER WAS CORRECTED BY AI';
+    body.appendChild(el('div',{class:'ai-banner'},[banner]));
+    // The banner is stored in some explanations too; do not print it twice.
+    text = text.replace(banner, '').replace(/^\s+/, '');
+    body.appendChild(el('div',{class:'was'},[
+      `The source's key was ${r.originalAnswer}. This bank grades ${q.a}.`
+    ]));
+  }
+  text.split(/\n{2,}/).forEach(para=>{
+    if(para.trim()) body.appendChild(el('div',{class:'para'}, linkify(para.trim())));
+  });
+  panel.appendChild(body);
+
+  if(r.whyWrong && r.whyWrong.length){
+    panel.appendChild(el('div',{class:'label'},['Why the other options are wrong']));
+    panel.appendChild(el('ul',{class:'why'}, r.whyWrong.map(t => el('li',{},[t]))));
+  }
+
+  if(r.source && r.source.url){
+    panel.appendChild(el('div',{class:'src'},[
+      'Source: ',
+      el('a',{href:r.source.url, target:'_blank', rel:'noopener noreferrer'},
+        [r.source.title || r.source.url])
+    ]));
+  }
+  return panel;
 }
 
 // ---------------- ANSWER-AREA (matching) ITEM ----------------
