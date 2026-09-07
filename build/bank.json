@@ -6253,7 +6253,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/azure/sentinel/tutorial-respond-threats-playbook?tabs=LAC"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Playbooks are Sentinel's SOAR component: automated workflows, built on Logic Apps, that run against an alert or incident. Both requirements land on them. “Respond to threats right away with minimal human involvement” is the response use case, and Microsoft's orchestration example is exactly the Teams requirement — “send a message to your security operations channel in Microsoft Teams or Slack so your security analysts know about the incident.”",
+    "whyWrong": [
+     "A. Data connectors bring data in. They are the SIEM plumbing, not the automated response.",
+     "C. Workbooks visualise data in dashboards; they take no action.",
+     "D. KQL is the query language the detections are written in, not an automation mechanism."
+    ],
+    "source": {
+     "title": "Automate threat response with playbooks in Microsoft Sentinel",
+     "url": "https://learn.microsoft.com/en-us/azure/sentinel/automate-responses-with-playbooks"
+    }
+   }
   },
   {
    "n": 60,
@@ -7955,7 +7969,21 @@
     {
      "p": "https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/web-content-filtering? view=o365-worldwide#configure-web-content-filtering-policies"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Web content filtering in Defender for Endpoint “enables your organization to track and regulate access to websites based on their content categories”, and the question names the categories almost verbatim: **Adult content** is a parent category and **Gambling** one of its children. Blocks are enforced by SmartScreen in Edge and by network protection in other browsers, on-premises or away from the network.",
+    "whyWrong": [
+     "A. Endpoint Manager (Intune) deploys the policy in some designs but is not the filtering capability itself, and the categories live in Defender.",
+     "B. Compliance Manager scores regulatory posture.",
+     "C. Defender for Cloud Apps governs SaaS app usage and can block unsanctioned apps, but category-based web filtering on the device is a Defender for Endpoint web protection feature."
+    ],
+    "source": {
+     "title": "Web content filtering in Microsoft Defender for Endpoint",
+     "url": "https://learn.microsoft.com/en-us/defender-endpoint/web-content-filtering"
+    }
+   }
   },
   {
    "n": 103,
@@ -11334,7 +11362,21 @@
     "Azure AD Conditional Access",
     "Microsoft Purview Information Protection"
    ],
-   "a": "A D"
+   "a": "A D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "This needs both halves and the question says so. A Defender for Cloud Apps **session policy** with Conditional Access App Control is what inspects the live session and blocks the download — Microsoft's own example is allowing access from unmanaged devices while limiting the download of sensitive files. But a session policy cannot work alone: “in order for your session policy to work, you must also have a Microsoft Entra ID Conditional Access policy”, which routes the session through Defender for Cloud Apps in the first place.",
+    "whyWrong": [
+     "B. Application Proxy publishes on-premises web apps; SharePoint Online is already a cloud service.",
+     "C. Azure Data Catalog is a data discovery service, long superseded, and unrelated.",
+     "E. Purview Information Protection can label and encrypt the file, but it does not block the download action based on device management state."
+    ],
+    "source": {
+     "title": "Create session policies in Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/session-policy-aad"
+    }
+   }
   },
   {
    "n": 191,
@@ -11359,7 +11401,21 @@
     "attack surface reduction (ASR) rules in Defender for Endpoint",
     "security baselines assessments in Microsoft Defender Vulnerability Management"
    ],
-   "a": "D"
+   "a": "D",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Security baselines assessment is the Defender Vulnerability Management feature built for exactly this: it “helps you to continuously and effortlessly monitor your organization's security baselines compliance and identify changes in real time”, comparing devices against a base benchmark — and CIS benchmarks for Windows 10, Windows 11 and Windows Server are explicitly supported. Devices configured to CIS at deployment and later modified show up as non-compliant against the profile.",
+    "whyWrong": [
+     "A. An authenticated scan reaches unmanaged devices; these devices are already onboarded.",
+     "B. Microsoft Secure Score for Devices is an aggregate posture score, not a per-device CIS compliance result.",
+     "C. Attack surface reduction rules harden the device against specific attack techniques; they do not measure benchmark drift."
+    ],
+    "source": {
+     "title": "Security baselines assessment in Microsoft Defender Vulnerability Management",
+     "url": "https://learn.microsoft.com/en-us/defender-vulnerability-management/tvm-security-baselines"
+    }
+   }
   },
   {
    "n": 192,
@@ -15565,7 +15621,21 @@
     "Microsoft Defender for Endpoint",
     "Microsoft Sentinel"
    ],
-   "a": "B"
+   "a": "B",
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "Defender for Cloud Apps is Microsoft's CASB and the MCRA component for SaaS visibility and control. Its session policies “provide granular visibility into cloud apps with real-time, session-level monitoring”, which is the “in real time” part of the requirement, and its activity policies and anomaly detections cover risky behaviour across connected apps.",
+    "whyWrong": [
+     "A. Purview Information Protection classifies and protects content; it does not monitor user activity across apps.",
+     "C. Defender for Endpoint sees the device, not the SaaS session.",
+     "D. Sentinel could ingest and correlate the signal, but it is the SIEM downstream. The question asks which service provides the visibility, and for SaaS that is Defender for Cloud Apps."
+    ],
+    "source": {
+     "title": "Create session policies in Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/session-policy-aad"
+    }
+   }
   },
   {
    "n": 298,
