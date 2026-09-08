@@ -18,7 +18,7 @@ bank = json.load(open(paths.BANK, encoding='utf-8'))
 items, cases = bank['items'], bank['cases']
 items.sort(key=lambda q: q['n'])
 
-ORDER = ['n', 'sec', 'num', 'c', 'q', 'body', 'o', 'a', 'srcA', 'boxes', 'keynote',
+ORDER = ['n', 'sec', 'num', 'c', 'q', 'body', 'o', 'a', 'srcA', 'boxes', 'order', 'keynote',
          'review', 'ansimg', 'e', 'cs']
 lines = [json.dumps({k: q[k] for k in ORDER if k in q}, ensure_ascii=False, separators=(',', ':'))
          for q in items]
@@ -30,7 +30,8 @@ cases_js = ('\n// The two case-study scenarios, shown from a panel on their ques
 
 choice = sum(1 for q in items if 'o' in q)
 match = sum(1 for q in items if 'boxes' in q)
-unscored = len(items) - choice - match
+order_n = sum(1 for q in items if 'order' in q)
+unscored = len(items) - choice - match - order_n
 exhibits = sum(1 for q in items if any('img' in n for n in q['body']))
 explained = sum(1 for q in items if q.get('e'))
 reviewed = sum(1 for q in items if q.get('review'))
@@ -41,6 +42,7 @@ consts = (
     '\n// How the bank breaks down, for the copy on the setup screen.\n'
     'const CHOICE_COUNT = %d;\n'
     'const MATCH_COUNT = %d;\n'
+    'const ORDER_COUNT = %d;\n'
     'const SCORABLE_COUNT = %d;\n'
     '// Answer-area items whose answers the source draws rather than writes.\n'
     'const UNSCORED_COUNT = %d;\n'
@@ -50,7 +52,7 @@ consts = (
     'const REVIEWED_COUNT = %d;\n'
     'const CORRECTED_COUNT = %d;\n'
     'const FLAGGED_COUNT = %d;\n\n'
-) % (choice, match, choice + match, unscored, exhibits, explained,
+) % (choice, match, order_n, choice + match + order_n, unscored, exhibits, explained,
      reviewed, corrected_n, flagged)
 
 css = rd('base.css.html')
@@ -115,8 +117,8 @@ else:
               % (len(missing), ', '.join(missing[:3])))
 
 print('wrote %s (%d KB)' % (OUT_HTML, len(html.encode('utf-8')) // 1024))
-print('%d questions: %d choice + %d answer-area = %d scored, %d unscored'
-      % (len(items), choice, match, choice + match, unscored))
+print('%d questions: %d choice + %d answer-area + %d ordering = %d scored, %d unscored'
+      % (len(items), choice, match, order_n, choice + match + order_n, unscored))
 print('review: %d keys checked, %d corrected, %d flagged' % (reviewed, corrected_n, flagged))
 print('%d exhibits, %d explanations, %d images (%.1f MB) in img/'
       % (exhibits, explained, len(used), total / 1e6))

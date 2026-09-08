@@ -613,6 +613,57 @@ ANSWER_AREAS = {
          'value': "Weekly",
          'options': ["Weekly", "Monthly", "Quarterly"]}
     ],
+    # These four look like drag-and-drop at a glance (a pool on the left, fixed
+    # target rows on the right), but each target row only ever takes one value
+    # from that same pool — exactly what a drop-down already does. No new
+    # rendering was needed for them, just entries here like everything above.
+    ('std', 94): [
+        {'label': "Use the Microsoft Cloud Adoption Framework for Azure to evaluate compliance with cloud governance policies",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Azure Advisor", "Microsoft cloud security benchmark (MCSB)", "Microsoft Defender for Cloud",
+                     "Microsoft Defender Vulnerability", "Microsoft Intune", "Microsoft Sentinel"]},
+        {'label': "Use the Azure Well-Architected Framework to secure individual workloads",
+         'value': "Microsoft Defender Vulnerability",
+         'options': ["Azure Advisor", "Microsoft cloud security benchmark (MCSB)", "Microsoft Defender for Cloud",
+                     "Microsoft Defender Vulnerability", "Microsoft Intune", "Microsoft Sentinel"]}
+    ],
+    ('std', 174): [
+        {'label': "Assume breach", 'value': "Segmenting access",
+         'options': ["Business continuity", "Data classification", "Just-in-time (JIT) access", "Segmenting access"]},
+        {'label': "Verify explicitly", 'value': "Data classification",
+         'options': ["Business continuity", "Data classification", "Just-in-time (JIT) access", "Segmenting access"]},
+        {'label': "Use least privilege access", 'value': "Just-in-time (JIT) access",
+         'options': ["Business continuity", "Data classification", "Just-in-time (JIT) access", "Segmenting access"]}
+    ],
+    ('std', 205): [
+        {'label': "For brute force password attacks", 'value': "Azure AD Password Protection",
+         'options': ["Azure AD Password Protection", "Extranet Smart Lockout (ESL)", "Password hash synchronization"]},
+        {'label': "For leaked credentials", 'value': "Password hash synchronization",
+         'options': ["Azure AD Password Protection", "Extranet Smart Lockout (ESL)", "Password hash synchronization"]}
+    ],
+    ('std', 225): [
+        {'label': "User accounts that were potentially compromised",
+         'value': "Azure Active Directory (Azure AD) Identity Protection",
+         'options': ["A data loss prevention (DLP) policy", "Azure Active Directory (Azure AD) Conditional Access",
+                     "Azure Active Directory (Azure AD) Identity Protection", "Microsoft Defender for Cloud",
+                     "Microsoft Defender for Cloud Apps"]},
+        {'label': "Users performing bulk file downloads from SharePoint Online",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["A data loss prevention (DLP) policy", "Azure Active Directory (Azure AD) Conditional Access",
+                     "Azure Active Directory (Azure AD) Identity Protection", "Microsoft Defender for Cloud",
+                     "Microsoft Defender for Cloud Apps"]}
+    ],
+    # A Yes/No table reduces the same way: each statement is a box with a fixed
+    # two-item option list rather than a full sentence, so it renders as one
+    # more drop-down instead of needing its own radio-button UI for a single item.
+    ('std', 284): [
+        {'label': "To enable MUA for Vault1, a resource guard must be deployed to Sub1.",
+         'value': "No", 'options': ["Yes", "No"]},
+        {'label': "A user in Group2 must approve changes made by a user in Group1 to the backup policies of Vault1.",
+         'value': "Yes", 'options': ["Yes", "No"]},
+        {'label': "A user in Group1 that activates Assignment1 can disable soft delete for the backups of Vault1, without the approval of a user in Group2.",
+         'value': "No", 'options': ["Yes", "No"]}
+    ],
 }
 AREA_NOTE = ('The choices for this item were supplied from outside the dump; the dump itself '
              'records the answer only as the picture shown above. Grading uses those choices.')
@@ -621,6 +672,73 @@ PRIOR_NOTE = ('The dump records this answer as a picture, shown above. The value
               'from a text export of the same dump, which spelled them out. No list of '
               'alternatives survives anywhere, so each drop-down offers this item’s own '
               'values — match each one to its box.')
+
+# Ordering items: move a subset of a pool of actions into the answer area and
+# arrange them correctly. `pool` is every action offered (including
+# distractors never used in a correct answer); `answers` is the list of
+# sequences that count as correct — almost always just one, except where the
+# source itself says "more than one order... is correct".
+ORDER_ITEMS = {
+    ('std', 77): {
+        'pool': ["Implement DevOps integration.", "Discover and protect IoT devices.",
+                 "Explicitly validate trust for all access requests.",
+                 "Apply provisions for ransomware recovery readiness.", "Classify and protect data."],
+        'answers': [["Explicitly validate trust for all access requests.",
+                      "Apply provisions for ransomware recovery readiness.", "Classify and protect data."]],
+    },
+    ('std', 156): {
+        'pool': ["Assess the current situation and identify the scope.",
+                 "Identify which line-of-business (LOB) apps are unavailable due to a ransomware incident.",
+                 "Identify the compromise recovery process.",
+                 "Implement a comprehensive strategy to reduce the risk of privileged access compromise.",
+                 "Update organizational processes to manage major ransomware events and streamline outsourcing to avoid friction."],
+        'answers': [["Assess the current situation and identify the scope.",
+                      "Identify which line-of-business (LOB) apps are unavailable due to a ransomware incident.",
+                      "Identify the compromise recovery process."]],
+    },
+    ('std', 220): {
+        'pool': ["Modify the target resources of Policy1.",
+                 "For the Microsoft Entra tenant, create an authentication strength.",
+                 "For the Microsoft Entra tenant, create an authentication context.",
+                 "Modify the conditions of Policy1.", "Configure a sensitivity label for Site1."],
+        # The item's own note says more than one order is accepted: the
+        # authentication context has to exist before either of the other two
+        # steps can reference it, but those two don't depend on each other.
+        'answers': [
+            ["For the Microsoft Entra tenant, create an authentication context.",
+             "Modify the conditions of Policy1.", "Configure a sensitivity label for Site1."],
+            ["For the Microsoft Entra tenant, create an authentication context.",
+             "Configure a sensitivity label for Site1.", "Modify the conditions of Policy1."],
+        ],
+    },
+    ('std', 239): {
+        'pool': ["Establish ransomware recovery readiness.", "Implement disaster recovery.",
+                 "Establish visibility.", "Enable additional protection and detection controls.",
+                 "Enable automation."],
+        'answers': [["Establish visibility.", "Enable additional protection and detection controls.",
+                      "Enable automation."]],
+    },
+    ('std', 266): {
+        'pool': ["Create an Azure Backup vault.", "From RG1, create a resource lock.",
+                  "Create a Recovery Services vault.", "Enable vault immutability.",
+                  "Lock immutability for the vault."],
+        'answers': [["Create a Recovery Services vault.", "Enable vault immutability.",
+                      "Lock immutability for the vault."]],
+    },
+    ('std', 272): {
+        'pool': ["Assign storage1 the Key Vault Reader role to access the key.",
+                 "Create a managed identity and assign it to storage1.",
+                 "Create and assign an access policy for storage1.",
+                 "Configure Azure Storage encryption with customer-managed keys.",
+                 "Create and assign a Key Vault access policy.",
+                 "Create a managed identity and assign it to AKV1."],
+        'answers': [["Create a managed identity and assign it to storage1.",
+                      "Create and assign a Key Vault access policy.",
+                      "Configure Azure Storage encryption with customer-managed keys."]],
+    },
+}
+ORDER_NOTE = ('The choices and their order were supplied from outside the dump; the dump itself '
+              'records the answer only as the picture shown above. Grading uses that order.')
 
 # Answer-area values recovered from the earlier text-only export of this dump,
 # keyed "<section>/<number>".
@@ -676,6 +794,14 @@ for q in parsed['questions']:
         # gradeable, and the recorded graphic is shown alongside on reveal.
         item['boxes'] = PRIOR_BOXES[(sec, num)]
         item['keynote'] = PRIOR_NOTE
+    elif (sec, num) in ORDER_ITEMS:
+        order = ORDER_ITEMS[(sec, num)]
+        pool_set = set(order['pool'])
+        for ans in order['answers']:
+            assert set(ans) <= pool_set, 'order item %s %d answer not in its own pool' % (sec, num)
+            assert len(set(ans)) == len(ans), 'order item %s %d answer repeats an action' % (sec, num)
+        item['order'] = order
+        item['keynote'] = ORDER_NOTE
 
     ans = conv(q['ansimg'])
     if ans:
@@ -701,11 +827,12 @@ for k, v in cases.items():
 
 choice = sum(1 for i in items if 'o' in i)
 match = sum(1 for i in items if 'boxes' in i)
-info = len(items) - choice - match
-print('total %d | choice %d | match %d | info %d' % (len(items), choice, match, info))
-print('scored: %d' % (choice + match))
+order_n = sum(1 for i in items if 'order' in i)
+info = len(items) - choice - match - order_n
+print('total %d | choice %d | match %d | order %d | info %d' % (len(items), choice, match, order_n, info))
+print('scored: %d' % (choice + match + order_n))
 print('info items that now show a recorded answer: %d'
-      % sum(1 for i in items if 'o' not in i and 'boxes' not in i and i.get('ansimg')))
+      % sum(1 for i in items if 'o' not in i and 'boxes' not in i and 'order' not in i and i.get('ansimg')))
 print('items carrying an exhibit: %d' % sum(1 for i in items if any('img' in n for n in i['body'])))
 print('items carrying an explanation: %d' % sum(1 for i in items if i.get('e')))
 print('per section:', Counter(i['sec'] for i in items))

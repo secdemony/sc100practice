@@ -52,6 +52,35 @@
   .match-mark.bad{color:var(--red);}
   .match-reset-row{margin:10px 24px 0;}
 
+  /* Ordering items — click-to-place instead of mouse drag-and-drop */
+  .order-note{
+    margin:12px 24px 4px;padding:11px 14px;border-radius:8px;
+    background:var(--gray-100);border:1px solid var(--gray-300);
+    font-size:13px;line-height:1.55;color:var(--gray-700);
+  }
+  .order-note b{color:var(--gray-900);}
+  .order-wrap{margin:12px 24px 4px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;}
+  .order-col{flex:1 1 260px;min-width:220px;}
+  .order-col-head{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-500);margin-bottom:8px;}
+  .order-answer-list,.order-pool-list{display:flex;flex-direction:column;gap:8px;}
+  .order-row{display:flex;align-items:center;gap:10px;border:1px solid var(--gray-300);border-radius:8px;padding:11px 13px;background:#fff;min-height:20px;}
+  .order-row.correct{border-color:var(--green);background:var(--green-light);}
+  .order-row.incorrect,.order-row.missing{border-color:var(--red);background:var(--red-light);}
+  .order-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .order-text{flex:1 1 auto;font-size:14.5px;line-height:1.45;color:var(--gray-900);}
+  .order-row.missing .order-text{color:var(--gray-500);font-style:italic;}
+  .order-remove{flex-shrink:0;border:none;background:transparent;color:var(--gray-500);font-size:15px;cursor:pointer;padding:2px 6px;border-radius:5px;line-height:1;font-family:inherit;}
+  .order-remove:hover{background:var(--gray-100);color:var(--red);}
+  .order-mark{flex-shrink:0;font-size:12.5px;font-weight:600;color:var(--gray-700);}
+  .order-row.correct .order-mark{color:var(--green);}
+  .order-row.incorrect .order-mark,.order-row.missing .order-mark{color:var(--red);}
+  .order-chip{
+    text-align:left;border:1px solid var(--gray-300);border-radius:8px;padding:11px 13px;
+    background:#fff;font-size:14.5px;line-height:1.45;color:var(--gray-900);cursor:pointer;font-family:inherit;
+  }
+  .order-chip:hover{background:var(--gray-50);border-color:var(--accent);}
+  .order-pool-empty{font-size:13.5px;color:var(--gray-500);font-style:italic;padding:8px 2px;}
+
   /* Domain weight rows on the setup screen wrap on narrow screens rather than
      squeezing the long SC-100 domain names into an unreadable column. */
   .domain-weight-row{flex-wrap:wrap;}
@@ -167,10 +196,11 @@
     .case-banner{padding:10px 16px;}
     .case-banner-q{margin-left:0;flex-basis:100%;}
     .warn-note, .cs-note{margin:0 16px 12px;}
-    .match-note, .match-wrap, .unscored-note{margin:10px 16px 4px;}
+    .match-note, .match-wrap, .unscored-note, .order-note, .order-wrap{margin:10px 16px 4px;}
     .statements-wrap{margin:12px 16px 4px;}
     .source-answer{margin:14px 16px 0;}
     .match-reset-row{margin:10px 16px 0;}
+    .order-wrap{flex-direction:column;}
     .unscored-footnote{padding:0 16px 14px;}
     .stat-grid.four{grid-template-columns:1fr 1fr;}
     .cat-row .name{flex:1 1 100%;}

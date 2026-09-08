@@ -3590,7 +3590,7 @@
     ]
   },
   "std/205": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Configure AD FS Extranet Smart Lockout Protection",
@@ -3598,7 +3598,7 @@
     },
     "explanation": "The recorded answer for brute-force password attacks, Azure AD Password Protection, checks out: banning weak and known-compromised passwords across both cloud and (via the DC agent) synced on-premises accounts is Microsoft's documented mitigation for password-spray and brute-force success. The recorded answer for leaked credentials, Extranet Smart Lockout (ESL), does not check out on two counts: ESL is documented as an Active Directory Federation Services (AD FS) feature for federated deployments, and this hybrid tenant uses pass-through authentication, not AD FS federation, so ESL isn't even part of this architecture; and ESL's own documented purpose is distinguishing legitimate sign-ins from brute-force/denial-of-service lockout attempts, not leaked-credential detection. Detecting leaked credentials specifically requires password hash synchronization to be enabled, since Microsoft can only compare a password against known-breached credentials if it holds a hash of that password, which pass-through authentication alone does not provide.",
     "whyWrong": [
-      "Extranet Smart Lockout would not even function in a pass-through-authentication deployment with no AD FS in the picture, and its actual purpose (protecting against brute-force lockout abuse) overlaps with the other box’s requirement, not this one’s. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Extranet Smart Lockout would not even function in a pass-through-authentication deployment with no AD FS in the picture, and its actual purpose (protecting against brute-force lockout abuse) overlaps with the other box’s requirement, not this one’s."
     ]
   },
   "std/206": {
@@ -3662,7 +3662,7 @@
     ]
   },
   "std/225": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
@@ -3670,7 +3670,7 @@
     },
     "explanation": "The recorded answer for potentially compromised user accounts, Azure AD Identity Protection, checks out: risky-user detection is Identity Protection's core purpose. The recorded answer for bulk file downloads from SharePoint Online, Microsoft Defender for Cloud, does not check out, and the item's own cited reference gives this away: the link it provides is to defender-cloud-apps/policies-threat-protection#detect-mass-download-data-exfiltration -- a Defender for Cloud Apps page about detecting exactly this mass-download behavior -- yet the recorded answer names the differently-branded \"Microsoft Defender for Cloud\" instead of \"Microsoft Defender for Cloud Apps,\" which is the product the source's own citation actually supports.",
     "whyWrong": [
-      "Microsoft Defender for Cloud assesses Azure resource security posture and has no SharePoint file-activity anomaly detection of its own; that capability belongs to Defender for Cloud Apps, which the item’s own source link points to. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Microsoft Defender for Cloud assesses Azure resource security posture and has no SharePoint file-activity anomaly detection of its own; that capability belongs to Defender for Cloud Apps, which the item’s own source link points to."
     ]
   },
   "std/226": {
@@ -3926,7 +3926,7 @@
     ]
   },
   "std/272": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Configure customer-managed keys for an existing storage account",
@@ -3934,7 +3934,7 @@
     },
     "explanation": "The recorded order has this backwards and picks the wrong identity target. Microsoft's own configuration steps for customer-managed keys are: give the storage account a managed identity, grant that identity permission on the key vault, and only then configure the storage account's encryption settings to reference the key -- because Azure validates that the configured identity can actually reach the key at the moment encryption is configured, which requires the identity and its access to already exist. The recorded sequence configures encryption with customer-managed keys first, before any identity or access exists to make that configuration valid, and its final step creates a managed identity \"and assigns it to AKV1\" rather than to storage1, when it is the storage account that needs an identity to present to Key Vault, not the vault that needs one assigned to it.",
     "whyWrong": [
-      "Configuring encryption to point at a key before an identity with permission to reach that key exists reverses a real dependency Azure enforces at configuration time, and a managed identity belongs on the resource that needs to authenticate (storage1), not on the vault holding the key. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Configuring encryption to point at a key before an identity with permission to reach that key exists reverses a real dependency Azure enforces at configuration time, and a managed identity belongs on the resource that needs to authenticate (storage1), not on the vault holding the key."
     ]
   },
   "std/273": {

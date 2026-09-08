@@ -9240,6 +9240,23 @@
     }
    ],
    "q": "You need to design a solution to accelerate a Zero Trust security implementation. The solution must be based on the Zero Trust Rapid Modernization Plan (RaMP).",
+   "order": {
+    "pool": [
+     "Implement DevOps integration.",
+     "Discover and protect IoT devices.",
+     "Explicitly validate trust for all access requests.",
+     "Apply provisions for ransomware recovery readiness.",
+     "Classify and protect data."
+    ],
+    "answers": [
+     [
+      "Explicitly validate trust for all access requests.",
+      "Apply provisions for ransomware recovery readiness.",
+      "Classify and protect data."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p086_x1474.webp",
@@ -10117,6 +10134,33 @@
     }
    ],
    "q": "You have an Azure environment that contains multiple workloads deployed across multiple subscriptions.",
+   "boxes": [
+    {
+     "label": "Use the Microsoft Cloud Adoption Framework for Azure to evaluate compliance with cloud governance policies",
+     "value": "Microsoft Defender for Cloud",
+     "options": [
+      "Azure Advisor",
+      "Microsoft cloud security benchmark (MCSB)",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender Vulnerability",
+      "Microsoft Intune",
+      "Microsoft Sentinel"
+     ]
+    },
+    {
+     "label": "Use the Azure Well-Architected Framework to secure individual workloads",
+     "value": "Microsoft Defender Vulnerability",
+     "options": [
+      "Azure Advisor",
+      "Microsoft cloud security benchmark (MCSB)",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender Vulnerability",
+      "Microsoft Intune",
+      "Microsoft Sentinel"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p097_x1630.webp",
@@ -13366,6 +13410,23 @@
     }
    ],
    "q": "Your company wants to optimize ransomware incident investigations.",
+   "order": {
+    "pool": [
+     "Assess the current situation and identify the scope.",
+     "Identify which line-of-business (LOB) apps are unavailable due to a ransomware incident.",
+     "Identify the compromise recovery process.",
+     "Implement a comprehensive strategy to reduce the risk of privileged access compromise.",
+     "Update organizational processes to manage major ransomware events and streamline outsourcing to avoid friction."
+    ],
+    "answers": [
+     [
+      "Assess the current situation and identify the scope.",
+      "Identify which line-of-business (LOB) apps are unavailable due to a ransomware incident.",
+      "Identify the compromise recovery process."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p141_x2204.webp",
@@ -14355,6 +14416,39 @@
     }
    ],
    "q": "For a Microsoft cloud environment, you need to recommend a security architecture that follows the Zero Trust principles of the Microsoft Cybersecurity Reference Architectures (MCRA).",
+   "boxes": [
+    {
+     "label": "Assume breach",
+     "value": "Segmenting access",
+     "options": [
+      "Business continuity",
+      "Data classification",
+      "Just-in-time (JIT) access",
+      "Segmenting access"
+     ]
+    },
+    {
+     "label": "Verify explicitly",
+     "value": "Data classification",
+     "options": [
+      "Business continuity",
+      "Data classification",
+      "Just-in-time (JIT) access",
+      "Segmenting access"
+     ]
+    },
+    {
+     "label": "Use least privilege access",
+     "value": "Just-in-time (JIT) access",
+     "options": [
+      "Business continuity",
+      "Data classification",
+      "Just-in-time (JIT) access",
+      "Segmenting access"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p154_x2437.webp",
@@ -16094,6 +16188,27 @@
     }
    ],
    "q": "You have a hybrid Azure AD tenant that has pass-through authentication enabled.",
+   "boxes": [
+    {
+     "label": "For brute force password attacks",
+     "value": "Azure AD Password Protection",
+     "options": [
+      "Azure AD Password Protection",
+      "Extranet Smart Lockout (ESL)",
+      "Password hash synchronization"
+     ]
+    },
+    {
+     "label": "For leaked credentials",
+     "value": "Password hash synchronization",
+     "options": [
+      "Azure AD Password Protection",
+      "Extranet Smart Lockout (ESL)",
+      "Password hash synchronization"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p177_x2816.webp",
@@ -16109,11 +16224,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for brute-force password attacks, Azure AD Password Protection, checks out: banning weak and known-compromised passwords across both cloud and (via the DC agent) synced on-premises accounts is Microsoft's documented mitigation for password-spray and brute-force success. The recorded answer for leaked credentials, Extranet Smart Lockout (ESL), does not check out on two counts: ESL is documented as an Active Directory Federation Services (AD FS) feature for federated deployments, and this hybrid tenant uses pass-through authentication, not AD FS federation, so ESL isn't even part of this architecture; and ESL's own documented purpose is distinguishing legitimate sign-ins from brute-force/denial-of-service lockout attempts, not leaked-credential detection. Detecting leaked credentials specifically requires password hash synchronization to be enabled, since Microsoft can only compare a password against known-breached credentials if it holds a hash of that password, which pass-through authentication alone does not provide.",
     "whyWrong": [
-     "Extranet Smart Lockout would not even function in a pass-through-authentication deployment with no AD FS in the picture, and its actual purpose (protecting against brute-force lockout abuse) overlaps with the other box’s requirement, not this one’s. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Extranet Smart Lockout would not even function in a pass-through-authentication deployment with no AD FS in the picture, and its actual purpose (protecting against brute-force lockout abuse) overlaps with the other box’s requirement, not this one’s."
     ],
     "source": {
      "title": "Configure AD FS Extranet Smart Lockout Protection",
@@ -17003,6 +17118,28 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription that contains a Microsoft SharePoint Online site named Site1.",
+   "order": {
+    "pool": [
+     "Modify the target resources of Policy1.",
+     "For the Microsoft Entra tenant, create an authentication strength.",
+     "For the Microsoft Entra tenant, create an authentication context.",
+     "Modify the conditions of Policy1.",
+     "Configure a sensitivity label for Site1."
+    ],
+    "answers": [
+     [
+      "For the Microsoft Entra tenant, create an authentication context.",
+      "Modify the conditions of Policy1.",
+      "Configure a sensitivity label for Site1."
+     ],
+     [
+      "For the Microsoft Entra tenant, create an authentication context.",
+      "Configure a sensitivity label for Site1.",
+      "Modify the conditions of Policy1."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p189_x3022.webp",
@@ -17235,6 +17372,31 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription",
+   "boxes": [
+    {
+     "label": "User accounts that were potentially compromised",
+     "value": "Azure Active Directory (Azure AD) Identity Protection",
+     "options": [
+      "A data loss prevention (DLP) policy",
+      "Azure Active Directory (Azure AD) Conditional Access",
+      "Azure Active Directory (Azure AD) Identity Protection",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps"
+     ]
+    },
+    {
+     "label": "Users performing bulk file downloads from SharePoint Online",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "A data loss prevention (DLP) policy",
+      "Azure Active Directory (Azure AD) Conditional Access",
+      "Azure Active Directory (Azure AD) Identity Protection",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p192_x3062.webp",
@@ -17259,11 +17421,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for potentially compromised user accounts, Azure AD Identity Protection, checks out: risky-user detection is Identity Protection's core purpose. The recorded answer for bulk file downloads from SharePoint Online, Microsoft Defender for Cloud, does not check out, and the item's own cited reference gives this away: the link it provides is to defender-cloud-apps/policies-threat-protection#detect-mass-download-data-exfiltration -- a Defender for Cloud Apps page about detecting exactly this mass-download behavior -- yet the recorded answer names the differently-branded \"Microsoft Defender for Cloud\" instead of \"Microsoft Defender for Cloud Apps,\" which is the product the source's own citation actually supports.",
     "whyWrong": [
-     "Microsoft Defender for Cloud assesses Azure resource security posture and has no SharePoint file-activity anomaly detection of its own; that capability belongs to Defender for Cloud Apps, which the item’s own source link points to. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Microsoft Defender for Cloud assesses Azure resource security posture and has no SharePoint file-activity anomaly detection of its own; that capability belongs to Defender for Cloud Apps, which the item’s own source link points to."
     ],
     "source": {
      "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
@@ -18117,6 +18279,23 @@
     }
    ],
    "q": "You are designing a security operations strategy based on the Zero Trust framework.",
+   "order": {
+    "pool": [
+     "Establish ransomware recovery readiness.",
+     "Implement disaster recovery.",
+     "Establish visibility.",
+     "Enable additional protection and detection controls.",
+     "Enable automation."
+    ],
+    "answers": [
+     [
+      "Establish visibility.",
+      "Enable additional protection and detection controls.",
+      "Enable automation."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p204_x3263.webp",
@@ -19639,6 +19818,23 @@
     }
    ],
    "q": "You have an Azure subscription that contains a resources group named RG1. RG1 contains multiple Azure Files shares.",
+   "order": {
+    "pool": [
+     "Create an Azure Backup vault.",
+     "From RG1, create a resource lock.",
+     "Create a Recovery Services vault.",
+     "Enable vault immutability.",
+     "Lock immutability for the vault."
+    ],
+    "answers": [
+     [
+      "Create a Recovery Services vault.",
+      "Enable vault immutability.",
+      "Lock immutability for the vault."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p224_x3587.webp",
@@ -20042,6 +20238,24 @@
     }
    ],
    "q": "You have an Azure Storage account named storage1.",
+   "order": {
+    "pool": [
+     "Assign storage1 the Key Vault Reader role to access the key.",
+     "Create a managed identity and assign it to storage1.",
+     "Create and assign an access policy for storage1.",
+     "Configure Azure Storage encryption with customer-managed keys.",
+     "Create and assign a Key Vault access policy.",
+     "Create a managed identity and assign it to AKV1."
+    ],
+    "answers": [
+     [
+      "Create a managed identity and assign it to storage1.",
+      "Create and assign a Key Vault access policy.",
+      "Configure Azure Storage encryption with customer-managed keys."
+     ]
+    ]
+   },
+   "keynote": "The choices and their order were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses that order.",
    "ansimg": [
     {
      "img": "img/p230_x3693.webp",
@@ -20057,11 +20271,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded order has this backwards and picks the wrong identity target. Microsoft's own configuration steps for customer-managed keys are: give the storage account a managed identity, grant that identity permission on the key vault, and only then configure the storage account's encryption settings to reference the key -- because Azure validates that the configured identity can actually reach the key at the moment encryption is configured, which requires the identity and its access to already exist. The recorded sequence configures encryption with customer-managed keys first, before any identity or access exists to make that configuration valid, and its final step creates a managed identity \"and assigns it to AKV1\" rather than to storage1, when it is the storage account that needs an identity to present to Key Vault, not the vault that needs one assigned to it.",
     "whyWrong": [
-     "Configuring encryption to point at a key before an identity with permission to reach that key exists reverses a real dependency Azure enforces at configuration time, and a managed identity belongs on the resource that needs to authenticate (storage1), not on the vault holding the key. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Configuring encryption to point at a key before an identity with permission to reach that key exists reverses a real dependency Azure enforces at configuration time, and a managed identity belongs on the resource that needs to authenticate (storage1), not on the vault holding the key."
     ],
     "source": {
      "title": "Configure customer-managed keys for an existing storage account",
@@ -20703,6 +20917,33 @@
     }
    ],
    "q": "You have the Azure subscriptions shown in the following table.",
+   "boxes": [
+    {
+     "label": "To enable MUA for Vault1, a resource guard must be deployed to Sub1.",
+     "value": "No",
+     "options": [
+      "Yes",
+      "No"
+     ]
+    },
+    {
+     "label": "A user in Group2 must approve changes made by a user in Group1 to the backup policies of Vault1.",
+     "value": "Yes",
+     "options": [
+      "Yes",
+      "No"
+     ]
+    },
+    {
+     "label": "A user in Group1 that activates Assignment1 can disable soft delete for the backups of Vault1, without the approval of a user in Group2.",
+     "value": "No",
+     "options": [
+      "Yes",
+      "No"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p239_x3807.webp",

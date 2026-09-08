@@ -53,9 +53,9 @@ check('every item is in one of the four current SC-100 domains', not bad_domain,
 
 print('answer keys')
 
-scorable = [i for i in items if i.get('o') or i.get('boxes')]
+scorable = [i for i in items if i.get('o') or i.get('boxes') or i.get('order')]
 check('every scorable item has a key',
-      all((i.get('a') or '').strip() or i.get('boxes') for i in scorable))
+      all((i.get('a') or '').strip() or i.get('boxes') or i.get('order') for i in scorable))
 
 out_of_range = []
 for k, i in index.items():
@@ -77,6 +77,20 @@ check('no key repeats the same letter', not dupes, str(dupes[:5]))
 box_bad = [k for k, i in index.items() if i.get('boxes')
            for b in i['boxes'] if b.get('options') and b['value'] not in b['options']]
 check('every answer-area value is among its own options', not box_bad, str(box_bad[:5]))
+
+order_items = {k: i for k, i in index.items() if i.get('order')}
+order_bad_pool = [k for k, i in order_items.items()
+                  if any(set(ans) - set(i['order']['pool']) for ans in i['order']['answers'])]
+check('every ordering item\'s answer only names actions from its own pool',
+      not order_bad_pool, str(order_bad_pool[:5]))
+order_bad_len = [k for k, i in order_items.items()
+                 if len(set(len(ans) for ans in i['order']['answers'])) != 1]
+check('every ordering item\'s accepted answers are all the same length',
+      not order_bad_len, str(order_bad_len[:5]))
+order_bad_dupe = [k for k, i in order_items.items()
+                  if any(len(set(ans)) != len(ans) for ans in i['order']['answers'])]
+check('no ordering item\'s answer repeats the same action twice',
+      not order_bad_dupe, str(order_bad_dupe[:5]))
 
 print('the review record')
 

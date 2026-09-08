@@ -146,21 +146,26 @@ function formatDuration(ms){
 // ---------------------------------------------------------------------------
 // GRADING
 //
-// Three question shapes exist:
+// Four question shapes exist:
 //   choice - q.o + q.a, an ordinary multiple-choice item
 //   match  - q.boxes, a Microsoft "answer area" item. The source gives a label
 //            and correct value per drop-down but never the option list, so each
 //            drop-down offers that item's own values shuffled.
-//   info   - neither. The source PDF records no gradeable question for it, so
-//            it is shown for reading and never scored.
+//   order  - q.order, a "move these actions into the answer area and put them
+//            in order" item. q.order.pool is every action offered (including
+//            distractors); q.order.answers is the list of sequences that count
+//            as correct (almost always one, occasionally more than one).
+//   info   - none of the above. The source PDF records no gradeable question
+//            for it, so it is shown for reading and never scored.
 // Every place that asks "was this answered?" or "was this right?" goes through
-// these helpers so the three shapes can never drift apart.
+// these helpers so the four shapes can never drift apart.
 // ---------------------------------------------------------------------------
 
 function isMatch(q){ return !!(q && q.boxes && q.boxes.length); }
 function isChoice(q){ return !!(q && q.o && q.o.length); }
+function isOrder(q){ return !!(q && q.order && q.order.pool && q.order.pool.length); }
 // An item counts towards a score only if there is something to get right.
-function isScorable(q){ return isChoice(q) || isMatch(q); }
+function isScorable(q){ return isChoice(q) || isMatch(q) || isOrder(q); }
 function isInfo(q){ return !!q && !isScorable(q); }
 
 // Does every drop-down on this item carry its own real choice list? Items whose
@@ -222,6 +227,37 @@ function matchScore(q, rec){
   return {got, total: q.boxes.length};
 }
 
+// Ordering responses live in rec.orderPicked as an array the same length as
+// the answer key, one slot per position; an empty slot is null.
+function orderResponse(rec){ return (rec && rec.orderPicked) || []; }
+
+function orderPlacedCount(rec){
+  return orderResponse(rec).filter(v => v != null).length;
+}
+
+// Number of positions that match SOME valid answer at that exact position —
+// used only to report a count ("2 of 3 slots right"); which valid answer that
+// count is drawn from can differ position to position, so it is an upper
+// bound on any single ordering's score, not a score for one in particular.
+function orderPositionsRight(q, rec){
+  const picked = orderResponse(rec);
+  const total = q.order.answers[0].length;
+  let got = 0;
+  for(let i=0;i<total;i++){
+    if(picked[i] != null && q.order.answers.some(ans => ans[i] === picked[i])) got++;
+  }
+  return {got, total};
+}
+
+// Correct only if the full placed sequence exactly matches one of the
+// accepted orderings — all-or-nothing, the same way a match item's drop-downs
+// all have to be right together.
+function orderIsCorrect(q, rec){
+  const picked = orderResponse(rec);
+  return q.order.answers.some(ans =>
+    ans.length === picked.length && ans.every((v,i) => picked[i] === v));
+}
+
 // Did the candidate put anything down at all? Blank counts as skipped, not
 // wrong. An info item has nothing to put down, so it is never "answered".
 function hasResponse(q, rec){
@@ -230,11 +266,13 @@ function hasResponse(q, rec){
     const resp = matchResponse(rec);
     return q.boxes.some((b, i) => !!resp[i]);
   }
+  if(isOrder(q)) return orderPlacedCount(rec) > 0;
   return !!(rec && rec.selected && rec.selected.length > 0);
 }
 
-// Matching items are all-or-nothing: every drop-down must be right, which is
-// how Microsoft scores its own answer-area items.
+// Matching and ordering items are all-or-nothing: every drop-down, or the
+// whole sequence, must be right, which is how Microsoft scores its own
+// answer-area items.
 function isCorrectAnswer(q, rec){
   if(isInfo(q)) return false;
   if(!hasResponse(q, rec)) return false;
@@ -242,6 +280,7 @@ function isCorrectAnswer(q, rec){
     const {got, total} = matchScore(q, rec);
     return got === total;
   }
+  if(isOrder(q)) return orderIsCorrect(q, rec);
   return arraysEqualAsSets(rec.selected, parseAnswerLetters(q.a));
 }
 
@@ -776,7 +815,7 @@ function renderSetup(app){
           `All ${TOTAL_Q} items are here, keeping the source's own numbering: ` +
           SECTIONS.map(s => `${s.label} 1–${SECTION_MAX[s.key]}`).join(', ') + '.'
         ]),
-        el('li',{},[`${CHOICE_COUNT} are multiple choice and ${MATCH_COUNT} are answer-area drop-down items scored all-or-nothing — ${SCORABLE_COUNT} scored questions in total.`]),
+        el('li',{},[`${CHOICE_COUNT} are multiple choice, ${MATCH_COUNT} are answer-area drop-down items, and ${ORDER_COUNT} ask you to put a set of actions in order — all scored all-or-nothing — ${SCORABLE_COUNT} scored questions in total.`]),
         el('li',{},[`The other ${UNSCORED_COUNT} are answer-area items whose answers the source records as pictures rather than text. There is nothing to click, so they are not scored — but the recorded answer is shown when you reveal it, and no answer is invented.`]),
         el('li',{},[`${EXHIBIT_COUNT} questions carry the diagrams, tables and screenshots they refer to, and ${EXPLAINED_COUNT} carry the source's explanation.`]),
         el('li',{},['Both case studies include their full scenario, which opens from a panel above the question.']),
@@ -876,6 +915,8 @@ function renderExam(app){
     renderInfoBody(card, q, checked);
   } else if(isMatch(q)){
     renderMatchBody(card, q, rec, checked);
+  } else if(isOrder(q)){
+    renderOrderBody(card, q, rec, checked);
   } else {
     const choicesWrap = el('div',{class:'choices'});
     q.o.forEach((opt, i)=>{
@@ -924,6 +965,18 @@ function renderExam(app){
         } else {
           bannerClass = 'incorrect';
           bannerText = `✗ Incorrect — ${got} of ${total} drop-downs right (all ${total} must be correct to score)`;
+        }
+      } else if(isOrder(q)){
+        const {got, total} = orderPositionsRight(q, rec);
+        if(revealedOnly){
+          bannerClass = 'revealed';
+          bannerText = 'Answer revealed — the correct order is marked in the answer area below';
+        } else if(allCorrect){
+          bannerClass = 'correct';
+          bannerText = `✓ Correct! All ${total} positions right`;
+        } else {
+          bannerClass = 'incorrect';
+          bannerText = `✗ Incorrect — ${got} of ${total} positions right (the whole order must be correct to score)`;
         }
       } else if(revealedOnly){
         bannerClass = 'revealed';
@@ -1100,6 +1153,15 @@ const REVIEW_LABEL = {
 
 function answerText(q){
   if(isMatch(q)) return q.boxes.map(b => `${b.label}: ${b.value}`).join(' · ');
+  if(isOrder(q)){
+    const text = q.order.answers[0].map((t,i) => `${i+1}. ${t}`).join(' · ');
+    // A couple of these accept more than one order (a hard dependency plus
+    // steps that don't depend on each other); say so rather than implying
+    // the one shown is the only one that scores.
+    return q.order.answers.length > 1
+      ? text + ' (this is one of more than one order that scores as correct)'
+      : text;
+  }
   // An info item has no text key at all — the source drew its answer as a
   // picture instead, rendered separately below this panel — so there is
   // nothing to echo here.
@@ -1228,6 +1290,109 @@ function setMatchValue(qn, idx, value){
 function resetMatch(qn){
   const s = state.session;
   s.answers[qn] = {selected: [], boxes: {}, checked:false};
+  saveSession(s);
+  render();
+}
+
+// ---------------- ORDERING ITEM ----------------
+// Click-to-place rather than mouse drag-and-drop: clicking an action in the
+// pool appends it to the first empty slot in the answer area, and clicking a
+// filled slot's ✕ clears it, sending that action back to the pool. This tests
+// the same thing the source's own drag interaction does (does the candidate
+// know which actions belong, in which order) without needing real HTML5 drag
+// events, which are markedly less reliable on touch devices.
+function renderOrderBody(card, q, rec, checked){
+  const total = q.order.answers[0].length;
+  const picked = orderResponse(rec);
+
+  card.appendChild(el('div',{class:'order-note'},[
+    el('b',{},['Answer area. ']),
+    `Move ${total} of the ${q.order.pool.length} actions into the answer area and arrange them in the correct order; all ${total} positions must be correct for the item to score.`
+  ]));
+
+  const wrap = el('div',{class:'order-wrap'});
+
+  const answerCol = el('div',{class:'order-col order-answer-col'});
+  answerCol.appendChild(el('div',{class:'order-col-head'},['Answer area']));
+  const answerList = el('div',{class:'order-answer-list'});
+  for(let i=0;i<total;i++){
+    const val = picked[i];
+    const ok = checked && val != null && q.order.answers.some(ans => ans[i] === val);
+    let rowCls = 'order-row';
+    if(checked) rowCls += val == null ? ' missing' : (ok ? ' correct' : ' incorrect');
+    const rowEl = el('div',{class:rowCls});
+    rowEl.appendChild(el('span',{class:'order-num'},[String(i+1)]));
+    rowEl.appendChild(el('span',{class:'order-text'},[val || '— empty —']));
+    if(!checked && val != null){
+      rowEl.appendChild(el('button',{class:'order-remove', title:'Send back to Actions',
+        onclick:()=>{ removeOrderValue(q.n, i); }},['✕']));
+    }
+    if(checked){
+      rowEl.appendChild(el('span',{class:'order-mark'},[
+        ok ? '✓ Correct' : ('✗ Correct answer: ' + q.order.answers[0][i])
+      ]));
+    }
+    answerList.appendChild(rowEl);
+  }
+  answerCol.appendChild(answerList);
+  wrap.appendChild(answerCol);
+
+  if(!checked){
+    const poolCol = el('div',{class:'order-col order-pool-col'});
+    poolCol.appendChild(el('div',{class:'order-col-head'},['Actions']));
+    const poolList = el('div',{class:'order-pool-list'});
+    q.order.pool.forEach(action=>{
+      if(picked.includes(action)) return; // already placed
+      poolList.appendChild(el('button',{class:'order-chip',
+        onclick:()=>{ addOrderValue(q.n, action); }},[action]));
+    });
+    if(!poolList.childNodes.length){
+      poolList.appendChild(el('div',{class:'order-pool-empty'},['All actions placed.']));
+    }
+    poolCol.appendChild(poolList);
+    wrap.appendChild(poolCol);
+  }
+
+  card.appendChild(wrap);
+
+  if(!checked){
+    card.appendChild(el('div',{class:'match-reset-row'},[
+      el('button',{class:'btn btn-outline', onclick: ()=>{ resetOrder(q.n, total); }},['Reset All'])
+    ]));
+  }
+}
+
+// Append an action to the first empty slot.
+function addOrderValue(qn, action){
+  const s = state.session;
+  const q = QMAP[qn];
+  const total = q.order.answers[0].length;
+  const rec = s.answers[qn] || {};
+  const picked = (rec.orderPicked || []).slice();
+  while(picked.length < total) picked.push(null);
+  const emptyIdx = picked.indexOf(null);
+  if(emptyIdx === -1) return; // already full
+  picked[emptyIdx] = action;
+  s.answers[qn] = {selected: [], orderPicked: picked, checked:false};
+  saveSession(s);
+  render();
+}
+
+// Clear one slot, sending its action back to the pool.
+function removeOrderValue(qn, idx){
+  const s = state.session;
+  const rec = s.answers[qn] || {};
+  const picked = (rec.orderPicked || []).slice();
+  picked[idx] = null;
+  s.answers[qn] = {selected: [], orderPicked: picked, checked:false};
+  saveSession(s);
+  render();
+}
+
+// "Reset All" — clears every slot on this item only.
+function resetOrder(qn, total){
+  const s = state.session;
+  s.answers[qn] = {selected: [], orderPicked: new Array(total).fill(null), checked:false};
   saveSession(s);
   render();
 }
@@ -1474,6 +1639,14 @@ function renderReview(app){
           picked ? ` · Your answer: ${picked}${ok ? ' ✓' : ' ✗'}` : ' · Your answer: —'
         ]));
       });
+    } else if(isOrder(q)){
+      const orderPicked = orderResponse(rec);
+      const {got, total} = orderPositionsRight(q, rec);
+      item.appendChild(el('div',{class:'ans'},[`${got} of ${total} positions correct`]));
+      item.appendChild(el('div',{class:'ans'},[`Correct order: ${answerText(q)}`]));
+      item.appendChild(el('div',{class:'ans'},[
+        `Your order: ${orderPicked.filter(v=>v!=null).join(' · ') || '—'}`
+      ]));
     } else {
       item.appendChild(el('div',{class:'ans'},[
         `Correct answer: ${letters.join(', ') || '—'}`,
