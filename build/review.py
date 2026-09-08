@@ -11,8 +11,12 @@ Status values
 -------------
 VERIFIED      The dump's key was checked and is right.
 CORRECTED     The dump's key was wrong. `answer` replaces it.
-MANUAL_REVIEW Microsoft's documentation does not settle it. The key is left
-              exactly as the dump had it and the item is flagged in the UI.
+MANUAL_REVIEW Either Microsoft's documentation does not settle it, or it does
+              but the item has no key a correction could actually change (an
+              unscored, picture-only answer-area item). Either way the key
+              is left exactly as the dump had it and the item is flagged in
+              the UI; for the second case the explanation says outright what
+              the source got wrong and what the documentation says instead.
 AMBIGUOUS     More than one answer is defensible as written.
 OUTDATED      The item tests something that has since changed.
 NOT_REVIEWED  Not yet examined. The default for everything absent from the file.

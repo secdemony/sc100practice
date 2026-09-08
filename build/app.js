@@ -1100,6 +1100,10 @@ const REVIEW_LABEL = {
 
 function answerText(q){
   if(isMatch(q)) return q.boxes.map(b => `${b.label}: ${b.value}`).join(' · ');
+  // An info item has no text key at all — the source drew its answer as a
+  // picture instead, rendered separately below this panel — so there is
+  // nothing to echo here.
+  if(isInfo(q)) return 'See the recorded answer below.';
   const letters = parseAnswerLetters(q.a);
   if(!letters.length) return '—';
   return letters.map(l => {

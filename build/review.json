@@ -2880,5 +2880,209 @@
       "A managed identity authenticates a resource to other Azure services; it is not how end users sign in to a web app. Microsoft Defender for App is not a Microsoft product name.",
       "An access policy or an OAuth app policy in Defender for Cloud Apps govern session behavior and third-party app consent respectively; neither implements a request-and-approval workflow. An access review recertifies existing access periodically; it does not process the initial request."
     ]
+  },
+  "cs1/1": {
+    "status": "OUTDATED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Azure Blueprints retirement",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/blueprints/blueprint-retirement"
+    },
+    "explanation": "Both halves of the recorded key were the right call when this item was written, and one still is. Updating the Azure Policy assignment to add TestRG as an exclusion is exactly how Microsoft documents excluding a scope from an assignment's evaluation, and that half of the answer is unaffected by anything that follows. The other half, creating a Blueprint to package the policy assignment (and whatever RBAC and templates go with it) so the HIPAA HITRUST baseline is enforced repeatably across Sub1, was the standard construct for exactly this job. Azure Blueprints is now being retired: as of 31 July 2026 new blueprint definitions and versions can no longer be created at all, with existing definitions losing the ability to be modified on 31 October 2026 and the service fully retiring on 31 January 2027. None of the other three choices offered here (an Automation account, a managed identity, workflow automation) does what a Blueprint did, and Microsoft's replacement path (Azure Deployment Stacks and template specs) is not one of the options this item offers, so the item is flagged as outdated rather than corrected to a choice that does not exist in it.",
+    "whyWrong": [
+      "An Azure Automation account, a managed identity, and workflow automation are all real Azure constructs, but none of them packages a policy assignment (plus RBAC and templates) into a single repeatable artifact the way a Blueprint did; they answer a different question than the one this box asks."
+    ]
+  },
+  "cs1/6": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Microsoft Entra B2B collaboration?",
+      "url": "https://learn.microsoft.com/en-us/entra/external-id/what-is-b2b"
+    },
+    "explanation": "The stated requirement is that \"the Contoso developers must use their existing contoso.onmicrosoft.com credentials to access the resources in Sub1,\" and a guest account in the fabrikam.onmicrosoft.com tenant is precisely what Microsoft Entra B2B collaboration creates for that: an external user's identity stays in their home tenant, and B2B collaboration represents them with a guest object in the resource tenant so they sign in with the credentials they already have. A synced user account in the corp.fabrikam.com domain, by contrast, would be a brand-new identity synchronized from Fabrikam's own on-premises directory into Fabrikam's own tenant; it has no connection at all to a Contoso credential, so it cannot satisfy \"use their existing contoso.onmicrosoft.com credentials\" no matter how it is configured. For the second box, entitlement management's access review is exactly the component built to periodically re-verify a group's membership, which is what \"every month, the membership of the ContosoDevelopers group must be verified\" calls for.",
+    "whyWrong": [
+      "The exhibit's own recorded pointer to \"a synced user account in the corp.fabrikam.com domain\" does not survive checking: syncing an on-premises Fabrikam account creates a Fabrikam-owned identity with Fabrikam-issued credentials, the opposite of letting Contoso developers keep using their own contoso.onmicrosoft.com sign-in. A guest account in the contoso.onmicrosoft.com tenant (rather than fabrikam.onmicrosoft.com) also does not fit: a B2B guest object is created in the tenant whose resources are being shared into, which is Fabrikam's, not Contoso's."
+    ]
+  },
+  "cs1/4": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Tutorial: Access Azure SQL Database from App Service using a managed identity",
+      "url": "https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-sql-database"
+    },
+    "explanation": "A private endpoint is what makes \"ClaimsDB must be accessible only from Azure virtual networks\" achievable: it gives ClaimsDB a private IP inside a VNet and lets its public network access be disabled, unlike a NAT gateway (outbound-only, irrelevant to inbound access to a database) or a service endpoint (extends a VNet's identity to the service but does not, by itself, remove the public endpoint the way a private endpoint configuration does). For \"the app services permission for ClaimsApp must be assigned to ClaimsDB,\" Microsoft's own tutorial for connecting an App Service app to Azure SQL Database walks through granting a managed identity a contained-database-user role rather than embedding a connection string with a password, which is exactly \"assigning a permission\" to a service identity rather than to a person or a shared credential.",
+    "whyWrong": [
+      "A custom RBAC role and Azure AD PIM both govern who can manage Azure resources at the control-plane level; neither one grants ClaimsApp a way to authenticate to the ClaimsDB data plane. An access package is an entitlement-management object for granting people access to resources and groups, not a mechanism for a web app to authenticate to a database."
+    ]
+  },
+  "cs1/7": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Connect your AWS account to Microsoft Defender for Cloud",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/quickstart-onboard-aws"
+    },
+    "explanation": "Defender for Cloud's native AWS connector is what extends its secure-score recommendations to AWS EC2 instances once an AWS account is connected, which is exactly \"notify security administrators at Fabrikam if any AWS EC2 instances are noncompliant with secure score recommendations.\" For \"ensure that the security administrators can query AWS service logs directly from the Azure environment,\" Microsoft Sentinel's AWS connector ingests AWS service logs (CloudTrail, and other AWS service logs collected through an S3 bucket) into a Sentinel workspace, letting them be queried with KQL from inside Azure exactly as required.",
+    "whyWrong": [
+      "Azure Blueprints, Microsoft Defender for Cloud Apps, and Microsoft Endpoint Manager have no AWS integration at all. Microsoft Defender for servers is the Defender for Cloud plan that Defender for Cloud applies once an AWS account is connected, but the connection and secure-score evaluation themselves are Defender for Cloud’s job, which is the more precise and directly correct answer for this box."
+    ]
+  },
+  "cs1/10": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Secure traffic to origins - Azure Front Door",
+      "url": "https://learn.microsoft.com/en-us/azure/frontdoor/origin-security"
+    },
+    "explanation": "FD1 alone does not protect all of ClaimsApp's instances: Microsoft's own guidance on securing Front Door origins is explicit that unless the origin is locked down to accept traffic only from that Front Door profile, clients can bypass Front Door entirely and reach the App Service instances directly on their own default hostnames, skipping its WAF and any other protection FD1 provides. Since nothing in the scenario says ClaimsApp's App Service instances have been locked down to Front Door's origin, \"FD1 can be used to protect all the instances of ClaimsApp\" is false as stated. A custom domain such as claims.fabrikam.com does need a bound TLS certificate on Front Door, whether Front Door-managed or customer-provided, so that statement is true. Blocking a specific country's traffic on Front Door's WAF is done with a custom rule using a geo-match condition; there is no managed rule set for country-level blocking, so a custom rule in FD1 is required, making the third statement true as well.",
+    "whyWrong": [
+      "Assuming Front Door automatically covers every backend instance ignores the documented origin-bypass risk: an unrestricted origin remains reachable directly, so protection is conditional on additional configuration this scenario does not describe as being in place."
+    ]
+  },
+  "cs2/1": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Geographical availability and data residency in Microsoft Sentinel",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/geographical-availability-data-residency"
+    },
+    "explanation": "Microsoft Sentinel is built on a regional Log Analytics workspace, so the workspace's region is the first data-residency decision, and Litware's requirement to \"ensure data residency compliance when collecting logs, telemetry, and data owned by each United States- and France-based subsidiary\" is satisfied by segmenting workspaces along that regional boundary; segmenting by Azure AD tenant as well matches Litware's structure of separate tenants per acquired subsidiary. For onboarding the Azure subscriptions of subsidiaries that each have their own tenant into a centralized SOC, Azure Lighthouse's subscription-onboarding process is Microsoft's documented mechanism for cross-tenant management, which is what \"centralize Security Operations Center (SOC) by using Microsoft Sentinel\" across many separate tenants requires.",
+    "whyWrong": [
+      "Segmenting by Azure AD tenant alone ignores the France-based subsidiaries’ data-residency requirement, and segmenting by region alone ignores that the subsidiaries sit in separate Azure AD tenants; only the combination answers both drivers stated in the requirements."
+    ]
+  },
+  "cs2/2": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Cloud-native governance and policy with Azure Arc-enabled servers",
+      "url": "https://learn.microsoft.com/en-us/azure/azure-arc/servers/cloud-native/governance-policy"
+    },
+    "explanation": "Assigning Azure Policy regulatory-compliance initiatives at the management-group level, rather than definitions or a per-subscription assignment, is what reaches \"the entire managed environment\" (20 subscriptions and counting, across a management-group hierarchy Litware is already planning) without having to repeat the assignment per subscription, matching the business requirement to minimize administrative overhead. For the on-premises AD DS domain controllers and other on-premises resources, Azure Arc-enabled servers is Microsoft's documented way to bring Azure Policy (including its guest-configuration checks) to bear on machines that are not Azure resources at all, which is exactly \"enable the management of on-premises resources from Azure\" including using \"Azure Policy for enforcement and compliance evaluation.\"",
+    "whyWrong": [
+      "Assigning individual policy definitions rather than initiatives means re-selecting and maintaining every control separately instead of using the built-in, curated compliance-standard bundles Microsoft ships as initiatives. Assigning at the subscription level rather than the management-group level would need to be repeated for every one of Litware’s subscriptions, which is the added administrative overhead the business requirement rules out."
+    ]
+  },
+  "cs2/3": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Authentication for Microsoft Entra hybrid identity solutions",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/choose-ad-authn"
+    },
+    "explanation": "Administrative units are Microsoft's documented construct for delegating management of a subset of users and groups (by business unit, in Litware's case) without handing out tenant-wide administrator rights, which is exactly \"delegated management of users and groups... including delegation of user management based on business units.\" For leaked-credential detection, Litware's tenant currently uses pass-through authentication with password hash synchronization disabled; Microsoft's own hybrid-authentication guidance states that leaked-credential detection in Microsoft Entra ID Protection depends on password hash synchronization being enabled, whether or not pass-through authentication is also in use, since detecting a leaked credential requires comparing a hash Microsoft actually holds. Enabling password hash sync alongside the existing PTA deployment, rather than replacing it, is what satisfies the requirement.",
+    "whyWrong": [
+      "AD DS organizational units and custom Azure AD roles both exist, but neither is the delegated-scope mechanism Microsoft documents for restricting a role to a subset of users and groups in Entra ID; administrative units are. Security defaults is an all-or-nothing baseline that does not add leaked-credential detection, and replacing PTA with AD FS changes the authentication method without enabling the password hash sync that leaked-credential detection actually depends on."
+    ]
+  },
+  "cs2/5": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Networking features - Azure App Service",
+      "url": "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
+    },
+    "explanation": "Microsoft's own App Service networking documentation draws this distinction directly: virtual network integration lets an app make outbound calls into a virtual network, but \"it doesn't grant inbound private access to your app from the virtual network,\" while a private endpoint is \"only for inbound flows to your web app.\" For App Service instances in a landing zone needing to reach out to virtual machines in the same zone, virtual network integration is what provides that outbound path; for virtual machines needing to reach the App Service web app itself, a private endpoint is what brings the app's inbound access onto the private network instead of a public endpoint, keeping the traffic on the Microsoft backbone as the landing zone requirement specifies.",
+    "whyWrong": [
+      "Reversing the pairing would ask virtual network integration to provide inbound access into the app, which Microsoft’s own documentation says it explicitly does not do, and ask a private endpoint to provide the app’s outbound path to the virtual machines, which is not what a private endpoint on the app is for."
+    ]
+  },
+  "cs2/7": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Microsoft Entra ID Protection",
+      "url": "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection"
+    },
+    "explanation": "Microsoft Entra ID Protection is the service that evaluates Microsoft Entra sign-ins for risk, including the sign-in patterns that indicate a brute-force or password-spray attempt, which is what \"prevent AD DS user accounts from being locked out by brute force attacks that target Azure AD user accounts\" needs watching for on the Azure AD side. Microsoft Defender for Identity, by contrast, runs its sensors on the on-premises domain controllers themselves and ships a dedicated brute-force detection for exactly this scenario, authentication attempts against AD DS accounts, which is what \"detect brute force attacks that directly target AD DS user accounts\" calls for.",
+    "whyWrong": [
+      "Azure AD Password Protection blocks weak and banned passwords at set time; it does not detect an in-progress brute-force campaign. Microsoft Defender for Cloud assesses Azure resource posture, not authentication traffic against domain controllers. An AD DS account lockout policy and Microsoft Defender for Endpoint address different layers (self-inflicted lockouts and endpoint malware, respectively) than detecting the brute-force attempts themselves."
+    ]
+  },
+  "cs2/9": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Azure Lighthouse?",
+      "url": "https://learn.microsoft.com/en-us/azure/lighthouse/overview"
+    },
+    "explanation": "The source's own recorded answer for this box, Azure AD B2C, does not hold up: Azure AD B2C (now Microsoft Entra External ID for customers) is a customer identity platform for letting external consumers sign in to a customer-facing application with social or local accounts. It has no subscription-management capability at all and cannot be what \"centralize subscription management\" is asking for. Azure Lighthouse is Microsoft's documented service for exactly this job: cross-tenant management of Azure resources across many customer or subsidiary tenants from one place, without the overhead of inviting and maintaining Azure AD B2B guest accounts in each one, which is precisely Litware's stated hybrid requirement, \"centralized, cross-tenant subscription management without the overhead of maintaining guest accounts.\" This same case study's own cs2/1 answers the identical requirement correctly with Azure Lighthouse, which is the same conclusion current documentation supports here. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item: there is no text key behind the recorded picture for a correction to change, so the picture continues to show Azure AD B2C, but Azure Lighthouse is the answer Litware's own stated requirement and Microsoft's documentation actually call for.",
+    "whyWrong": [
+      "B2B direct connect and cross-tenant synchronization both involve Entra ID collaboration between specific tenants, but neither is Microsoft’s documented mechanism for centralizing management of many subscriptions from one place; Azure Lighthouse is."
+    ]
+  },
+  "std/11": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Encryption scopes for Blob storage",
+      "url": "https://learn.microsoft.com/en-us/azure/storage/blobs/encryption-scope-overview"
+    },
+    "explanation": "For Blob Storage containers, Microsoft's own documentation on encryption scopes says a scope's key \"may be scoped to a container or an individual blob,\" so the individual blob is the more granular of the two Blob-storage options, matching the requirement to apply the key \"at the most granular level.\" For Azure Files shares, the encryption-scope feature is documented as applying at the level of the file share itself; Azure Storage does not offer a documented per-individual-file encryption scope the way it offers a per-blob one, so the share is the most granular unit customer-managed-key encryption actually reaches for file data, even though \"File\" looks superficially more granular by analogy with \"Blob.\"",
+    "whyWrong": [
+      "Account-level encryption is the coarsest option for both containers and shares, the opposite of what \"most granular\" calls for. Selecting Container for the first box or the (non-existent, for this purpose) individual-file granularity for the second would each stop one step short of the most granular level Azure Storage actually documents for that data type."
+    ]
+  },
+  "std/28": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Dynamic data masking - Azure SQL Database",
+      "url": "https://learn.microsoft.com/en-us/azure/azure-sql/database/dynamic-data-masking-overview"
+    },
+    "explanation": "The recorded answer for the database administrators, Always Encrypted, checks out: Microsoft's own Always Encrypted documentation names exactly this scenario, protecting sensitive data \"from those who manage the data but should have no access: on-premises database administrators, cloud database operators, or other high-privileged unauthorized users,\" since the encryption keys are never exposed to the database engine or the people who administer it. The recorded answer for the operators, Row-level security (RLS), does not check out: RLS controls which rows a user's query returns; it has no mechanism for showing part of a column's value and hiding the rest. \"They must view only the last four digits of the Credit Card attribute\" is, word for word, what Dynamic Data Masking's built-in credit-card masking function does: it \"exposes the last four digits of the designated fields and adds a constant string as a prefix,\" masking the rest of the value for anyone querying through App1 without the unmask permission. Dynamic data masking, not row-level security, is the answer this requirement calls for.",
+    "whyWrong": [
+      "Row-level security is a real Azure SQL feature, but it filters which records a query returns rather than obscuring part of a value within a visible record, so it cannot produce \"the last four digits\" of a field the operator can otherwise see. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/30": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Microsoft Entra External ID for customers?",
+      "url": "https://learn.microsoft.com/en-us/entra/external-id/customers/overview-customers-ciam"
+    },
+    "explanation": "Microsoft Entra B2B collaboration is the documented mechanism for letting an external partner's own users, fabrikam.com's in this case, be granted permissions to specific resources such as Teams channels in contoso.com, without contoso.com having to create or manage a separate account for each of them. Microsoft Entra External ID for customers (the current name for what was Azure AD B2C) is, by contrast, built specifically to let a customer-facing application's users authenticate with social identity providers, which is exactly what \"users of App1 can authenticate by using social media accounts\" needs, and is not something B2B collaboration, cross-tenant synchronization, or B2B direct connect provide.",
+    "whyWrong": [
+      "Cross-tenant synchronization and B2B direct connect both govern collaboration between known partner Entra tenants; neither adds social-identity-provider sign-in for an application’s own end users, which only External ID for customers is built to do."
+    ]
+  },
+  "std/35": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Security features to help protect against ransomware - Azure Backup",
+      "url": "https://learn.microsoft.com/en-us/azure/backup/backup-azure-security-feature"
+    },
+    "explanation": "The recorded answer for Azure Storage, immutable storage, checks out: Microsoft positions immutable (WORM) blob storage as its flagship ransomware defense for Azure Storage, since a ransomware actor who compromises an account still cannot alter or delete data locked under an immutable policy. The recorded answer for Azure Backup, encryption by using platform-managed keys, does not check out as the strongest ransomware-specific protection: platform-managed-key encryption is the account's default at-rest encryption, applied automatically regardless of any ransomware scenario, and it does nothing to stop an attacker with compromised admin credentials from deleting or disabling backups, which is what ransomware actually threatens. Microsoft's own documentation on protecting Azure Backup from ransomware centers on requiring a security PIN (generated from the Recovery Services vault) before critical, potentially destructive operations, such as stopping protection with data deletion or changing the passphrase, can be carried out, which is exactly the kind of protection \"strongest protection against ransomware attacks\" is asking for.",
+    "whyWrong": [
+      "Encryption by using platform-managed keys is always on by default and is not a ransomware-specific control at all, so recommending it as the strongest available protection misses the actual anti-tampering purpose behind the requirement. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/37": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Conditional Access: Require compliant devices",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-device-compliance"
+    },
+    "explanation": "A Conditional Access policy with the \"require device to be marked as compliant\" grant control is what Group1, which manages Microsoft Entra and Microsoft 365 services, would configure to actually block sign-ins from noncompliant devices; Conditional Access lives in Microsoft Entra ID, matching Group1's area of responsibility. Microsoft's own documentation for that control is explicit that it depends on a compliance policy already existing in Microsoft Intune, which is Group2's area (they manage Intune and Defender for Endpoint): a compliance policy configured to require device encryption is what actually evaluates each device and reports a noncompliant, unencrypted device's status back to Microsoft Entra ID for Conditional Access to act on.",
+    "whyWrong": [
+      "A configuration profile, an attack surface reduction rule, and an endpoint security policy in Intune can configure or harden a device, but none of them evaluates and reports a compliance verdict the way a compliance policy does, and Conditional Access’s device-compliance grant control has nothing to check without one. A sign-in or user risk policy in Identity Protection targets risk signals unrelated to device encryption state."
+    ]
+  },
+  "std/39": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Tutorial: Use a managed identity to connect App Service to Key Vault",
+      "url": "https://learn.microsoft.com/en-us/azure/app-service/tutorial-connect-msi-key-vault"
+    },
+    "explanation": "Azure Key Vault is Microsoft's purpose-built secret store, meeting \"the password is stored securely.\" For \"App1 can authenticate to the service that will store the password\" with no credential of its own to manage, Microsoft's own tutorial for connecting an App Service app to Key Vault has the app authenticate using a managed identity, which needs no secret, certificate or password of its own and cannot be exfiltrated from App1's configuration the way an embedded credential could.",
+    "whyWrong": [
+      "A certificate and a group managed service account both still require a credential-like artifact to be provisioned and rotated, which a managed identity avoids entirely. A guest account is an Entra ID object for external human users, not an authentication method a web app can use to reach a secret store."
+    ]
   }
 }
