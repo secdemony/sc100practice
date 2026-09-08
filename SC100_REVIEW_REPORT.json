@@ -4,14 +4,14 @@
  "totals": {
   "questions": 310,
   "scorable": 222,
-  "examined": 233,
-  "notReviewed": 77,
-  "verified": 168,
-  "not_reviewed": 0,
-  "outdated": 9,
-  "ambiguous": 5,
+  "examined": 250,
+  "notReviewed": 60,
+  "outdated": 10,
   "corrected": 38,
-  "manual_review": 13
+  "verified": 178,
+  "ambiguous": 5,
+  "manual_review": 19,
+  "not_reviewed": 0
  },
  "findings": {
   "std/20": {
@@ -3329,6 +3329,227 @@
    "explanation": "Azure Key Vault is Microsoft's purpose-built secret store, meeting \"the password is stored securely.\" For \"App1 can authenticate to the service that will store the password\" with no credential of its own to manage, Microsoft's own tutorial for connecting an App Service app to Key Vault has the app authenticate using a managed identity, which needs no secret, certificate or password of its own and cannot be exfiltrated from App1's configuration the way an embedded credential could.",
    "whyWrong": [
     "A certificate and a group managed service account both still require a credential-like artifact to be provisioned and rotated, which a managed identity avoids entirely. A guest account is an Entra ID object for external human users, not an authentication method a web app can use to reach a secret store."
+   ]
+  },
+  "std/41": {
+   "question": "Standalone 41",
+   "status": "MANUAL_REVIEW",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Discover and manage Shadow IT",
+    "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/tutorial-shadow-it"
+   },
+   "explanation": "The recorded answer for blocking the sites, Microsoft Defender for Endpoint, checks out: once Defender for Cloud Apps marks the discovered file-sharing sites as Unsanctioned, their domains sync to Defender for Endpoint as network-protection indicators, and Defender for Endpoint is the component that actually enforces the block on each device. The recorded answer for identifying the sites, also Microsoft Defender for Endpoint, does not check out: identifying which cloud and file-sharing sites users have connected to over a trailing window is Cloud Discovery, a Microsoft Defender for Cloud Apps capability. Cloud Discovery natively consumes the network traffic signal that already flows from Defender for Endpoint-onboarded devices, so it needs no separate log collector, which is exactly what \"minimize administrative effort\" is pointing to, but the product surfacing that 90-day usage report and scoring the discovered apps is Defender for Cloud Apps, not Defender for Endpoint itself.",
+   "whyWrong": [
+    "Microsoft Defender for Cloud and Microsoft Defender Vulnerability Management have no cloud-app-discovery or web-content-filtering capability at all, so neither fits either box. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+   ]
+  },
+  "std/44": {
+   "question": "Standalone 44",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Feature-based comparison of the Azure API Management tiers",
+    "url": "https://learn.microsoft.com/en-us/azure/api-management/api-management-features"
+   },
+   "explanation": "Microsoft's own tier-comparison table rules out the Consumption tier here: the developer portal, along with its \"related functionality such as users, groups, issues, applications,\" is unavailable on Consumption, and that portal (with its Groups feature controlling which developers see which Products) is how \"different groups of developers can access only specific sets of APIs\" is actually administered day to day. Standard v2 keeps that portal along with everything else the scenario needs. For the scope, the rate-limit policy's documented scopes are product, API, and operation; scoping it to a Product, the construct that bundles a specific set of APIs behind one subscription, is what lets \"each set of APIs be configured with specific rate limits\" per developer group, rather than repeating the same limit on every API individually.",
+   "whyWrong": [
+    "Consumption would minimize cost but, lacking the developer portal and its groups/applications management, would raise the exact administrative effort the requirement asks to minimize. Scoping the policy to an individual API rather than a Product would need the limit repeated per API instead of once per bundled set, and Workspace is an organizational container for APIM itself, not a rate-limit scope tied to a set of APIs."
+   ]
+  },
+  "std/49": {
+   "question": "Standalone 49",
+   "status": "MANUAL_REVIEW",
+   "confidence": "LOW",
+   "source": {
+    "title": "Commonly used information protection policies",
+    "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/policies-information-protection"
+   },
+   "explanation": "This item's own exhibit does not correspond to its question. Both the question's exhibit and its answer exhibit show a \"Policy type\" drop-down of App control policy / App protection policy / Compliance policy and a \"Microsoft 365 service\" drop-down of Endpoint DLP / Defender for Cloud Apps / Defender for Endpoint / Purview insider risk management, all Intune device-management and endpoint-monitoring concepts with no connection to \"prevent users from uploading unlabeled files to SharePoint Online if the files contain sensitive content.\" This looks like a mismatched exhibit in the source dump itself, most likely paired with the wrong question during the PDF's own production, so there is no key here that can be checked against the question as written. For what it is worth, Microsoft's own Defender for Cloud Apps documentation describes exactly the scenario this question actually asks about: \"Defender for Cloud Apps can ensure that the upload of unlabeled files that have sensitive content is blocked until the user classifies the content,\" enforced through a Conditional Access App Control session policy, which is a different pairing of concepts entirely than what this item's own broken exhibit offers as choices.",
+   "whyWrong": [
+    "None of this item’s own recorded options (App control/App protection/Compliance policy; Endpoint DLP/Defender for Cloud Apps/Defender for Endpoint/Purview insider risk management) can be scored as right or wrong against the actual question, since the exhibit itself appears to belong to a different item."
+   ]
+  },
+  "std/50": {
+   "question": "Standalone 50",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
+    "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy"
+   },
+   "explanation": "Microsoft Defender for Cloud Apps' built-in anomaly detection policies include unusual multiple file-download activity, which is exactly what flags \"users downloading an unusually high number of files from SharePoint Online... possibly involved in a data exfiltration attempt.\" For blocking malicious Teams messages using zero-hour auto purge, Microsoft's own documentation places ZAP for Microsoft Teams within Defender for Office 365, which retroactively detects and purges malicious chat messages after delivery, matching the requirement precisely.",
+   "whyWrong": [
+    "Defender for Endpoint and Defender for Identity have no SharePoint file-activity anomaly detection or Teams message-purging capability; those are, respectively, a Cloud Apps and an Office 365 capability."
+   ]
+  },
+  "std/53": {
+   "question": "Standalone 53",
+   "status": "MANUAL_REVIEW",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Known limitations for Global Secure Access",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/reference-current-known-limitations"
+   },
+   "explanation": "The recorded answer for compliant devices, Office1 and Office2, checks out, but not for the reason it might appear to: Microsoft's own documented known limitation states that \"Microsoft traffic is accessible through remote network connectivity without the Global Secure Access Client; however, the Conditional Access policy isn't enforced—Conditional Access policies... are only enforced when a user has the Global Secure Access client.\" Office1 only has the remote-network assignment (no client), so its Microsoft 365 traffic passes through Global Secure Access but the linked Conditional Access compliant-network policy is never actually enforced there, meaning nothing blocks any device, compliant or not. Office2 has the client, where Conditional Access is enforced, so a compliant device there is correctly granted access by the policy. Both offices' compliant devices reach Microsoft 365 either way, which is why that box is right. The recorded answer for noncompliant devices, Office1 only, is backwards given that same documented limitation: since Conditional Access is not enforced at Office1 at all, a noncompliant device there is not blocked by this policy either; it is Office2, where the policy is actually enforced, that blocks a noncompliant device from accessing Microsoft 365.",
+   "whyWrong": [
+    "Assuming the office with only remote-network connectivity (Office1) is where noncompliant devices get blocked has it backwards: Microsoft’s documented limitation is that Conditional Access enforcement for Global Secure Access Microsoft traffic requires the client, which only Office2 has. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+   ]
+  },
+  "std/58": {
+   "question": "Standalone 58",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Information protection policies - Microsoft Defender for Cloud Apps",
+    "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/data-protection-policies"
+   },
+   "explanation": "A file policy in Defender for Cloud Apps scans file content in a connected app and can trigger a governance action, including applying a sensitivity label, based on what the content is found to contain, matching \"a label must be applied to the file in real time based on the file's contents.\" Whether a user is let in to Dropbox in the first place based on their device's Intune-compliance state is a sign-in-time gate, which is what an access policy governs; a session policy, by contrast, controls what an already-signed-in user is allowed to do inside the session (block a download, apply a watermark), not whether the sign-in itself succeeds.",
+   "whyWrong": [
+    "An activity policy alerts on or acts on things a user already did inside a session; it does not label files based on content as they are downloaded, and it does not gate sign-in. An OAuth app policy governs third-party app permissions granted via consent, unrelated to gating human sign-in by device compliance."
+   ]
+  },
+  "std/62": {
+   "question": "Standalone 62",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Best practices for Azure RBAC",
+    "url": "https://learn.microsoft.com/en-us/azure/role-based-access-control/best-practices"
+   },
+   "explanation": "With all 30 subscriptions split exactly between two management groups (Mgmt1 and Mgmt2, 15 subscriptions each, per the exhibit's own table), assigning the custom role once at each of those two management groups reaches every Storage account in scope with only two assignments. Assigning once at the tenant root management group would technically also reach every subscription with a single assignment, but Microsoft's own Azure RBAC best practices explicitly warn to \"avoid assigning broader roles at broader scopes even if it initially seems more convenient,\" since a root-scope assignment propagates to everything under it, including any subscription or management group added later outside of Mgmt1 and Mgmt2 -- the opposite of the \"granular access\" the requirement calls for. Two assignments, one at each of the two management groups that actually contain the target subscriptions, is the minimum that stays within that granularity.",
+   "whyWrong": [
+    "A single assignment at the tenant root minimizes the assignment count, but only by trading away the granularity the requirement explicitly asks for, since it would also grant the role over any future management group or subscription created directly under root."
+   ]
+  },
+  "std/66": {
+   "question": "Standalone 66",
+   "status": "MANUAL_REVIEW",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Configure per-app access using Global Secure Access applications",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-configure-per-app-access"
+   },
+   "explanation": "Neither recorded answer holds up against how Microsoft documents these two constructs. A single Global Secure Access enterprise application can hold multiple application segments (the FQDNs or IP addresses to tunnel), and Conditional Access for per-app access is \"configured at the application level for each app,\" not per segment. Since all five standalone apps are used by the same group with no stated need to treat any of them differently, adding all five servers as segments under one enterprise application lets a single Conditional Access policy enforce security controls for all of them at once, which is the minimum administrative effort this scenario calls for -- not five separate application objects each needing their own assignment. For private network connectors, Microsoft's own connector documentation states plainly to \"use at least two connectors in each group for high availability\"; connectors serve an entire connector group's traffic regardless of how many app segments sit behind it, so two, not five, is the minimum that satisfies \"highly available.\"",
+   "whyWrong": [
+    "Creating five separate enterprise applications, one per server, multiplies the Conditional Access assignments needed for identical protection requirements with no benefit, and deploying five connectors ties connector count to server count rather than to the documented two-per-group floor for redundancy. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+   ]
+  },
+  "std/68": {
+   "question": "Standalone 68",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Microsoft Entra Conditional Access for workload identities",
+    "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/workload-identity"
+   },
+   "explanation": "Microsoft's own documentation for Conditional Access for workload identities states plainly that \"managed identities aren't covered by policy\"; only service principals (applications registered and owned by the organization) can be targeted by a workload-identity Conditional Access policy, matching the recorded answer. For the signal source, risk-based Conditional Access for workload identities evaluates workload identity risk detections, which Microsoft Entra ID Protection is what surfaces (leaked credentials, unusual sign-in properties for a service principal); client app and device platform are conditions used for user sign-in policies, not workload identity risk.",
+   "whyWrong": [
+    "System-assigned and user-assigned managed identities are both explicitly excluded from workload identity Conditional Access coverage per Microsoft’s own documentation, and client app/device platform are user-centric sign-in conditions with no bearing on a service principal’s risk."
+   ]
+  },
+  "std/75": {
+   "question": "Standalone 75",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Extend Microsoft Sentinel across workspaces and tenants",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/extend-sentinel-across-workspaces-tenants"
+   },
+   "explanation": "Since Sub2, Sub3, and Sub4 each have their own unique Microsoft Entra tenant, each tenant's own Entra ID and Microsoft 365 diagnostic logs can only be collected into a Log Analytics workspace inside that same tenant, so monitoring all three requires one Sentinel workspace per tenant: three workspaces at minimum. For User1, who sits in Sub1's own tenant, to monitor those three separate workspaces without being invited as a guest into each of the other tenants individually, Azure Lighthouse is Microsoft's documented mechanism for exactly this: delegated, cross-tenant access to resources including Log Analytics/Sentinel workspaces, viewed directly from the user's own home tenant, which is what \"minimize administrative effort\" calls for over maintaining three sets of guest accounts.",
+   "whyWrong": [
+    "Azure Bastion, Azure Private Link, and Azure Arc solve unrelated problems (secure VM access, private connectivity to a PaaS resource, and hybrid server management, respectively); none of them grants a user in one tenant delegated access to resources living in other tenants the way Azure Lighthouse does."
+   ]
+  },
+  "std/77": {
+   "question": "Standalone 77",
+   "status": "OUTDATED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "RaMP Checklist - Explicitly validate trust for all access requests",
+    "url": "https://learn.microsoft.com/en-us/security/zero-trust/user-access-productivity-validate-trust"
+   },
+   "explanation": "This item tests the classic Zero Trust Rapid Modernization Plan structure: five named initiatives (Explicitly validate trust for all access requests, Discover and protect IoT devices, Classify and protect data, Apply provisions for ransomware recovery readiness, Implement DevOps integration) presented with a specific top-three priority ordering. Some of the individual checklist articles the source's key draws on, including \"Explicitly validate trust for all access requests\" and \"Ransomware recovery readiness,\" still exist on Microsoft Learn as standalone content, but the RaMP overview page that once presented this specific initiative list with a prioritized ordering has been restructured: Microsoft's current Zero Trust guidance is organized around the newer Zero Trust adoption framework and Security Exposure Management rather than the classic RaMP checklist-with-priority-order model this item was built on. Because there is no longer a current, single authoritative page presenting these five initiatives with a definitive recommended order to check the source's specific 3-item sequence against, the key is left as the source recorded it and the item is flagged as outdated rather than re-ordered without current backing.",
+   "whyWrong": [
+    "None established with confidence -- this item is flagged because the framework structure it depends on has moved on, not because a specific alternative ordering has been confirmed against current documentation."
+   ]
+  },
+  "std/79": {
+   "question": "Standalone 79",
+   "status": "MANUAL_REVIEW",
+   "confidence": "HIGH",
+   "source": {
+    "title": "What is Microsoft Defender External Attack Surface Management?",
+    "url": "https://learn.microsoft.com/en-us/azure/external-attack-surface-management/overview"
+   },
+   "explanation": "The recorded answer for detecting vulnerability scans of the apps, Microsoft Defender for App Service, checks out: it is the Defender for Cloud plan that watches an already-onboarded App Service resource's own runtime activity and raises alerts (including a vulnerability-scanner-detected alert) when it is being probed. The recorded answer for detecting whether newly deployed apps are vulnerable to attack, also Microsoft Defender for App Service, does not check out: that plan protects resources that are already known to and onboarded in Defender for Cloud. Discovering and assessing newly deployed, internet-facing apps that a security team may not even know about yet is what Microsoft Defender External Attack Surface Management (Defender EASM) is documented to do, using \"recursive discovery to find unknown internet-facing assets\" and giving organizations \"visibility over newly deployed assets\" so vulnerabilities on them can be identified quickly -- exactly \"newly deployed apps\" registered automatically in the company's DNS domain.",
+   "whyWrong": [
+    "Azure WAF inspects and filters HTTP(S) traffic to a published application; it does not discover unknown or newly deployed internet-facing assets. Defender for Cloud Apps governs SaaS usage and session activity, not an organization’s own external attack surface. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+   ]
+  },
+  "std/90": {
+   "question": "Standalone 90",
+   "status": "MANUAL_REVIEW",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Grant limited access to Azure Storage resources using shared access signatures (SAS)",
+    "url": "https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview"
+   },
+   "explanation": "Neither recorded answer holds up. For the blobs, Microsoft's own SAS documentation is direct: \"Microsoft recommends using a user delegation SAS when possible for superior security... secured with Microsoft Entra credentials,\" language that maps onto \"include authentication support when possible\" almost exactly, and a user delegation SAS still supports time-boxed access the way an account SAS does. An account SAS is signed with the storage account key alone, with no Entra identity behind it, so it is the account SAS, not the user delegation SAS, that the requirement is steering away from. For the shares, the requirement is access over the SMB protocol specifically, and shared access signatures are an HTTPS/REST construct that ordinary SMB clients do not present at all; Microsoft's own guidance for Azure Files SMB access is to \"use identity-based authentication to access SMB file shares instead of the storage account key,\" naming Microsoft Entra Domain Services as one of the supported identity sources, which is also one of this item's own listed options.",
+   "whyWrong": [
+    "An account SAS for the blobs is signed with the account key rather than an Entra identity, missing the \"authentication support when possible\" half of the requirement that a user delegation SAS satisfies. A service SAS for the shares fails a harder constraint: SAS tokens are not a credential an SMB client can present at all, so no SAS variant can satisfy \"support access to the shares by using the SMB protocol.\" This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+   ]
+  },
+  "std/93": {
+   "question": "Standalone 93",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Azure Update Manager overview",
+    "url": "https://learn.microsoft.com/en-us/azure/update-manager/overview"
+   },
+   "explanation": "Azure Update Manager is Microsoft's unified update-management service, and it is what supports hotpatching for Azure Edition virtual machines, on-demand update inventory and deployment, and delivering Extended Security Update (ESU) patches, all from one place. On-premises servers need the Azure Connected Machine agent to become Azure Arc-enabled servers first, which is what makes them visible to and manageable by Update Manager (and eligible for Arc-delivered ESU) in the first place.",
+   "whyWrong": [
+    "Azure Automanage and System Center Updates Publisher are both real products, but neither is the single service documented to cover hotpatching, on-demand inventory/deployment, and ESU delivery together the way Update Manager does. Azure Monitor Agent and the Azure VPN client are unrelated to bringing an on-premises server under Arc-based update management."
+   ]
+  },
+  "std/94": {
+   "question": "Standalone 94",
+   "status": "VERIFIED",
+   "confidence": "MEDIUM",
+   "source": {
+    "title": "Enforce cloud governance policies - Cloud Adoption Framework",
+    "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/govern/enforce-cloud-governance-policies"
+   },
+   "explanation": "The Cloud Adoption Framework's own governance guidance names Microsoft Defender for Cloud as one of the tools (alongside Azure Policy) that enforces and evaluates compliance with an organization's cloud governance policies across the estate, matching \"evaluate compliance with cloud governance policies.\" The Well-Architected Framework's security pillar is scoped to reviewing and hardening one workload at a time, and Microsoft Defender Vulnerability Management's per-resource, per-device vulnerability assessment fits that individual-workload granularity, distinct from Defender for Cloud's broader, estate-wide governance role in the first box.",
+   "whyWrong": [
+    "Azure Advisor gives general optimization recommendations rather than governance-policy compliance evaluation or workload-specific vulnerability assessment. Microsoft Intune and Microsoft Sentinel are device management and SIEM tools respectively, neither of which is the documented tool for either half of this pairing."
+   ]
+  },
+  "std/102": {
+   "question": "Standalone 102",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Get started with Information Barriers",
+    "url": "https://learn.microsoft.com/en-us/purview/information-barriers-policies"
+   },
+   "explanation": "Three segments cover this scenario with nothing left unaccounted for: one for Investment's regular employees, one for Research's regular employees, and a single combined segment for both departments' compliance-team members, so that the compliance segment is never split into two separate ones needing an explicit allow between them. Microsoft's own Information Barriers documentation shows that blocking two segments from each other takes two policies, one per direction (blocking Investment from Research and Research from Investment); with no policy at all referencing the compliance segment, its members remain free to communicate with everyone, including each other and their own department's colleagues, which is exactly \"the compliance team of each department must be able to communicate with the compliance team of the other department\" while the two departments' regular employees stay isolated from each other.",
+   "whyWrong": [
+    "Splitting the compliance team into two department-specific segments would need an explicit allow policy between them to satisfy their cross-department communication requirement, raising the segment and policy count above the minimum without changing what the solution actually accomplishes."
+   ]
+  },
+  "std/105": {
+   "question": "Standalone 105",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
+   "source": {
+    "title": "Multi-user authorization using Resource Guard",
+    "url": "https://learn.microsoft.com/en-us/azure/backup/multi-user-authorization-concept"
+   },
+   "explanation": "The exhibit's own table shows Sub1 (contoso.com) holding the Recovery Services vaults and Sub2 (fabrikam.com, a separate tenant) currently unused; Microsoft's documentation notes the Resource Guard \"can be in a different subscription or a different tenant with respect to the vault,\" and using a separate tenant is what maximizes the separation of duties MUA is built to provide, which is exactly what \"maximize the security of the MUA configuration\" calls for. For the role, Microsoft's own guidance is explicit that \"the Backup admin must have Reader role on the Resource Guard... to enable MUA on a vault\" and must specifically not hold Contributor or Backup MUA Admin/Operator permissions there, which is the least-privilege split the requirement asks for: enough access to reference the Resource Guard when configuring the vault, not enough to modify or disable it.",
+   "whyWrong": [
+    "Assigning the backup team Contributor or Owner on the Resource Guard would let the very team the guard is meant to check circumvent it by modifying or removing it themselves, defeating the separation of duties multi-user authorization exists to enforce."
    ]
   }
  }
