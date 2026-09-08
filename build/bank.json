@@ -14121,7 +14121,19 @@
      "w": 964,
      "h": 139
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Just-in-time VM access's network-based controls, which open an NSG rule to a specific originating IP for a limited window after a request, are a Defender for Cloud capability, matching the network-control box. Its authorization side, restricting who can even request that access based on an RBAC role assignment, is what turning the relevant role into a Microsoft Entra Privileged Identity Management-eligible assignment provides: the role only becomes active after the same kind of request-and-time-bound-activation pattern, applied to the identity layer instead of the network layer. Together they give JIT VM access a request-based control at both the network layer and the identity layer.",
+    "whyWrong": [
+     "Microsoft Defender for Cloud Apps and Defender for Endpoint have no role in managing NSG rules, and Microsoft Purview Privileged Access Management and Entra Permissions Management address different problems (Exchange-mailbox privileged tasks and multicloud permissions right-sizing, respectively) rather than JIT-activating a VM-access RBAC role."
+    ],
+    "source": {
+     "title": "Understand just-in-time virtual machine access",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+    }
+   }
   },
   {
    "n": 205,
@@ -14161,7 +14173,19 @@
      "w": 945,
      "h": 143
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Static application security testing (SAST) scans source code without running it, which is why the Cloud Adoption Framework places it at the Commit the code stage, before anything is built. Dynamic application security testing (DAST) needs a running target to send test traffic against, which is why it sits at the Build and test stage instead, once a deployable build actually exists to test.",
+    "whyWrong": [
+     "Penetration testing and smoke testing are different activities (broader manual assessment and a lightweight post-deployment sanity check, respectively) than the automated code-level and running-app scans SAST and DAST specifically provide at these two pipeline stages."
+    ],
+    "source": {
+     "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/secure/devsecops-controls"
+    }
+   }
   },
   {
    "n": 206,
@@ -14340,7 +14364,19 @@
      "w": 691,
      "h": 158
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Microsoft's enterprise access model, the security-level framework the MCRA builds on, places IT administrators (who can affect the security of the enterprise itself) at the privileged level, developers and other roles with access to business-critical or sensitive systems at the specialized level, and the rest of the workforce at the enterprise level. Assigning developers to specialized (rather than enterprise) security recognizes that developer accounts typically reach source code, build pipelines, and production-adjacent systems that make them a higher-value target than a standard user account.",
+    "whyWrong": [
+     "Placing IT administrators at specialized (rather than privileged) security, or developers at enterprise security, understates how much damage a compromise of either account type can cause relative to a standard user, which is exactly the distinction Microsoft’s access-level model is built to capture."
+    ],
+    "source": {
+     "title": "Privileged access: Strategy",
+     "url": "https://learn.microsoft.com/en-us/security/privileged-access-workstations/privileged-access-strategy"
+    }
+   }
   },
   {
    "n": 210,
@@ -14752,7 +14788,19 @@
      "w": 856,
      "h": 116
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Azure Key Vault Managed HSM is Microsoft's single-tenant, FIPS 140-2 Level 3 validated HSM service, matching \"provide a single tenancy\" and \"maintain FIPS 140-2 Level 3 compliance\" directly (the standard, multi-tenant Key Vault Premium tier uses FIPS 140-2 Level 2 validated HSMs). Managed HSM supports only role-based access control, and RBAC roles can be scoped down to an individual key rather than the whole HSM, so a single Managed HSM holding all 20 apps' keys and certificates, with RBAC assignments scoped per key, follows least privilege without needing 20 separate resources.",
+    "whyWrong": [
+     "The Premium SKU of standard Key Vault is multi-tenant and only FIPS 140-2 Level 2 validated, missing the single-tenancy and Level 3 requirements. Twenty separate vaults would satisfy least privilege but add administrative overhead the single-vault, RBAC-scoped design avoids, and Managed HSM does not support the legacy access-policy authorization model alongside RBAC on the same instance."
+    ],
+    "source": {
+     "title": "What is Azure Key Vault Managed HSM?",
+     "url": "https://learn.microsoft.com/en-us/azure/key-vault/managed-hsm/overview"
+    }
+   }
   },
   {
    "n": 218,
@@ -14792,7 +14840,19 @@
      "w": 1000,
      "h": 156
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The recorded answer for lateral movement across domain-joined computers, Microsoft Defender for Identity, checks out: Defender for Identity's sensors run on domain controllers specifically to catch this behavior. The recorded answer for exfiltrating data to external websites, also Microsoft Defender for Identity, does not check out: Defender for Identity's visibility is limited to on-premises Active Directory Domain Services signal, not traffic to external websites. Detecting data exfiltration to external or unsanctioned sites is Microsoft Defender for Cloud Apps' documented anomaly-detection territory, which is what the exfiltration box should point to instead.",
+    "whyWrong": [
+     "Defender for Identity has no visibility into web traffic to external sites at all; it only sees authentication and directory activity inside the on-premises AD DS environment, which is why it fits the lateral-movement box but not the exfiltration one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy"
+    }
+   }
   },
   {
    "n": 219,
@@ -14871,7 +14931,19 @@
      "w": 620,
      "h": 109
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The recorded second layer for the dedicated pool, infrastructure encryption, checks out: Microsoft's own documentation describes infrastructure encryption as encrypting storage-account data \"twice -- once at the service level and once at the infrastructure level -- with two different encryption algorithms and two different keys,\" which stacks as a genuine second layer on top of the dedicated pool's existing Transparent Data Encryption. The recorded second layer for the serverless pool, server-side encryption (SSE), does not check out: SSE is the service-level encryption that already protects the serverless pool's underlying storage by default (the serverless pool has no TDE of its own to layer on top of), making SSE the first layer, not a second one. The genuine second, additional layer available on top of SSE is the same infrastructure encryption used for the dedicated pool, since it is a storage-account-level feature that covers whichever data sits in that account.",
+    "whyWrong": [
+     "Recommending SSE as a \"second\" layer for the serverless pool recommends something that is already the pool’s existing, default protection rather than an additional one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Enable infrastructure encryption for double encryption of data",
+     "url": "https://learn.microsoft.com/en-us/azure/storage/common/infrastructure-encryption-enable"
+    }
+   }
   },
   {
    "n": 221,
@@ -14911,7 +14983,19 @@
      "w": 1000,
      "h": 121
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The two recorded answers are swapped. Securing a Git workflow is a matter of branch governance -- requiring pull requests, reviewers, and status checks before code merges -- which is what protected branches provide, not what Azure Key Vault does (Key Vault has no concept of a Git branch or pull request at all). Securing deployment credentials, by contrast, means keeping the actual secrets a pipeline uses out of its YAML and source code, which is precisely what Azure Key Vault is for; protected branches govern how code changes are reviewed and merged, not how a pipeline authenticates to a target environment.",
+    "whyWrong": [
+     "Azure Key Vault cannot enforce anything about how a Git workflow accepts changes, and protected branches store no secrets and control no deployment credentials, so each recorded pairing names a construct that cannot actually deliver the control it is credited with. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/secure/devsecops-controls"
+    }
+   }
   },
   {
    "n": 222,
@@ -15010,7 +15094,19 @@
      "w": 993,
      "h": 160
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "A threat intelligence connector is exactly how Microsoft Sentinel ingests indicators (including known-malware indicators) from a third-party security vendor's TI platform or feed. Once those indicators are in Sentinel, a threat detection (analytics) rule that matches ingested events against the TI-sourced indicators, such as a known command-and-control server IP appearing in event data, is what automatically generates an incident from that match.",
+    "whyWrong": [
+     "Custom entity activities, a playbook, and workbooks are, respectively, an investigation-graph customization, an automation responder, and a visualization tool; none of them is what brings in third-party threat intelligence or, on its own, generates an incident the moment a known-bad indicator is observed in the data."
+    ],
+    "source": {
+     "title": "Connect your threat intelligence platform to Microsoft Sentinel",
+     "url": "https://learn.microsoft.com/en-us/azure/sentinel/connect-threat-intelligence-tip"
+    }
+   }
   },
   {
    "n": 224,
@@ -15053,7 +15149,19 @@
      "w": 1000,
      "h": 137
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The recorded answer for brute-force password attacks, Azure AD Password Protection, checks out: banning weak and known-compromised passwords across both cloud and (via the DC agent) synced on-premises accounts is Microsoft's documented mitigation for password-spray and brute-force success. The recorded answer for leaked credentials, Extranet Smart Lockout (ESL), does not check out on two counts: ESL is documented as an Active Directory Federation Services (AD FS) feature for federated deployments, and this hybrid tenant uses pass-through authentication, not AD FS federation, so ESL isn't even part of this architecture; and ESL's own documented purpose is distinguishing legitimate sign-ins from brute-force/denial-of-service lockout attempts, not leaked-credential detection. Detecting leaked credentials specifically requires password hash synchronization to be enabled, since Microsoft can only compare a password against known-breached credentials if it holds a hash of that password, which pass-through authentication alone does not provide.",
+    "whyWrong": [
+     "Extranet Smart Lockout would not even function in a pass-through-authentication deployment with no AD FS in the picture, and its actual purpose (protecting against brute-force lockout abuse) overlaps with the other box’s requirement, not this one’s. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Configure AD FS Extranet Smart Lockout Protection",
+     "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/operations/configure-ad-fs-extranet-smart-lockout-protection"
+    }
+   }
   },
   {
    "n": 225,
@@ -15096,7 +15204,19 @@
     {
      "p": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/tech-specific-samples/azdo- container-d e v-test-release/"
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "GitHub Enterprise's GitHub Advanced Security code scanning is what scans code the moment it's pushed to the repository, matching \"uploading the code to repositories.\" Container image scanning is documented as a step integrated into the Azure Pipelines build process itself (a container-focused CI/CD pattern that scans the image as part of building it), matching \"building containers.\"",
+    "whyWrong": [
+     "Azure Boards is a work-tracking tool with no code-scanning capability, and Microsoft Defender for Cloud assesses deployed Azure resources rather than scanning code as it is pushed or a container as it is built."
+    ],
+    "source": {
+     "title": "Scan and secure your source code",
+     "url": "https://learn.microsoft.com/en-us/security/zero-trust/prioritizing-defense/scan-secure-source-code"
+    }
+   }
   },
   {
    "n": 226,
@@ -15144,7 +15264,19 @@
      "w": 1000,
      "h": 457
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "All three boxes describe structurally the same choice (a Log Analytics workspace, Application Insights, a matching Defender for Cloud plan, or Microsoft Sentinel), and Microsoft's own landing zone guidance answers all three the same way: \"a landing zone must include centralized monitoring from day one with a Log Analytics workspace... that collects logs from all subscriptions.\" The recorded answers instead give three different answers to the same underlying question, crediting Microsoft Defender for SQL with storing the SQL audit logs and Microsoft Sentinel with storing the App Service audit logs -- but neither a Defender for Cloud plan nor Sentinel is itself a log-retention destination; both sit on top of a Log Analytics workspace and add their own cost on top of it, which works against \"minimize costs\" when plain centralized retention is all three requirements actually call for.",
+    "whyWrong": [
+     "A Defender for Cloud plan assesses and alerts on a resource’s security posture; it does not retain 365 days of that resource’s own audit logs. Enabling Microsoft Sentinel on top of a workspace adds analytics costs beyond what centralizing and retaining logs requires on its own. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Management platform for Azure landing zones",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/design-area/management-platform"
+    }
+   }
   },
   {
    "n": 227,
@@ -15303,7 +15435,19 @@
      "w": 618,
      "h": 98
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "Azure Lighthouse, the recorded answer for delegating permissions, checks out for letting Tenant1's users manage Sub2 and Sub3's resources without switching tenants. The recorded Sentinel feature, analytics rules, does not check out: Microsoft's own documentation is explicit that Microsoft Sentinel's \"multiple workspace view... is currently available only for incidents,\" letting a user see and work with incidents from several workspaces and tenants in one unified list. Analytics rules are configured per workspace and have no cross-workspace viewing mode of their own.",
+    "whyWrong": [
+     "Analytics rules generate the incidents that live inside a single workspace; the feature that then lets a user see those incidents aggregated across Sentinel2 and Sentinel3 at once is the multiple workspace view for incidents specifically, not analytics rules or workbooks. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Work with Microsoft Sentinel incidents in many workspaces at once",
+     "url": "https://learn.microsoft.com/en-us/azure/sentinel/multiple-workspace-view"
+    }
+   }
   },
   {
    "n": 230,
@@ -15406,7 +15550,19 @@
      "w": 1000,
      "h": 123
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The recorded DLP answer, Microsoft Purview, checks out: Purview's DLP policies are manageable from the unified Microsoft Defender/Purview portal experience. The recorded UEBA answer, Azure AD Identity Protection, does not check out as the service documented for UEBA with unified alerting: Microsoft Defender for Identity is the one of the four native Microsoft 365 Defender workloads explicitly built around \"User and Entity Behavior Analytics (UEBA)\" with full unified incident and alert correlation in the Defender portal, whereas Identity Protection's sign-in and user risk detections are a related but separate signal, not the product Microsoft brands and documents as its UEBA capability.",
+    "whyWrong": [
+     "Microsoft Entra Verified ID issues and verifies digital credentials, an unrelated capability to behavior analytics. Identity Protection is a real and valuable risk-detection service, but it is Defender for Identity that Microsoft specifically documents as providing UEBA with unified Microsoft 365 Defender alerting."
+    ],
+    "source": {
+     "title": "What is Microsoft Defender for Identity?",
+     "url": "https://learn.microsoft.com/en-us/defender-for-identity/what-is"
+    }
+   }
   },
   {
    "n": 232,
@@ -15804,7 +15960,19 @@
      "w": 983,
      "h": 224
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Scoping Policy1 down to only Site1 requires an authentication context to exist before it can be referenced anywhere else, which the recorded order respects by creating it first. The item's own note that \"more than one order... is correct\" reflects that the remaining two actions, configuring a sensitivity label for Site1 with that authentication context and updating Policy1's conditions to target the authentication context instead of all of SharePoint Online, only depend on the authentication context already existing, not on each other, so either can follow it in either order.",
+    "whyWrong": [
+     "Doing anything with the authentication context, whether assigning it to Site1 via a sensitivity label or referencing it in Policy1’s conditions, before the context itself is created would have nothing to reference; that dependency is the only hard ordering constraint this scenario actually has."
+    ],
+    "source": {
+     "title": "Question: is more than one order accepted",
+     "url": "https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-cloud-apps"
+    }
+   }
   },
   {
    "n": 240,
@@ -16033,7 +16201,19 @@
     {
      "p": "https://docs.microsoft.com/en-us/microsoft-365/security/defender/investigate-users"
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "The recorded answer for potentially compromised user accounts, Azure AD Identity Protection, checks out: risky-user detection is Identity Protection's core purpose. The recorded answer for bulk file downloads from SharePoint Online, Microsoft Defender for Cloud, does not check out, and the item's own cited reference gives this away: the link it provides is to defender-cloud-apps/policies-threat-protection#detect-mass-download-data-exfiltration -- a Defender for Cloud Apps page about detecting exactly this mass-download behavior -- yet the recorded answer names the differently-branded \"Microsoft Defender for Cloud\" instead of \"Microsoft Defender for Cloud Apps,\" which is the product the source's own citation actually supports.",
+    "whyWrong": [
+     "Microsoft Defender for Cloud assesses Azure resource security posture and has no SharePoint file-activity anomaly detection of its own; that capability belongs to Defender for Cloud Apps, which the item’s own source link points to. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
+     "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy"
+    }
+   }
   },
   {
    "n": 245,
@@ -16073,7 +16253,19 @@
      "w": 915,
      "h": 141
     }
-   ]
+   ],
+   "review": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "explanation": "Both recorded stages are one step later than where the Cloud Adoption Framework places these controls. Static application security testing scans source code before it is built, which is why it belongs at the Commit the code stage, the same placement this review has already confirmed for SAST elsewhere (std/148, std/186) -- not Build and test, where the recorded answer puts it. Infrastructure scanning, which checks infrastructure-as-code templates for misconfigurations, is documented as belonging to the Build and test stage, where the templates are validated alongside the application build -- not Go to production, which is a stage later than where the scan is meant to catch problems.",
+    "whyWrong": [
+     "Placing either control one stage later than documented defeats the shift-left purpose of running it early: infrastructure scanning at Go to production catches misconfigurations only once deployment is already underway, and SAST at Build and test scans code that should already have been scanned when it was committed. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ],
+    "source": {
+     "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
+     "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/secure/devsecops-controls"
+    }
+   }
   },
   {
    "n": 246,
@@ -16161,7 +16353,19 @@
      "w": 841,
      "h": 116
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Azure Web Application Firewall with the OWASP Core Rule Set is the documented mechanism for blocking inbound requests that carry CRS-defined threats, matching the inbound box. For outbound connections, Azure Firewall Premium's threat intelligence-based filtering evaluates traffic against the Microsoft Threat Intelligence feed (the same feed also referred to as Defender TI) and can deny traffic to or from flagged IP addresses and domains, matching \"outbound... connections that contain security threats identified by the Microsoft Defender Threat Intelligence (Defender TI) feed\" directly.",
+    "whyWrong": [
+     "Network security groups and application security groups filter by IP address and port, not by matching against a threat intelligence feed, and Microsoft Entra application proxy publishes internal apps for inbound access, an unrelated capability to outbound threat-intelligence-based filtering."
+    ],
+    "source": {
+     "title": "Azure Firewall threat intelligence-based filtering",
+     "url": "https://learn.microsoft.com/en-us/azure/firewall/threat-intel"
+    }
+   }
   },
   {
    "n": 248,
@@ -16352,7 +16556,19 @@
      "w": 1000,
      "h": 142
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "MEDIUM",
+    "explanation": "Deploying private network connectors across two connector groups (the default group plus a new one) gives the London deployment redundant connector coverage rather than a single point of failure, supporting \"maximize redundancy.\" For the path from the private network connectors up to the Private Access service, ExpressRoute is a private, dedicated circuit that avoids the public internet entirely, and Microsoft peering is the ExpressRoute peering type used to reach Microsoft's own cloud-hosted services (which is what the multi-tenant Private Access edge service is) privately, which together support minimizing both latency and exposure to the public internet.",
+    "whyWrong": [
+     "A single connector group would leave connectivity to App1 dependent on that one group staying healthy, and private (rather than Microsoft) peering is built to reach resources inside your own Azure virtual networks, not a Microsoft-hosted multi-tenant service like Private Access."
+    ],
+    "source": {
+     "title": "What is Microsoft Entra Private Access?",
+     "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-private-access"
+    }
+   }
   },
   {
    "n": 251,
@@ -16394,7 +16610,19 @@
      "w": 798,
      "h": 185
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Application Gateway's Web Application Firewall with its OWASP-based rule set is what detects and blocks cross-site scripting, matching App1's requirement. LinkedIn is not one of the identity providers Azure AD B2C (Microsoft Entra External ID) supports out of the box through its built-in policies; wiring up a non-standard social identity provider like LinkedIn is documented as requiring a custom policy, which is exactly what App2's \"authenticate... by using their LinkedIn account\" requirement calls for.",
+    "whyWrong": [
+     "Azure Firewall and Azure VPN Gateway with NSG rules are network-layer controls with no application-layer XSS inspection, so neither fits App1. Azure AD B2B authentication federates with another organization’s own tenant; it has no mechanism for consumer social-identity sign-in like a personal LinkedIn account, which is what App2 specifically needs."
+    ],
+    "source": {
+     "title": "Custom policies overview - Azure AD B2C",
+     "url": "https://learn.microsoft.com/en-us/azure/active-directory-b2c/custom-policy-overview"
+    }
+   }
   },
   {
    "n": 252,
@@ -16678,7 +16906,19 @@
      "w": 1000,
      "h": 106
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "This is the same scenario reviewed as std/162 (jump servers on a dynamically scaling Linux VM Scale Set, requiring per-connection access requests and brute-force protection), and here the source's own recorded key already matches what Microsoft's just-in-time VM access documentation describes: JIT \"ensures 'deny all inbound traffic' rules exist... in the network security group,\" opening access to a specific requester's IP only \"when a user requests access to a VM,\" for a limited time -- exactly \"each time the support staff connects... they must request access.\" Azure Bastion and Azure Automation have no equivalent per-request NSG-opening mechanism of their own.",
+    "whyWrong": [
+     "This entry has no correction to record; it verifies the same underlying JIT VM access reasoning already established for std/162, where the recorded answer instead (and incorrectly) named Azure Bastion for the identical scenario."
+    ],
+    "source": {
+     "title": "Understand just-in-time virtual machine access",
+     "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+    }
+   }
   },
   {
    "n": 258,
@@ -16715,7 +16955,19 @@
      "w": 1000,
      "h": 151
     }
-   ]
+   ],
+   "review": {
+    "status": "OUTDATED",
+    "confidence": "MEDIUM",
+    "explanation": "This item tests a specific three-step Zero Trust security-operations deployment sequence (establish visibility, enable additional protection and detection controls, enable automation) that was once presented as Microsoft's SecOps Zero Trust deployment objectives. Microsoft's current SecOps guidance has since been reorganized around a different security adoption model built on disciplines like centralizing detection and visibility, automating response and containment, proactive threat hunting, and continuous learning, rather than the specific three-item list and order this question was built on. Because there is no longer a current, single authoritative page presenting these exact three objectives with a definitive recommended sequence to check the source's specific order against, the key is left as the source recorded it and the item is flagged as outdated rather than re-ordered without current backing.",
+    "whyWrong": [
+     "None established with confidence -- this item is flagged because the framework structure and terminology it depends on has been reorganized in current Microsoft guidance, not because a specific alternative ordering has been confirmed against current documentation."
+    ],
+    "source": {
+     "title": "Use the Microsoft security adoption model to modernize SecOps",
+     "url": "https://learn.microsoft.com/en-us/security/zero-trust/security-adoption-discipline-security-operations"
+    }
+   }
   },
   {
    "n": 259,
@@ -16767,7 +17019,19 @@
      "w": 905,
      "h": 131
     }
-   ]
+   ],
+   "review": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "explanation": "Data collection rules are what let the Windows Security Events via AMA connector be configured to ingest only specific event IDs rather than the full security event stream, matching \"only specific events are collected\" and \"minimize costs\" together. The on-premises Hyper-V virtual machines are not Azure resources, so they need the Azure Connected Machine agent to become Azure Arc-enabled servers first, which is what makes the Azure Monitor Agent (and the DCR that configures it) deployable to them at all.",
+    "whyWrong": [
+     "The Network Controller role and the Azure Pipelines agent have nothing to do with onboarding an on-premises server to Azure Arc or Azure Monitor; without Arc onboarding via the Connected Machine agent, there is no Azure identity for a DCR to target on these on-premises virtual machines in the first place."
+    ],
+    "source": {
+     "title": "Windows Security Events via AMA connector",
+     "url": "https://learn.microsoft.com/en-us/azure/sentinel/data-connectors/windows-security-events-via-ama"
+    }
+   }
   },
   {
    "n": 260,
