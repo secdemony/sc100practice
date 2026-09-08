@@ -3756,5 +3756,257 @@
     "whyWrong": [
       "The Network Controller role and the Azure Pipelines agent have nothing to do with onboarding an on-premises server to Azure Arc or Azure Monitor; without Arc onboarding via the Connected Machine agent, there is no Azure identity for a DCR to target on these on-premises virtual machines in the first place."
     ]
+  },
+  "std/244": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "About Microsoft Azure Backup Server (MABS)",
+      "url": "https://learn.microsoft.com/en-us/azure/backup/backup-azure-microsoft-azure-backup"
+    },
+    "explanation": "The recorded destination, a Recovery Services vault, checks out -- both the MARS agent and Microsoft Azure Backup Server ultimately back up to one. The recorded agent, the MARS agent, does not check out given the stated constraint that a firewall prevents Server1 from reaching the internet: the MARS agent runs directly on the protected machine and needs that machine itself to have internet access to reach the vault, which Server1 explicitly does not have. Microsoft Azure Backup Server is built for exactly this: it backs up Server1 to local disk over the LAN first, and only the MABS server itself (which can sit on a different, internet-connected part of the network) needs to reach Azure to upload that data to the vault.",
+    "whyWrong": [
+      "Installing the MARS agent directly on Server1 would require exactly the internet access the scenario says Server1 doesn’t have; an Azure VM extension has no role in backing up an on-premises server at all. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/246": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Create an access review of Azure resource and Microsoft Entra roles in PIM",
+      "url": "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-create-roles-and-resource-roles-review"
+    },
+    "explanation": "Microsoft's own documentation is direct that \"to create access reviews for Microsoft Entra roles, you must be assigned at least the Privileged Role Administrator role,\" which is exactly the role User2 needs to configure and enforce the periodic validation of privileged role assignments the security team wants, without needing the broader Global Administrator role. Access reviews is the PIM feature that performs that periodic validation and can be configured to auto-remove access when a review isn't completed, matching \"automate and enforce the validation process.\"",
+    "whyWrong": [
+      "A role broader than Privileged Role Administrator (such as Global Administrator) would work but violates least privilege, since Privileged Role Administrator alone is sufficient to create and manage the needed access reviews."
+    ]
+  },
+  "std/247": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Environments - Azure Pipelines",
+      "url": "https://learn.microsoft.com/en-us/azure/devops/pipelines/process/environments"
+    },
+    "explanation": "Protected branches are Azure Repos' mechanism for requiring a pull request (with reviewers and status checks) before code can merge, which is what \"all pull requests must be enforced\" is asking for. Azure Pipelines environments support pre-deployment approval checks scoped to a specific environment, which is the documented way to require sign-off before a deployment reaches production, matching \"all deployments to production must be approved.\"",
+    "whyWrong": [
+      "Resource locks prevent accidental deletion or modification of an Azure resource; they have no concept of a pull request or a deployment approval gate, so neither fits either requirement here."
+    ]
+  },
+  "std/248": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Microsoft Entra smart lockout",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/authentication/howto-password-smart-lockout"
+    },
+    "explanation": "Both boxes are testing settings that belong to Microsoft Entra ID specifically, not to a value shared between Entra ID and AD DS. Microsoft's own smart lockout documentation is explicit that the Microsoft Entra lockout threshold and the AD DS account lockout threshold are two separately configured values that must be tuned relative to each other (\"the Microsoft Entra lockout threshold must be LESS than the AD DS account lockout threshold,\" and separately, \"the Microsoft Entra lockout duration must be LONGER than the AD DS account lockout duration\"). Since Microsoft Entra smart lockout's own failed-attempt count and lockout duration are each configured purely within Microsoft Entra ID, and deliberately set to a different number than the separate on-premises AD DS policy, evaluating \"Microsoft Entra smart lockout\" considerations means evaluating Microsoft Entra ID-only settings, not a value that spans both systems.",
+    "whyWrong": [
+      "If the same number applied to both AD DS and Microsoft Entra ID, Microsoft’s own guidance to set the Entra threshold lower and the Entra duration longer than AD DS’s separate values would be contradictory, which is why these are documented as two independently configured settings rather than one shared setting. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/255": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "AWS S3 data connector for Microsoft Sentinel",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/data-connectors/amazon-web-services-s3"
+    },
+    "explanation": "The two recorded answers are swapped. Automatically identifying threats in AWS CloudTrail events is a log-ingestion-and-analytics task: Microsoft Sentinel's AWS connector ingests CloudTrail logs and ships with dozens of built-in analytics rules to detect suspicious activity in them, which is exactly what \"automatically identify threats found in AWS CloudTrail events\" needs, not Defender for Cloud (which assesses resource configuration rather than analyzing log events for threats). Enforcing security settings on AWS virtual machines by using Azure Policy is a governance task that runs through Defender for Cloud's AWS connector: once AWS EC2 instances are Arc-onboarded through Defender for Cloud, Azure Policy can be applied to them to enforce configuration settings, which is documented for exactly this scenario -- not Microsoft Sentinel, which has no policy-enforcement capability of its own.",
+    "whyWrong": [
+      "Microsoft Sentinel has no mechanism to enforce configuration settings on a resource via Azure Policy, and Microsoft Defender for Cloud does not analyze log events like CloudTrail entries for threats the way Sentinel’s analytics rules do; each recorded answer names the product built for the other box’s job. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/256": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Azure Active Directory B2C?",
+      "url": "https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview"
+    },
+    "explanation": "Azure AD B2C (Microsoft Entra External ID for customers) is Microsoft's identity platform for letting a customer-facing application's own users authenticate with a social identity provider such as Facebook, matching the App Service customer sign-in requirement. Azure AD B2B collaboration is the mechanism for letting a partner company's own users access specific SharePoint Online sites without deploying new infrastructure or maintaining separate accounts for them, matching the partner-access requirement -- and both choices avoid deploying any additional infrastructure, matching that stated constraint.",
+    "whyWrong": [
+      "Federation with AD FS, pass-through authentication, and password hash synchronization are all authentication methods for an organization’s own hybrid workforce; none of them lets an external consumer sign in with a social account or lets a partner company’s own users reach a specific SharePoint site."
+    ]
+  },
+  "std/260": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Microsoft Defender for IoT architecture",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-iot/organizations/architecture"
+    },
+    "explanation": "Microsoft Defender for IoT is Microsoft's purpose-built security posture and threat-detection service for IoT and OT devices, including Azure IoT Edge, matching the IoT Edge requirement directly. AWS EC2 instances need to be Azure Arc-enabled first before Defender for Cloud's plans can assess and protect them, so the pairing of Defender for Cloud together with Azure Arc is what actually reaches EC2 instances for posture management, rather than Defender for Cloud alone.",
+    "whyWrong": [
+      "Defender for Cloud Apps and Defender for Endpoint address SaaS session activity and endpoint device protection respectively, neither of which is the documented posture-management path for IoT Edge devices or AWS EC2 instances specifically."
+    ]
+  },
+  "std/263": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Visualize and monitor your data by using workbooks in Microsoft Sentinel",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/monitor-your-data"
+    },
+    "explanation": "Microsoft Sentinel workbooks are the dashboarding and visualization feature, built for exactly \"custom dashboards to visualize\" whatever data a workbook is pointed at, including analysts' workload. Playbooks are Sentinel's Logic Apps-based automation feature, triggered by an analytics rule (via an automation rule) to automatically respond to a generated alert, matching \"enable automated responses for the security alerts.\"",
+    "whyWrong": [
+      "Notebooks are a Jupyter-based tool for deep, code-driven investigation rather than a dashboarding feature, and they don’t generate automated responses to alerts the way playbooks do."
+    ]
+  },
+  "std/264": {
+    "status": "OUTDATED",
+    "confidence": "MEDIUM",
+    "source": {
+      "title": "Universal tenant restrictions",
+      "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-universal-tenant-restrictions"
+    },
+    "explanation": "The recorded answer for authentication plane resources, all Microsoft Entra ID integrated apps including third-party apps, matches Microsoft's current documentation for universal tenant restrictions, which describes authentication plane protection as covering sign-in traffic broadly across platforms and apps. The recorded answer for data plane resources, all Microsoft 365 apps, does not match Microsoft's current documentation, which states plainly that \"data plane enforcement is currently supported for Microsoft Graph only\" -- a narrower scope than \"all Microsoft 365 apps,\" and one that doesn't map cleanly onto any of this item's own three answer choices. Since universal tenant restrictions is a newer, still-evolving Global Secure Access capability, the data-plane scope this item was written against appears to have since narrowed (or been described differently) in current documentation, so the key is left as the source recorded it and the item is flagged as outdated rather than matched to an answer choice that doesn't reflect the currently documented scope.",
+    "whyWrong": [
+      "None established with confidence -- this item is flagged because the current documented data-plane scope (Microsoft Graph only) doesn’t correspond to any of the item’s own listed choices, not because a specific one of those choices has been confirmed correct."
+    ]
+  },
+  "std/266": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Azure Backup immutable vaults",
+      "url": "https://learn.microsoft.com/en-us/azure/backup/backup-azure-immutable-vault-concept"
+    },
+    "explanation": "Azure Files backup is a Recovery Services vault workload (the newer Backup vault covers Blobs and disks instead), so creating a Recovery Services vault has to come first. Vault immutability is what prevents the backup retention period from being shortened and stops backup data from being deleted, addressing two of the three stated risks, and it must exist on the vault before it can be locked. Locking immutability makes the setting permanent, which is what specifically closes off the privilege-escalation risk: without the lock, an attacker who escalates to an administrator role could simply disable immutability and then delete the backups or vault it was protecting.",
+    "whyWrong": [
+      "Creating an Azure Backup vault instead of a Recovery Services vault would leave Azure Files unsupported by this backup solution entirely, and enabling immutability without locking it would leave the setting reversible by exactly the privileged account compromise this scenario is trying to defend against."
+    ]
+  },
+  "std/267": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Environments - Azure Pipelines",
+      "url": "https://learn.microsoft.com/en-us/azure/devops/pipelines/process/environments"
+    },
+    "explanation": "Onboarding the new Azure virtual machines to Defender for Cloud (rather than Azure Arc, which is for non-Azure or on-premises machines) is what extends Microsoft Defender for Endpoint, and therefore EDR, to them through the Defender for Servers plan. Configuring Microsoft Sentinel playbooks is what SOAR, security orchestration, automation, and response, means concretely in Sentinel: Logic Apps-based playbooks triggered from analytics or automation rules to automatically respond to an alert.",
+    "whyWrong": [
+      "Azure Arc is for bringing non-Azure machines under Azure management, which is unnecessary for VMs already in Azure, and analytics rules or workflow automation in Defender for Cloud generate or route findings rather than providing Sentinel’s own orchestrated automated-response capability the way playbooks do."
+    ]
+  },
+  "std/269": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
+      "url": "https://learn.microsoft.com/en-us/defender-cloud-apps/anomaly-detection-policy"
+    },
+    "explanation": "Microsoft Defender for Cloud Apps is the service documented for identifying atypical SharePoint Online download volume, and its built-in anomaly detection policy (covering unusual multiple file-download activity) is the specific policy type that flags exactly this behavior, as opposed to a DLP, file, or Endpoint DLP policy, none of which is built to baseline and flag a volume anomaly.",
+    "whyWrong": [
+      "A DLP policy (Purview or Endpoint) matches content against defined sensitive-information patterns; it doesn’t baseline a user’s typical download volume and flag deviations the way an anomaly detection policy does."
+    ]
+  },
+  "std/270": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Networking features - Azure App Service",
+      "url": "https://learn.microsoft.com/en-us/azure/app-service/networking-features"
+    },
+    "explanation": "For inbound connectivity from VM1 to App1, a private endpoint brings App1’s inbound access onto a private IP in the virtual network rather than a public endpoint, minimizing the exposure that could otherwise be used to exfiltrate data. For App1’s outbound reach to VM2 (where the data is stored), virtual network integration is what Microsoft documents App Service using to make outbound calls into a virtual network; the two features are complementary, one for each traffic direction, which is exactly what this scenario’s two connections need.",
+    "whyWrong": [
+      "Virtual network integration is documented as outbound-only and would not secure App1’s inbound endpoint, while a private endpoint provides inbound access only and would not give App1 an outbound path to VM2, so swapping the two would leave one direction unaddressed."
+    ]
+  },
+  "std/271": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Configure anti-phishing policies in Microsoft Defender for Office 365",
+      "url": "https://learn.microsoft.com/en-us/defender-office-365/anti-phishing-policies-about"
+    },
+    "explanation": "Microsoft Defender for Office 365's anti-phishing policies are specifically where user and domain impersonation protection is configured, which is exactly the mechanism for stopping a malicious actor from impersonating an internal sender's email address in Exchange Online.",
+    "whyWrong": [
+      "Anti-spam and DLP policies filter based on message volume/reputation and sensitive content respectively, neither of which evaluates whether a sender is impersonating another internal address, and Azure AD Identity Protection and Defender for DNS operate on sign-in risk and DNS traffic, unrelated to email sender impersonation."
+    ]
+  },
+  "std/272": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Configure customer-managed keys for an existing storage account",
+      "url": "https://learn.microsoft.com/en-us/azure/storage/common/customer-managed-keys-configure-existing-account"
+    },
+    "explanation": "The recorded order has this backwards and picks the wrong identity target. Microsoft's own configuration steps for customer-managed keys are: give the storage account a managed identity, grant that identity permission on the key vault, and only then configure the storage account's encryption settings to reference the key -- because Azure validates that the configured identity can actually reach the key at the moment encryption is configured, which requires the identity and its access to already exist. The recorded sequence configures encryption with customer-managed keys first, before any identity or access exists to make that configuration valid, and its final step creates a managed identity \"and assigns it to AKV1\" rather than to storage1, when it is the storage account that needs an identity to present to Key Vault, not the vault that needs one assigned to it.",
+    "whyWrong": [
+      "Configuring encryption to point at a key before an identity with permission to reach that key exists reverses a real dependency Azure enforces at configuration time, and a managed identity belongs on the resource that needs to authenticate (storage1), not on the vault holding the key. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/273": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "ExpressRoute circuit peerings",
+      "url": "https://learn.microsoft.com/en-us/azure/expressroute/expressroute-circuit-peerings"
+    },
+    "explanation": "The recorded answer for connectors, two connectors in the default connector group, checks out for redundancy without adding the complexity of a second group. The recorded peering type, Microsoft peering, does not check out here: Microsoft peering is documented as the ExpressRoute peering type for reaching Microsoft's own cloud-hosted services (Microsoft 365, Dynamics 365, Azure PaaS endpoints), not for reaching resources inside a customer's own virtual network. Here the connector sits in VNet1 (Azure) and needs to reach App1, an on-premises application in the New York City office, over the same ExpressRoute circuit -- exactly what private peering is documented for: connecting an on-premises network to a customer's own Azure virtual network resources.",
+    "whyWrong": [
+      "Microsoft peering would route toward Microsoft’s own multi-tenant services, not toward an on-premises application reachable only through the customer’s own VNet, which is the opposite of what connecting the connector in VNet1 to App1 in New York City actually requires. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/279": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Microsoft Entra ID Protection",
+      "url": "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection"
+    },
+    "explanation": "Microsoft Entra ID Protection detects risky sign-ins, including brute-force and password-spray patterns, and can drive risk-based Conditional Access policies that automatically block or challenge the sign-in, matching \"automatically identifies and stops external, brute force attacks against accounts.\" Microsoft Defender for Cloud Apps' anomaly detection identifies a compromised or misused internal account exfiltrating data from SharePoint Online and can trigger governance actions (such as suspending the account or the session) automatically, matching the second requirement.",
+    "whyWrong": [
+      "Defender for Identity and Defender for Cloud address on-premises AD DS authentication and Azure resource posture respectively, neither of which is the documented mechanism for stopping external brute-force sign-in attempts or SharePoint Online data exfiltration by a compromised account."
+    ]
+  },
+  "std/284": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Multi-user authorization using Resource Guard",
+      "url": "https://learn.microsoft.com/en-us/azure/backup/multi-user-authorization-concept"
+    },
+    "explanation": "All three statements follow directly from how multi-user authorization and PIM interact here. The Resource Guard was deployed to Sub2 (a different subscription in a different tenant), not Sub1, so \"a resource guard must be deployed to Sub1\" is false. With all available MUA controls enabled, modifying Vault1's backup policy is one of the protected critical operations, so a Group1 backup administrator needs approval from a Group2 security administrator (who controls the Resource Guard) to make that change, making the second statement true. Assignment1 only grants Group1 the Contributor role on Vault1 in contoso.com; it says nothing about the Resource Guard in Sub2, so activating that PIM assignment alone does not let a Group1 user bypass the MUA approval requirement to disable soft delete, making the third statement false as written (approval from Group2 is still required).",
+    "whyWrong": [
+      "Treating the PIM-granted Contributor role on Vault1 as sufficient on its own to disable soft delete ignores that multi-user authorization enforces its approval requirement independently of ordinary RBAC permissions on the vault, which is the entire point of enabling all available MUA controls."
+    ]
+  },
+  "std/285": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Azure attribute-based access control (Azure ABAC)?",
+      "url": "https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-overview"
+    },
+    "explanation": "Azure attribute-based access control lets a role assignment's conditions reference a blob's own index tags, which is exactly \"access... can be defined by using the assigned tags.\" Blob index tags are a Blob Storage-specific feature with no equivalent for file shares or tables, which is why blobs are the resource type this capability requires.",
+    "whyWrong": [
+      "An access control list has no concept of evaluating a resource’s tags as part of an authorization decision, and a shared access signature grants time-boxed access to a resource without any tag-based condition either; only ABAC conditions can reference a blob’s index tags this way."
+    ]
+  },
+  "std/287": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Azure Policy effect: Modify",
+      "url": "https://learn.microsoft.com/en-us/azure/governance/policy/concepts/effect-modify"
+    },
+    "explanation": "Modify is the right effect for auto-remediating a missing tag, and that half of the recorded answer checks out. The recorded property, existenceCondition, does not check out for a Modify-effect policy: Microsoft's own documentation describes existenceCondition as a property used with AuditIfNotExists and DeployIfNotExists policies to check whether a related resource exists, not with Modify. For a Modify-effect policy, Microsoft's documentation states that roleDefinitionIds \"is a required property\" specifying which RBAC roles the policy's remediation identity needs to actually add the missing tag, which is the property this scenario's auto-remediating tag policy actually needs to configure.",
+    "whyWrong": [
+      "existenceCondition belongs to a different effect type entirely (checking for a related resource’s existence) and plays no role in a Modify policy’s own required configuration, which is why a Modify policy without roleDefinitionIds set would be missing a property Microsoft documents as required. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/291": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Upgrade node images in Azure Kubernetes Service (AKS)",
+      "url": "https://learn.microsoft.com/en-us/azure/aks/upgrade-node-image"
+    },
+    "explanation": "Microsoft's own AKS documentation states plainly that \"Linux node images are updated weekly, and Windows node images are updated monthly.\" Matching each pool's OS-image replacement cadence to how often Microsoft actually ships a new image for that OS is what minimizes the time between an update's release and its application (refreshing Windows more than monthly would gain nothing, since a new Windows image isn't available yet) while also minimizing administrative effort by not scheduling refreshes more often than new images actually appear.",
+    "whyWrong": [
+      "Swapping the two, or picking quarterly for either, would either miss newly released images for weeks or months longer than necessary (working against minimizing update latency) or refresh a pool more often than Microsoft actually publishes a new image for that OS, adding administrative overhead with no benefit."
+    ]
   }
 }
