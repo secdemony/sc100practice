@@ -99,16 +99,6 @@
    ]
   }
  ],
- "std/21": [
-  {
-   "label": "Role to assign",
-   "value": "Password Administrator"
-  },
-  {
-   "label": "To restrict the scope",
-   "value": "A custom role"
-  }
- ],
  "std/29": [
   {
    "label": "To ensure that only VM1 can access DB1",

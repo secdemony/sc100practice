@@ -5732,7 +5732,7 @@
     "Assign a blueprint to each subscription.",
     "Assign a blueprint to a management group."
    ],
-   "a": "A F",
+   "a": "A C",
    "e": [
     {
      "p": "https://docs.microsoft.com/en-us/azure/governance/management-groups/overview"
@@ -5747,14 +5747,22 @@
      "p": "https://docs.microsoft.com/en-us/azure/governance/policy/tutorials/create-and-manage"
     }
    ],
+   "srcA": "A F",
    "review": {
-    "status": "MANUAL_REVIEW",
-    "confidence": "LOW",
-    "explanation": "Flagged because the second half of the keyed pair does not fit the requirement, and no other option is clearly the intended second answer either. Assigning an initiative to a management group is well supported: initiatives bundle many policy definitions under one assignment, so adding or removing an ISO 27001 control from the monitored set means editing the initiative once rather than touching 50 separate subscription-level assignments, which is exactly what minimizing modification effort calls for. The keyed second answer, assigning a blueprint to a management group, does not belong alongside it: a blueprint is a packaged deployment artifact combining templates, RBAC and policy assignments, not a live monitoring construct you edit to adjust which controls are being watched, and Azure Blueprints itself is being retired, with a phased retirement beginning in 2026 and full retirement on 31 January 2027. None of the remaining four options, per-subscription policy or initiative assignments, a per-subscription policy at the management group, or a per-subscription blueprint, better completes a two-part answer either, since each either multiplies the maintenance work across 50 subscriptions or repeats the same flaw as the keyed second option. The key is left as the source has it and the item is flagged rather than guessed at.",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nThe recorded second answer, assigning a blueprint to a management group, doesn't fit: a blueprint is a packaged deployment artifact bundling templates, RBAC and policy assignments, not a construct you edit to adjust which compliance controls are being monitored, and Azure Blueprints is itself being retired. The correct pair is A and C: assign an initiative to a management group, and assign a policy to a management group. Microsoft's own Azure Policy overview says an assignment \"could range from a management group to an individual resource\" and that \"all child resources inherit the assignments,\" so assigning at the management group scope -- rather than repeating the assignment 50 times, once per subscription -- is what actually minimizes management effort here. The same page also recommends bundling policies into an initiative specifically for this reason: \"we recommend creating and assigning initiative definitions even if starting with a single policy definition. This method enables you to add policy definitions to the initiative later without increasing the number of assignments to manage.\" That's the initiative half (A). The policy half (C) covers a definition that isn't part of that initiative, or hasn't been grouped in yet; assigning it directly to the same management group keeps it under the same one-assignment-covers-every-subscription model rather than falling back to 50 separate per-subscription assignments. Both A and C share the property the other four options lack: scope at the management group rather than at each of the 50 subscriptions.",
+    "whyWrong": [
+     "B (policy to each subscription) and D (initiative to each subscription) both require maintaining 50 separate assignments, which is exactly the effort the requirement asks to minimize.",
+     "E (blueprint to each subscription) has both problems at once: per-subscription assignments and a deprecated mechanism.",
+     "F (blueprint to a management group), the recorded second answer, uses the right scope but the wrong tool -- a blueprint isn't what you edit to add or remove a monitored policy definition, and Azure Blueprints is being retired (phased retirement beginning in 2026, full retirement 31 January 2027)."
+    ],
     "source": {
-     "title": "Azure Blueprints retirement",
-     "url": "https://learn.microsoft.com/en-us/azure/governance/blueprints/blueprint-retirement"
-    }
+     "title": "Overview of Azure Policy",
+     "url": "https://learn.microsoft.com/en-us/azure/governance/policy/overview"
+    },
+    "corrected": true,
+    "originalAnswer": "A F"
    }
   },
   {
@@ -5876,16 +5884,35 @@
    "q": "Your company, named Contoso. Ltd... has an Azure AD tenant namedcontoso.com. Contoso has a partner company named Fabrikam. Inc. that has an Azure AD tenant named fabrikam.com. You need to ensure that helpdesk users at Fabrikam can reset passwords for specific users at Contoso. The solution must meet the following requirements:",
    "boxes": [
     {
-     "label": "Role to assign",
-     "value": "Password Administrator"
+     "label": "Role to assign to the Fabrikam helpdesk users for contoso.com",
+     "value": "Password Administrator",
+     "options": [
+      "Directory Readers",
+      "Helpdesk Administrator",
+      "Password Administrator"
+     ]
     },
     {
-     "label": "To restrict the scope",
+     "label": "To restrict the scope of the role assignments for the Fabrikam helpdesk users, use",
      "value": "An administrative unit",
+     "options": [
+      "A custom role",
+      "An access package",
+      "An administrative unit"
+     ],
      "srcValue": "A custom role"
+    },
+    {
+     "label": "Role to assign to the Fabrikam helpdesk users to reset the Contoso user passwords",
+     "value": "Password Administrator",
+     "options": [
+      "Directory Readers",
+      "Helpdesk Administrator",
+      "Password Administrator"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p038_x751.webp",
@@ -5913,7 +5940,7 @@
     },
     "corrected": true,
     "originalAnswer": "A custom role",
-    "boxLabel": "To restrict the scope"
+    "boxLabel": "To restrict the scope of the role assignments for the Fabrikam helpdesk users, use"
    }
   },
   {

@@ -55,6 +55,17 @@ ANSWER_AREAS = {
          'value': 'Share',
          'options': ['Account', 'File', 'Share']}
     ],
+    ('std', 21): [
+        {'label': 'Role to assign to the Fabrikam helpdesk users for contoso.com',
+         'value': 'Password Administrator',
+         'options': ['Directory Readers', 'Helpdesk Administrator', 'Password Administrator']},
+        {'label': 'To restrict the scope of the role assignments for the Fabrikam helpdesk users, use',
+         'value': 'A custom role',
+         'options': ['A custom role', 'An access package', 'An administrative unit']},
+        {'label': 'Role to assign to the Fabrikam helpdesk users to reset the Contoso user passwords',
+         'value': 'Password Administrator',
+         'options': ['Directory Readers', 'Helpdesk Administrator', 'Password Administrator']}
+    ],
     ('std', 28): [
         {'label': "For the database administrators",
          'value': "Always Encrypted",
