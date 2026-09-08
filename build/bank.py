@@ -46,6 +46,14 @@ ANSWER_AREAS = {
          'options': ['Microsoft Priva',
                      'Microsoft Purview Communication Compliance',
                      'Microsoft Purview Compliance Manager']}
+    ],
+    ('std', 11): [
+        {'label': 'For the containers',
+         'value': 'Blob',
+         'options': ['Account', 'Blob', 'Container']},
+        {'label': 'For the shares',
+         'value': 'Share',
+         'options': ['Account', 'File', 'Share']}
     ]
 }
 AREA_NOTE = ('The choices for this item were supplied from outside the dump; the dump itself '

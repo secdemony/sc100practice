@@ -12,7 +12,7 @@ authoritative, and this file records which of them have actually been checked.
 | | Count |
 | --- | --- |
 | Questions in the bank | 310 |
-| Of those, scorable (have a gradeable key) | 222 |
+| Of those, scorable (have a gradeable key) | 223 |
 | **Answer keys examined against Microsoft Learn** | **310** |
 | — verified correct | 213 |
 | — corrected | 38 |

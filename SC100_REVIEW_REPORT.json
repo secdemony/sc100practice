@@ -3,15 +3,15 @@
  "objectives": "SC-100 skills measured as of July 28, 2026",
  "totals": {
   "questions": 310,
-  "scorable": 222,
+  "scorable": 223,
   "examined": 310,
   "notReviewed": 0,
-  "outdated": 12,
-  "ambiguous": 5,
-  "corrected": 38,
   "verified": 213,
+  "ambiguous": 5,
+  "manual_review": 42,
   "not_reviewed": 0,
-  "manual_review": 42
+  "outdated": 12,
+  "corrected": 38
  },
  "findings": {
   "std/20": {

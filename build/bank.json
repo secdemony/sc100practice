@@ -5397,6 +5397,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains multiple storage accounts. The accounts contain Azure Files shares and Azure Blob Storage containers. The accounts have encryption scopes and infrastructure encryption enabled.",
+   "boxes": [
+    {
+     "label": "For the containers",
+     "value": "Blob",
+     "options": [
+      "Account",
+      "Blob",
+      "Container"
+     ]
+    },
+    {
+     "label": "For the shares",
+     "value": "Share",
+     "options": [
+      "Account",
+      "File",
+      "Share"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p032_x674.webp",
