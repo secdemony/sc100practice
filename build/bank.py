@@ -54,7 +54,565 @@ ANSWER_AREAS = {
         {'label': 'For the shares',
          'value': 'Share',
          'options': ['Account', 'File', 'Share']}
-    ]
+    ],
+    ('std', 28): [
+        {'label': "For the database administrators",
+         'value': "Always Encrypted",
+         'options': ["Always Encrypted", "Dynamic data masking", "Row-level security (RLS)", "Transparent Data Encryption (TDE)"]},
+        {'label': "For the operators",
+         'value': "Dynamic data masking",
+         'options': ["Always Encrypted", "Dynamic data masking", "Row-level security (RLS)", "Transparent Data Encryption (TDE)"]}
+    ],
+    ('std', 30): [
+        {'label': "Ensures that the fabrikam.com users can be granted permissions to the Teams channels in contoso.com",
+         'value': "Microsoft Entra B2B collaboration",
+         'options': ["B2B direct connect", "Cross-tenant synchronization", "Microsoft Entra B2B collaboration", "Microsoft Entra External ID for customers"]},
+        {'label': "Ensures that the App1 users can authenticate by using social media accounts",
+         'value': "Microsoft Entra External ID for customers",
+         'options': ["B2B direct connect", "Cross-tenant synchronization", "Microsoft Entra B2B collaboration", "Microsoft Entra External ID for customers"]}
+    ],
+    ('std', 35): [
+        {'label': "Azure Backup",
+         'value': "A security PIN",
+         'options': ["Access policies", "Access tiers", "Encryption by using platform-managed keys", "Immutable storage", "A security PIN"]},
+        {'label': "Azure Storage",
+         'value': "Immutable storage",
+         'options': ["Access policies", "Access tiers", "Encryption by using platform-managed keys", "Immutable storage", "A security PIN"]}
+    ],
+    ('std', 37): [
+        {'label': "Group1",
+         'value': "A Conditional Access policy",
+         'options': ["A Conditional Access policy", "A sign-in risk policy in Microsoft Entra ID Protection", "A user risk policy in Microsoft Entra ID Protection", "Microsoft Defender for Office 365"]},
+        {'label': "Group2",
+         'value': "A compliance policy in Intune",
+         'options': ["A compliance policy in Intune", "A configuration profile in Intune", "A Defender for Endpoint attack surface reduction (ASR) rule", "An endpoint security policy"]}
+    ],
+    ('std', 39): [
+        {'label': "Service",
+         'value': "Azure Key Vault",
+         'options': ["Azure Key Vault", "Microsoft Entra ID Protection", "Privileged Identity Management (PIM)"]},
+        {'label': "Authentication method",
+         'value': "Managed identity",
+         'options': ["Certificate", "Group managed service account (gMSA)", "Guest account", "Managed identity"]}
+    ],
+    ('std', 41): [
+        {'label': "Identify the sites by using",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint", "Microsoft Defender Vulnerability Management"]},
+        {'label': "Prevent the users from connecting to the sites by using",
+         'value': "Microsoft Defender for Endpoint",
+         'options': ["Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint", "Microsoft Defender Vulnerability Management"]}
+    ],
+    ('std', 44): [
+        {'label': "Pricing tier",
+         'value': "Standard V2",
+         'options': ["Basic V2", "Consumption", "Standard V2"]},
+        {'label': "Scope",
+         'value': "Product",
+         'options': ["API", "Product", "Workspace"]}
+    ],
+    ('std', 50): [
+        {'label': "Identify data exfiltration attempts",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint", "Microsoft Defender for Identity", "Microsoft Defender for Office 365"]},
+        {'label': "Block Teams messages",
+         'value': "Microsoft Defender for Office 365",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint", "Microsoft Defender for Identity", "Microsoft Defender for Office 365"]}
+    ],
+    ('std', 53): [
+        {'label': "Compliant devices",
+         'value': "Office1 and Office2",
+         'options': ["Office1 only", "Office2 only", "Office1 and Office2"]},
+        {'label': "Noncompliant devices",
+         'value': "Office2 only",
+         'options': ["Office1 only", "Office2 only", "Office1 and Office2"]}
+    ],
+    ('std', 58): [
+        {'label': "When a user downloads a file from SharePoint Online, a label must be applied to the file in real time based on the file's contents",
+         'value': "File policy",
+         'options': ["Activity policy", "File policy", "Session policy"]},
+        {'label': "Only users that use Intune-compliant devices must be able to sign in to Dropbox",
+         'value': "Access policy",
+         'options': ["Access policy", "Activity policy", "OAuth app policy"]}
+    ],
+    ('std', 62): [
+        {'label': "Scope",
+         'value': "/providers/microsoft.management/managementGroups/Mgmt1 AND /providers/microsoft.management/managementGroups/Mgmt2",
+         'options': ["/", "/providers/microsoft.management/managementGroups/<Entra Tenant GUID>", "/providers/microsoft.management/managementGroups/Mgmt1 AND /providers/microsoft.management/managementGroups/Mgmt2"]},
+        {'label': "Minimum number of assignments",
+         'value': "2",
+         'options': ["1", "2", "30"]}
+    ],
+    ('std', 66): [
+        {'label': "Global Secure Access apps",
+         'value': "One enterprise application",
+         'options': ["One enterprise application", "One Quick Access app", "Five enterprise applications", "Five Quick Access apps"]},
+        {'label': "Private network connectors",
+         'value': "2",
+         'options': ["1", "2", "5", "10"]}
+    ],
+    ('std', 68): [
+        {'label': "Identity type",
+         'value': "Service principal",
+         'options': ["Service principal", "System-assigned managed identity", "User-assigned managed identity"]},
+        {'label': "Signal source",
+         'value': "Microsoft Entra ID Protection",
+         'options': ["Client app", "Device platform", "Microsoft Entra ID Protection"]}
+    ],
+    ('std', 75): [
+        {'label': "Number of workspaces",
+         'value': "3",
+         'options': ["1", "2", "3", "4"]},
+        {'label': "Service",
+         'value': "Azure Lighthouse",
+         'options': ["Azure Arc", "Azure Bastion", "Azure Lighthouse", "Azure Private Link"]}
+    ],
+    ('std', 79): [
+        {'label': "To detect vulnerability scans of the apps",
+         'value': "Microsoft Defender for App Service",
+         'options': ["Azure WAF", "Microsoft Defender External Attack Surface Management (Defender EASM)", "Microsoft Defender for App Service", "Microsoft Defender for Cloud Apps"]},
+        {'label': "To detect whether newly deployed apps are vulnerable to attack",
+         'value': "Microsoft Defender External Attack Surface Management (Defender EASM)",
+         'options': ["Azure WAF", "Microsoft Defender External Attack Surface Management (Defender EASM)", "Microsoft Defender for App Service", "Microsoft Defender for Cloud Apps"]}
+    ],
+    ('std', 90): [
+        {'label': "Blobs",
+         'value': "User delegation shared access signatures (SAS)",
+         'options': ["Account shared access signatures (SAS)", "Microsoft Entra Domain Services", "Service shared access signatures (SAS)", "User delegation shared access signatures (SAS)"]},
+        {'label': "Shares",
+         'value': "Microsoft Entra Domain Services",
+         'options': ["Account shared access signatures (SAS)", "Microsoft Entra Domain Services", "Service shared access signatures (SAS)", "User delegation shared access signatures (SAS)"]}
+    ],
+    ('std', 93): [
+        {'label': "For update management, use",
+         'value': "Azure Update Manager",
+         'options': ["Azure Automanage", "Azure Update Manager", "System Center Updates Publisher"]},
+        {'label': "On the on-premises operating systems, install",
+         'value': "The Azure Connected Machine agent",
+         'options': ["Azure Monitor Agent", "The Azure Connected Machine agent", "Azure VPN client"]}
+    ],
+    ('std', 102): [
+        {'label': "Segments",
+         'value': "3",
+         'options': ["2", "3", "4"]},
+        {'label': "Policies",
+         'value': "2",
+         'options': ["2", "3", "4"]}
+    ],
+    ('std', 105): [
+        {'label': "Location",
+         'value': "Sub2 in the East US Azure region",
+         'options': ["Sub1 in the East US Azure region", "Sub2 in the East US Azure region", "Sub1 in the West US Azure region", "Sub2 in the West US Azure region"]},
+        {'label': "Role",
+         'value': "Reader",
+         'options': ["Contributor", "Owner", "Reader"]}
+    ],
+    ('std', 110): [
+        {'label': "Endpoint type",
+         'value': "Azure Instance Metadata Service (IMDS)",
+         'options': ["Azure Instance Metadata Service (IMDS)", "Microsoft Graph REST API v1.0", "Microsoft Identity Platform OAuth 2.0 access token"]},
+        {'label': "Identity type",
+         'value': "User-assigned managed identity",
+         'options': ["Service principal", "System-assigned managed identity", "User-assigned managed identity"]}
+    ],
+    ('std', 116): [
+        {'label': "Use",
+         'value': "Automation rules",
+         'options': ["Analytics rules", "Automation rules", "Investigation graphs"]},
+        {'label': "Trigger type",
+         'value': "Incident",
+         'options': ["Alert", "Entity", "Incident"]}
+    ],
+    ('std', 120): [
+        {'label': "Storage blobs",
+         'value': "Data Map",
+         'options': ["Compliance Manager", "Data Map", "Insider risk management", "The Information Protection scanner"]},
+        {'label': "Shared folders",
+         'value': "The Information Protection scanner",
+         'options': ["Compliance Manager", "Data Map", "Insider risk management", "The Information Protection scanner"]}
+    ],
+    ('std', 128): [
+        {'label': "To connect the Azure data sources to Microsoft Information Protection",
+         'value': "Azure Purview",
+         'options': ["Azure Purview", "Endpoint data loss prevention", "Microsoft Defender for Cloud Apps", "Microsoft Information Protection"]},
+        {'label': "To triage security alerts related to resources that contain PII data",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Azure Monitor", "Endpoint data loss prevention", "Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps"]}
+    ],
+    ('std', 132): [
+        {'label': "Use",
+         'value': "Microsoft Purview Compliance Manager",
+         'options': ["Microsoft Defender for Cloud regulatory compliance", "Microsoft Purview Audit (Premium)", "Microsoft Purview Compliance Manager", "Microsoft Priva Privacy Risk Management"]},
+        {'label': "Additional costs",
+         'value': "Licenses for premium regulatory templates",
+         'options': ["Microsoft Priva Privacy Risk Management licenses", "Microsoft Purview Data Map capacity units", "Microsoft Syntex pay-as-you-go billing", "Licenses for premium regulatory templates"]}
+    ],
+    ('std', 141): [
+        {'label': "Deleted backups",
+         'value': "Soft delete of backups",
+         'options': ["A security PIN for critical operations", "Encryption by using a customer-managed key", "Multi-user authorization by using Resource Guard", "Soft delete of backups"]},
+        {'label': "Disabled backups",
+         'value': "A security PIN for critical operations",
+         'options': ["A security PIN for critical operations", "Encryption by using a customer-managed key", "Multi-user authorization by using Resource Guard", "Soft delete of backups"]}
+    ],
+    ('std', 144): [
+        {'label': "RBAC roles",
+         'value': "Workspaces",
+         'options': ["Products", "Subscriptions", "Workspaces"]},
+        {'label': "Keys",
+         'value': "Subscriptions",
+         'options': ["Products", "Subscriptions", "Workspaces"]}
+    ],
+    ('std', 148): [
+        {'label': "Pre-deployment",
+         'value': "Static application security testing (SAST)",
+         'options': ["Dynamic application security testing (DAST)", "Penetration testing", "Security smoke testing", "Static application security testing (SAST)"]},
+        {'label': "Post-deployment to the test environment",
+         'value': "Dynamic application security testing (DAST)",
+         'options': ["Dynamic application security testing (DAST)", "Security acceptance testing", "Security smoke testing", "Static application security testing (SAST)"]}
+    ],
+    ('std', 155): [
+        {'label': "To minimize the number of events",
+         'value': "Create Data Collection rules (DCRs)",
+         'options': ["Create Data Collection rules (DCRs)", "Filter Microsoft Sentinel scheduled query rules", "Set a daily cap for WS1"]},
+        {'label': "To minimize the number of Microsoft Entra identities, enable",
+         'value': "System-assigned managed identities for the on-premises servers and user-assigned managed identities for the Azure virtual machines",
+         'options': ["System-assigned managed identities for all the on-premises servers and Azure virtual machines", "System-assigned managed identities for the on-premises servers and user-assigned managed identities for the Azure virtual machines", "User-assigned managed identities for all the on-premises servers and Azure virtual machines", "User-assigned identities for the on-premises servers and system-assigned identities for the Azure virtual machines"]}
+    ],
+    ('std', 158): [
+        {'label': "For the VDI",
+         'value': "Add the Defender for Endpoint onboarding script to the virtual machine template",
+         'options': ["Add the Defender for Endpoint onboarding script to the virtual machine template", "Deploy Defender for Endpoint by using a custom Group Policy Object (GPO)", "Onboard the virtual machine template to Defender for Endpoint"]},
+        {'label': "For Azure Virtual Desktop",
+         'value': "Add the Defender for Endpoint onboarding script to the golden image",
+         'options': ["Add the Defender for Endpoint onboarding script to the golden image", "Deploy Defender for Endpoint by using a custom Group Policy Object (GPO)", "Onboard the golden image to Defender for Endpoint"]}
+    ],
+    ('std', 159): [
+        {'label': "Inspection method",
+         'value': "Fingerprint",
+         'options': ["Exact data match (EDM)", "Fingerprint", "Trainable classifier"]},
+        {'label': "Option",
+         'value': "Authentication context",
+         'options': ["Authentication context", "Authentication strength", "Custom control"]}
+    ],
+    ('std', 161): [
+        {'label': "Resource type to provision",
+         'value': "Azure Front Door",
+         'options': ["Azure Application Gateway", "Azure Firewall Premium", "Azure Front Door", "Microsoft Defender for App Service"]},
+        {'label': "Option to enable",
+         'value': "Azure Web Application Firewall (WAF)",
+         'options': ["Azure Firewall web categories", "Azure Web Application Firewall (WAF)", "Intrusion detection and prevention system (IDPS)", "Threat intelligence-based filtering"]}
+    ],
+    ('std', 162): [
+        {'label': "Manage NSG rules by using",
+         'value': "Just-in-time (JIT) VM access",
+         'options': ["Azure Automation", "Azure Bastion", "Just-in-time (JIT) VM access"]},
+        {'label': "Only allow SSH connections to the jump servers from",
+         'value': "Any public IP addresses provided before the connection is established",
+         'options': ["Any public IP addresses provided before the connection is established", "AzureBastionSubnet", "GatewaySubnet"]}
+    ],
+    ('std', 168): [
+        {'label': "Identity Governance feature",
+         'value': "Access reviews",
+         'options': ["Access reviews", "Azure AD Privileged Identity Management (PIM)", "Entitlement management", "Lifecycle workflows"]},
+        {'label': "Project team configuration",
+         'value': "Azure AD, create a security group for each project and enable group writeback for each group",
+         'options': ["Enable group writeback for the existing synced groups", "From Azure AD, create a new cloud-only security group for each project", "Azure AD, create a security group for each project and enable group writeback for each group"]}
+    ],
+    ('std', 178): [
+        {'label': "Service",
+         'value': "Microsoft Entra ID Protection",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Identity", "Microsoft Entra ID Protection"]},
+        {'label': "License type",
+         'value': "Microsoft Entra Workload ID Premium",
+         'options': ["Microsoft Entra ID P1", "Microsoft Entra ID P2", "Microsoft Entra Workload ID Premium"]}
+    ],
+    ('std', 185): [
+        {'label': "For the network controls",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint"]},
+        {'label': "For the authorization controls",
+         'value': "Microsoft Entra Privileged Identity Management (PIM)",
+         'options': ["Microsoft Entra Privileged Identity Management (PIM)", "Microsoft Purview Privileged Access Management", "Microsoft Entra Permissions Management"]}
+    ],
+    ('std', 186): [
+        {'label': "Commit the code",
+         'value': "Static application security testing (SAST)",
+         'options': ["Dynamic application security testing (DAST)", "Penetration testing", "Smoke testing", "Static application security testing (SAST)"]},
+        {'label': "Build and test",
+         'value': "Dynamic application security testing (DAST)",
+         'options': ["Dynamic application security testing (DAST)", "Penetration testing", "Smoke testing", "Static application security testing (SAST)"]}
+    ],
+    ('std', 190): [
+        {'label': "Developer",
+         'value': "Specialized security",
+         'options': ["Enterprise security", "Privileged security", "Specialized security"]},
+        {'label': "Standard user",
+         'value': "Enterprise security",
+         'options': ["Enterprise security", "Privileged security", "Specialized security"]},
+        {'label': "IT administrator",
+         'value': "Privileged security",
+         'options': ["Enterprise security", "Privileged security", "Specialized security"]}
+    ],
+    ('std', 198): [
+        {'label': "Azure service",
+         'value': "Azure Key Vault Managed HSM",
+         'options': ["Azure Key Vault Premium SKU", "Azure Key Vault Standard SKU", "Azure Key Vault Managed HSM"]},
+        {'label': "Authorization mechanism",
+         'value': "A single vault with role-based access control (RBAC) authorization",
+         'options': ["20 vaults with role-based access control (RBAC) authorization", "A single vault with role-based access control (RBAC) authorization", "A single vault with role-based access control (RBAC) authorization and access policy-based authorization"]}
+    ],
+    ('std', 199): [
+        {'label': "An attacker attempts to exfiltrate data to external websites",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Identity", "Microsoft Defender for Office 365"]},
+        {'label': "An attacker attempts lateral movement across domain-joined computers",
+         'value': "Microsoft Defender for Identity",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Identity", "Microsoft Defender for Office 365"]}
+    ],
+    ('std', 201): [
+        {'label': "Pool1",
+         'value': "Infrastructure encryption",
+         'options': ["Infrastructure encryption", "Server-side encryption (SSE)", "Transparent Data Encryption (TDE)"]},
+        {'label': "Serverless SQL pool",
+         'value': "Infrastructure encryption",
+         'options': ["Infrastructure encryption", "Server-side encryption (SSE)", "Transparent Data Encryption (TDE)"]}
+    ],
+    ('std', 202): [
+        {'label': "Git workflow",
+         'value': "Protected branches",
+         'options': ["Azure Key Vault", "Custom roles for build agents", "Protected branches", "Resource locks in Azure"]},
+        {'label': "Secure deployment credentials",
+         'value': "Azure Key Vault",
+         'options': ["Azure Key Vault", "Custom roles for build agents", "Protected branches", "Resource locks in Azure"]}
+    ],
+    ('std', 204): [
+        {'label': "Integrate Microsoft Sentinel with a third-party security vendor",
+         'value': "A threat intelligence connector",
+         'options': ["Custom entity activities", "A playbook", "A threat detection rule", "A threat indicator", "A threat intelligence connector"]},
+        {'label': "Automatically generate incidents",
+         'value': "A threat detection rule",
+         'options': ["Custom entity activities", "A playbook", "A threat detection rule", "A threat indicator", "A threat intelligence connector"]}
+    ],
+    ('std', 206): [
+        {'label': "Uploading the code to repositories",
+         'value': "GitHub Enterprise",
+         'options': ["Azure Boards", "Azure Pipelines", "GitHub Enterprise", "Microsoft Defender for Cloud"]},
+        {'label': "Building containers",
+         'value': "Azure Pipelines",
+         'options': ["Azure Boards", "Azure Pipelines", "GitHub Enterprise", "Microsoft Defender for Cloud"]}
+    ],
+    ('std', 207): [
+        {'label': "For the SQL audit logs",
+         'value': "A Log Analytics workspace",
+         'options': ["A Log Analytics workspace", "Azure Application Insights", "Microsoft Defender for SQL", "Microsoft Sentinel"]},
+        {'label': "For the Windows Security logs",
+         'value': "A Log Analytics workspace",
+         'options': ["A Log Analytics workspace", "Application Insights", "Microsoft Defender for servers", "Microsoft Sentinel"]},
+        {'label': "For the App Service audit logs",
+         'value': "A Log Analytics workspace",
+         'options': ["A Log Analytics workspace", "Application Insights", "Microsoft Defender for App Service", "Microsoft Sentinel"]}
+    ],
+    ('std', 210): [
+        {'label': "Delegate permissions by using",
+         'value': "Azure Lighthouse",
+         'options': ["Azure Blueprints", "Azure Lighthouse", "Azure Sphere"]},
+        {'label': "Microsoft Sentinel feature",
+         'value': "Incidents",
+         'options': ["Analytics rules", "Incidents", "Workbooks"]}
+    ],
+    ('std', 212): [
+        {'label': "DLP",
+         'value': "Microsoft Purview",
+         'options': ["Azure Data Catalog", "Azure Data Explorer", "Microsoft Purview"]},
+        {'label': "UEBA",
+         'value': "Microsoft Defender for Identity",
+         'options': ["Azure AD Identity Protection", "Microsoft Defender for Identity", "Microsoft Entra Verified ID"]}
+    ],
+    ('std', 226): [
+        {'label': "Infrastructure scanning",
+         'value': "Build and test",
+         'options': ["Build and test", "Commit the code", "Go to production", "Operate", "Plan and develop"]},
+        {'label': "Static application security testing",
+         'value': "Commit the code",
+         'options': ["Build and test", "Commit the code", "Go to production", "Operate", "Plan and develop"]}
+    ],
+    ('std', 228): [
+        {'label': "For the inbound connections",
+         'value': "Azure Web Application Firewall (WAF)",
+         'options': ["Application security groups", "Azure Firewall", "Azure Web Application Firewall (WAF)", "Microsoft Entra application proxy", "Network security groups (NSGs)"]},
+        {'label': "For the outbound connections",
+         'value': "Azure Firewall",
+         'options': ["Application security groups", "Azure Firewall", "Azure Web Application Firewall (WAF)", "Microsoft Entra application proxy", "Network security groups (NSGs)"]}
+    ],
+    ('std', 231): [
+        {'label': "To optimize the connection between the users and the application proxy, deploy",
+         'value': "A connector to the default connector group and a connector to a new connector group",
+         'options': ["A connector to the default connector group and a connector to a new connector group", "Two connectors to a new connector group", "Two connectors to the default connector group"]},
+        {'label': "To optimize the connection between the application proxy and the connectors, use",
+         'value': "ExpressRoute with Microsoft peering",
+         'options': ["ExpressRoute with Microsoft peering", "ExpressRoute with Microsoft peering and the premium add-on", "ExpressRoute with private peering"]}
+    ],
+    ('std', 232): [
+        {'label': "App1",
+         'value': "Azure Application Gateway Web Application Firewall policies",
+         'options': ["Azure AD B2B authentication with Conditional Access", "Azure AD B2C custom policies with Conditional Access", "Azure Application Gateway Web Application Firewall policies", "Azure Firewall", "Azure VPN Gateway with network security group rules", "Azure VPN Point-to-Site connections"]},
+        {'label': "App2",
+         'value': "Azure AD B2C custom policies with Conditional Access",
+         'options': ["Azure AD B2B authentication with Conditional Access", "Azure AD B2C custom policies with Conditional Access", "Azure Application Gateway Web Application Firewall policies", "Azure Firewall", "Azure VPN Gateway with network security group rules", "Azure VPN Point-to-Site connections"]}
+    ],
+    ('std', 238): [
+        {'label': "Manage NSG rules by using",
+         'value': "Just-in-time (JIT) VM access",
+         'options': ["Azure Automation", "Azure Bastion", "Just-in-time (JIT) VM access"]},
+        {'label': "Only allow SSH connections to the jump servers from",
+         'value': "Any public IP addresses provided before the connection is established",
+         'options': ["Any public IP addresses provided before the connection is established", "AzureBastionSubnet", "GatewaySubnet"]}
+    ],
+    ('std', 240): [
+        {'label': "In Azure, deploy",
+         'value': "Azure Monitor Data collection rules (DCRs)",
+         'options': ["Azure Monitor data collection endpoints", "Azure Monitor Data collection rules (DCRs)", "Microsoft Defender for Cloud data collection settings"]},
+        {'label': "On the virtual machines, install",
+         'value': "the Azure Connected Machine agent",
+         'options': ["the Azure Connected Machine agent", "the Network Controller role", "the Azure Pipelines agent"]}
+    ],
+    ('std', 244): [
+        {'label': "For the on-premises datacenter",
+         'value': "Microsoft Azure Backup Server (MABS)",
+         'options': ["An Azure virtual machine extension", "Microsoft Azure Backup Server (MABS)", "The Microsoft Azure Recovery Services (MARS) agent"]},
+        {'label': "For Sub1",
+         'value': "A Recovery Services vault",
+         'options': ["A Recovery Services vault", "An Azure Backup vault", "Azure Storage block blobs"]}
+    ],
+    ('std', 246): [
+        {'label': "Role",
+         'value': "Privileged Role Administrator",
+         'options': ["Global Administrator", "Privileged Role Administrator", "Security Administrator"]},
+        {'label': "Tool",
+         'value': "Access reviews",
+         'options': ["Access packages", "Access reviews", "Lifecycle workflows"]}
+    ],
+    ('std', 247): [
+        {'label': "All pull requests must be enforced",
+         'value': "Protected branches",
+         'options': ["Environments", "Protected branches", "Resource locks"]},
+        {'label': "All deployments to production must be approved",
+         'value': "Environments",
+         'options': ["Environments", "Resource locks", "Triggers"]}
+    ],
+    ('std', 248): [
+        {'label': "The number of failed sign-in attempts that trigger a lockout",
+         'value': "Microsoft Entra ID only",
+         'options': ["AD DS only", "Microsoft Entra ID only", "AD DS and Microsoft Entra ID"]},
+        {'label': "The duration of the lockout",
+         'value': "Microsoft Entra ID only",
+         'options': ["AD DS only", "Microsoft Entra ID only", "AD DS and Microsoft Entra ID"]}
+    ],
+    ('std', 255): [
+        {'label': "Automatically identify threats found in AWS CloudTrail events",
+         'value': "Microsoft Sentinel",
+         'options': ["Azure Arc", "Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Sentinel"]},
+        {'label': "Enforce security settings on AWS virtual machines by using Azure policies",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Azure Arc", "Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Sentinel"]}
+    ],
+    ('std', 256): [
+        {'label': "For the customers",
+         'value': "Azure AD B2C authentication",
+         'options': ["Azure AD B2B authentication with access package assignments", "Azure AD B2C authentication", "Federation in Azure AD Connect with Active Directory Federation Services", "Pass-through authentication in Azure AD Connect", "Password hash synchronization in Azure AD Connect"]},
+        {'label': "For the partners",
+         'value': "Azure AD B2B authentication with access package assignments",
+         'options': ["Azure AD B2B authentication with access package assignments", "Azure AD B2C authentication", "Federation in Azure AD Connect with Active Directory Federation Services", "Pass-through authentication in Azure AD Connect", "Password hash synchronization in Azure AD Connect"]}
+    ],
+    ('std', 260): [
+        {'label': "For the IoT Edge devices",
+         'value': "Microsoft Defender for IoT",
+         'options': ["Azure Arc", "Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Endpoint", "Microsoft Defender for IoT"]},
+        {'label': "For the AWS EC2 instances",
+         'value': "Microsoft Defender for Cloud and Azure Arc",
+         'options': ["Azure Arc only", "Microsoft Defender for Cloud and Azure Arc", "Microsoft Defender for Cloud Apps only", "Microsoft Defender for Cloud only", "Microsoft Defender for Endpoint and Azure Arc", "Microsoft Defender for Endpoint only"]}
+    ],
+    ('std', 263): [
+        {'label': "Custom dashboards",
+         'value': "Workbooks",
+         'options': ["Notebooks", "Playbooks", "Workbooks"]},
+        {'label': "Automated responses",
+         'value': "Playbooks",
+         'options': ["Notebooks", "Playbooks", "Workbooks"]}
+    ],
+    ('std', 267): [
+        {'label': "EDR",
+         'value': "Onboard the servers to Defender for Cloud",
+         'options': ["Add a Microsoft Sentinel data connector for Azure Active Directory (Azure AD)", "Add a Microsoft Sentinel data connector for Microsoft Defender for Cloud Apps", "Onboard the servers to Azure Arc", "Onboard the servers to Defender for Cloud"]},
+        {'label': "SOAR",
+         'value': "Configure Microsoft Sentinel playbooks",
+         'options': ["Configure Microsoft Sentinel analytics rules", "Configure Microsoft Sentinel playbooks", "Configure regulatory compliance standards in Defender for Cloud", "Configure workflow automation in Defender for Cloud"]}
+    ],
+    ('std', 269): [
+        {'label': "Service",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["Microsoft Defender for Cloud Apps", "Microsoft Defender for Office 365", "Microsoft Purview Data Loss Prevention (DLP)", "Microsoft Purview Information Protection"]},
+        {'label': "Policy",
+         'value': "An anomaly detection policy",
+         'options': ["A data loss prevention (DLP) policy applied to SharePoint Online", "A file policy", "An anomaly detection policy", "An Endpoint data loss prevention (Endpoint DLP) policy"]}
+    ],
+    ('std', 270): [
+        {'label': "Inbound connectivity",
+         'value': "Private endpoints",
+         'options': ["Private endpoints", "Service endpoints", "Static IP restrictions", "Virtual network integration"]},
+        {'label': "Outbound connectivity",
+         'value': "Virtual network integration",
+         'options': ["Private endpoint", "Service endpoint", "Static IP restrictions", "Virtual network integration"]}
+    ],
+    ('std', 271): [
+        {'label': "Service",
+         'value': "Microsoft Defender for Office 365",
+         'options': ["Azure AD Identity Protection", "Microsoft Defender for DNS", "Microsoft Defender for Office 365", "Microsoft Purview"]},
+        {'label': "Policy type",
+         'value': "Anti-phishing",
+         'options': ["Anti-phishing", "Anti-spam", "Data loss prevention (DLP)", "Insider risk management"]}
+    ],
+    ('std', 273): [
+        {'label': "To optimize the connection between the users and the application proxy, deploy",
+         'value': "Two connectors to the default connector group",
+         'options': ["A connector to the default connector group and a connector to a new connector group", "Two connectors to a new connector group", "Two connectors to the default connector group"]},
+        {'label': "To optimize the connection between the connector and App1, use",
+         'value': "ExpressRoute with private peering",
+         'options': ["ExpressRoute with Microsoft peering", "ExpressRoute with Microsoft peering and the premium add-on", "ExpressRoute with private peering"]}
+    ],
+    ('std', 279): [
+        {'label': "Automatically identifies and stops external, brute force attacks against accounts",
+         'value': "Microsoft Entra ID Protection",
+         'options': ["Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Identity", "Microsoft Entra ID Identity Governance", "Microsoft Entra ID Protection"]},
+        {'label': "Automatically identifies and stops external attacks that use an internal account to exfiltrate data from SharePoint Online sites",
+         'value': "Microsoft Defender for Cloud Apps",
+         'options': ["Microsoft Defender for Cloud", "Microsoft Defender for Cloud Apps", "Microsoft Defender for Identity", "Microsoft Entra ID Identity Governance", "Microsoft Entra ID Protection"]}
+    ],
+    ('std', 285): [
+        {'label': "Authorization mechanism",
+         'value': "Attribute-based access control (ABAC)",
+         'options': ["Access control list (ACL)", "Attribute-based access control (ABAC)", "Shared access signature (SAS)"]},
+        {'label': "Resource type",
+         'value': "Blob",
+         'options': ["Blob", "File", "Table"]}
+    ],
+    ('std', 287): [
+        {'label': "Property to add",
+         'value': "roleDefinitionIds",
+         'options': ["conflictEffect", "existenceCondition", "roleDefinitionIds"]},
+        {'label': "Effect to use",
+         'value': "Modify",
+         'options': ["append", "Modify", "mutate"]}
+    ],
+    ('std', 291): [
+        {'label': "Pool1",
+         'value': "Monthly",
+         'options': ["Weekly", "Monthly", "Quarterly"]},
+        {'label': "Pool2",
+         'value': "Weekly",
+         'options': ["Weekly", "Monthly", "Quarterly"]}
+    ],
 }
 AREA_NOTE = ('The choices for this item were supplied from outside the dump; the dump itself '
              'records the answer only as the picture shown above. Grading uses those choices.')

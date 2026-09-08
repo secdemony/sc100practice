@@ -3026,7 +3026,7 @@
     ]
   },
   "std/28": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Dynamic data masking - Azure SQL Database",
@@ -3034,7 +3034,7 @@
     },
     "explanation": "The recorded answer for the database administrators, Always Encrypted, checks out: Microsoft's own Always Encrypted documentation names exactly this scenario, protecting sensitive data \"from those who manage the data but should have no access: on-premises database administrators, cloud database operators, or other high-privileged unauthorized users,\" since the encryption keys are never exposed to the database engine or the people who administer it. The recorded answer for the operators, Row-level security (RLS), does not check out: RLS controls which rows a user's query returns; it has no mechanism for showing part of a column's value and hiding the rest. \"They must view only the last four digits of the Credit Card attribute\" is, word for word, what Dynamic Data Masking's built-in credit-card masking function does: it \"exposes the last four digits of the designated fields and adds a constant string as a prefix,\" masking the rest of the value for anyone querying through App1 without the unmask permission. Dynamic data masking, not row-level security, is the answer this requirement calls for.",
     "whyWrong": [
-      "Row-level security is a real Azure SQL feature, but it filters which records a query returns rather than obscuring part of a value within a visible record, so it cannot produce \"the last four digits\" of a field the operator can otherwise see. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Row-level security is a real Azure SQL feature, but it filters which records a query returns rather than obscuring part of a value within a visible record, so it cannot produce \"the last four digits\" of a field the operator can otherwise see."
     ]
   },
   "std/30": {
@@ -3050,7 +3050,7 @@
     ]
   },
   "std/35": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Security features to help protect against ransomware - Azure Backup",
@@ -3058,7 +3058,7 @@
     },
     "explanation": "The recorded answer for Azure Storage, immutable storage, checks out: Microsoft positions immutable (WORM) blob storage as its flagship ransomware defense for Azure Storage, since a ransomware actor who compromises an account still cannot alter or delete data locked under an immutable policy. The recorded answer for Azure Backup, encryption by using platform-managed keys, does not check out as the strongest ransomware-specific protection: platform-managed-key encryption is the account's default at-rest encryption, applied automatically regardless of any ransomware scenario, and it does nothing to stop an attacker with compromised admin credentials from deleting or disabling backups, which is what ransomware actually threatens. Microsoft's own documentation on protecting Azure Backup from ransomware centers on requiring a security PIN (generated from the Recovery Services vault) before critical, potentially destructive operations, such as stopping protection with data deletion or changing the passphrase, can be carried out, which is exactly the kind of protection \"strongest protection against ransomware attacks\" is asking for.",
     "whyWrong": [
-      "Encryption by using platform-managed keys is always on by default and is not a ransomware-specific control at all, so recommending it as the strongest available protection misses the actual anti-tampering purpose behind the requirement. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Encryption by using platform-managed keys is always on by default and is not a ransomware-specific control at all, so recommending it as the strongest available protection misses the actual anti-tampering purpose behind the requirement."
     ]
   },
   "std/37": {
@@ -3086,7 +3086,7 @@
     ]
   },
   "std/41": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Discover and manage Shadow IT",
@@ -3094,7 +3094,7 @@
     },
     "explanation": "The recorded answer for blocking the sites, Microsoft Defender for Endpoint, checks out: once Defender for Cloud Apps marks the discovered file-sharing sites as Unsanctioned, their domains sync to Defender for Endpoint as network-protection indicators, and Defender for Endpoint is the component that actually enforces the block on each device. The recorded answer for identifying the sites, also Microsoft Defender for Endpoint, does not check out: identifying which cloud and file-sharing sites users have connected to over a trailing window is Cloud Discovery, a Microsoft Defender for Cloud Apps capability. Cloud Discovery natively consumes the network traffic signal that already flows from Defender for Endpoint-onboarded devices, so it needs no separate log collector, which is exactly what \"minimize administrative effort\" is pointing to, but the product surfacing that 90-day usage report and scoring the discovered apps is Defender for Cloud Apps, not Defender for Endpoint itself.",
     "whyWrong": [
-      "Microsoft Defender for Cloud and Microsoft Defender Vulnerability Management have no cloud-app-discovery or web-content-filtering capability at all, so neither fits either box. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Microsoft Defender for Cloud and Microsoft Defender Vulnerability Management have no cloud-app-discovery or web-content-filtering capability at all, so neither fits either box."
     ]
   },
   "std/44": {
@@ -3134,7 +3134,7 @@
     ]
   },
   "std/53": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Known limitations for Global Secure Access",
@@ -3142,7 +3142,7 @@
     },
     "explanation": "The recorded answer for compliant devices, Office1 and Office2, checks out, but not for the reason it might appear to: Microsoft's own documented known limitation states that \"Microsoft traffic is accessible through remote network connectivity without the Global Secure Access Client; however, the Conditional Access policy isn't enforced—Conditional Access policies... are only enforced when a user has the Global Secure Access client.\" Office1 only has the remote-network assignment (no client), so its Microsoft 365 traffic passes through Global Secure Access but the linked Conditional Access compliant-network policy is never actually enforced there, meaning nothing blocks any device, compliant or not. Office2 has the client, where Conditional Access is enforced, so a compliant device there is correctly granted access by the policy. Both offices' compliant devices reach Microsoft 365 either way, which is why that box is right. The recorded answer for noncompliant devices, Office1 only, is backwards given that same documented limitation: since Conditional Access is not enforced at Office1 at all, a noncompliant device there is not blocked by this policy either; it is Office2, where the policy is actually enforced, that blocks a noncompliant device from accessing Microsoft 365.",
     "whyWrong": [
-      "Assuming the office with only remote-network connectivity (Office1) is where noncompliant devices get blocked has it backwards: Microsoft’s documented limitation is that Conditional Access enforcement for Global Secure Access Microsoft traffic requires the client, which only Office2 has. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Assuming the office with only remote-network connectivity (Office1) is where noncompliant devices get blocked has it backwards: Microsoft’s documented limitation is that Conditional Access enforcement for Global Secure Access Microsoft traffic requires the client, which only Office2 has."
     ]
   },
   "std/58": {
@@ -3170,7 +3170,7 @@
     ]
   },
   "std/66": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Configure per-app access using Global Secure Access applications",
@@ -3178,7 +3178,7 @@
     },
     "explanation": "Neither recorded answer holds up against how Microsoft documents these two constructs. A single Global Secure Access enterprise application can hold multiple application segments (the FQDNs or IP addresses to tunnel), and Conditional Access for per-app access is \"configured at the application level for each app,\" not per segment. Since all five standalone apps are used by the same group with no stated need to treat any of them differently, adding all five servers as segments under one enterprise application lets a single Conditional Access policy enforce security controls for all of them at once, which is the minimum administrative effort this scenario calls for -- not five separate application objects each needing their own assignment. For private network connectors, Microsoft's own connector documentation states plainly to \"use at least two connectors in each group for high availability\"; connectors serve an entire connector group's traffic regardless of how many app segments sit behind it, so two, not five, is the minimum that satisfies \"highly available.\"",
     "whyWrong": [
-      "Creating five separate enterprise applications, one per server, multiplies the Conditional Access assignments needed for identical protection requirements with no benefit, and deploying five connectors ties connector count to server count rather than to the documented two-per-group floor for redundancy. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Creating five separate enterprise applications, one per server, multiplies the Conditional Access assignments needed for identical protection requirements with no benefit, and deploying five connectors ties connector count to server count rather than to the documented two-per-group floor for redundancy."
     ]
   },
   "std/68": {
@@ -3218,7 +3218,7 @@
     ]
   },
   "std/79": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "What is Microsoft Defender External Attack Surface Management?",
@@ -3226,11 +3226,11 @@
     },
     "explanation": "The recorded answer for detecting vulnerability scans of the apps, Microsoft Defender for App Service, checks out: it is the Defender for Cloud plan that watches an already-onboarded App Service resource's own runtime activity and raises alerts (including a vulnerability-scanner-detected alert) when it is being probed. The recorded answer for detecting whether newly deployed apps are vulnerable to attack, also Microsoft Defender for App Service, does not check out: that plan protects resources that are already known to and onboarded in Defender for Cloud. Discovering and assessing newly deployed, internet-facing apps that a security team may not even know about yet is what Microsoft Defender External Attack Surface Management (Defender EASM) is documented to do, using \"recursive discovery to find unknown internet-facing assets\" and giving organizations \"visibility over newly deployed assets\" so vulnerabilities on them can be identified quickly -- exactly \"newly deployed apps\" registered automatically in the company's DNS domain.",
     "whyWrong": [
-      "Azure WAF inspects and filters HTTP(S) traffic to a published application; it does not discover unknown or newly deployed internet-facing assets. Defender for Cloud Apps governs SaaS usage and session activity, not an organization’s own external attack surface. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Azure WAF inspects and filters HTTP(S) traffic to a published application; it does not discover unknown or newly deployed internet-facing assets. Defender for Cloud Apps governs SaaS usage and session activity, not an organization’s own external attack surface."
     ]
   },
   "std/90": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Grant limited access to Azure Storage resources using shared access signatures (SAS)",
@@ -3238,7 +3238,7 @@
     },
     "explanation": "Neither recorded answer holds up. For the blobs, Microsoft's own SAS documentation is direct: \"Microsoft recommends using a user delegation SAS when possible for superior security... secured with Microsoft Entra credentials,\" language that maps onto \"include authentication support when possible\" almost exactly, and a user delegation SAS still supports time-boxed access the way an account SAS does. An account SAS is signed with the storage account key alone, with no Entra identity behind it, so it is the account SAS, not the user delegation SAS, that the requirement is steering away from. For the shares, the requirement is access over the SMB protocol specifically, and shared access signatures are an HTTPS/REST construct that ordinary SMB clients do not present at all; Microsoft's own guidance for Azure Files SMB access is to \"use identity-based authentication to access SMB file shares instead of the storage account key,\" naming Microsoft Entra Domain Services as one of the supported identity sources, which is also one of this item's own listed options.",
     "whyWrong": [
-      "An account SAS for the blobs is signed with the account key rather than an Entra identity, missing the \"authentication support when possible\" half of the requirement that a user delegation SAS satisfies. A service SAS for the shares fails a harder constraint: SAS tokens are not a credential an SMB client can present at all, so no SAS variant can satisfy \"support access to the shares by using the SMB protocol.\" This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "An account SAS for the blobs is signed with the account key rather than an Entra identity, missing the \"authentication support when possible\" half of the requirement that a user delegation SAS satisfies. A service SAS for the shares fails a harder constraint: SAS tokens are not a credential an SMB client can present at all, so no SAS variant can satisfy \"support access to the shares by using the SMB protocol.\""
     ]
   },
   "std/93": {
@@ -3290,7 +3290,7 @@
     ]
   },
   "std/110": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Best practice recommendations for managed identities",
@@ -3298,7 +3298,7 @@
     },
     "explanation": "The recorded endpoint, Azure Instance Metadata Service (IMDS), checks out: IMDS is the non-routable, internal endpoint a VM queries to obtain a token for its own managed identity, which is exactly how App1 would reach Vault1's secrets. The recorded identity type, a system-assigned managed identity, does not check out given \"the virtual machines will be redeployed regularly\": Microsoft's own guidance is direct that system-assigned identities are tied to the lifecycle of the specific VM they're created on and are deleted when that VM is deleted, so a deployment pipeline that regularly destroys and recreates VMs \"creates orphaned RBAC assignments every cycle\" -- a fresh identity, and a fresh Key Vault access grant, every redeploy. A user-assigned managed identity is created once as its own standalone resource and can be attached to each newly redeployed VM in turn, so the same one security principal keeps its access to Vault1 across every redeployment, which is what actually minimizes both the number of security principals touching Vault1 and the administrative effort of re-granting access after each redeploy.",
     "whyWrong": [
-      "A system-assigned identity looks like the simpler default, but it multiplies security principals over time in exactly this redeploy-heavy scenario, since each new VM instance gets its own new identity needing its own new grant on Vault1. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "A system-assigned identity looks like the simpler default, but it multiplies security principals over time in exactly this redeploy-heavy scenario, since each new VM instance gets its own new identity needing its own new grant on Vault1."
     ]
   },
   "std/116": {
@@ -3350,7 +3350,7 @@
     ]
   },
   "std/141": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Security features to help protect against ransomware - Azure Backup",
@@ -3358,7 +3358,7 @@
     },
     "explanation": "The recorded protection against a compromised administrator deleting backups from Azure Backup, soft delete, checks out: soft-deleted backup data is retained and recoverable for a retention period regardless of who issued the delete. The recorded protection against a compromised administrator disabling backups specifically on the MARS agent, multi-user authorization by using Resource Guard, targets the wrong layer: Microsoft's own documentation for protecting Azure Backup from ransomware describes a security PIN, generated from the Recovery Services vault and required before critical operations such as \"Stop Protection with Delete Data\" or changing the passphrase can be carried out from the MARS agent itself, on the on-premises server. Multi-user authorization/Resource Guard adds its own separate layer of approval for operations performed against the vault through Azure (the portal, PowerShell, or the API); the risk described here is specifically an admin acting through the on-premises MARS agent software, which is exactly what the security PIN requirement is built to stop.",
     "whyWrong": [
-      "Multi-user authorization is a real and valuable Azure Backup protection, but it is not what gates a critical operation triggered locally from the MARS agent on the server itself; the security PIN is. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Multi-user authorization is a real and valuable Azure Backup protection, but it is not what gates a critical operation triggered locally from the MARS agent on the server itself; the security PIN is."
     ]
   },
   "std/144": {
@@ -3410,7 +3410,7 @@
     ]
   },
   "std/158": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Onboard non-persistent virtual desktop infrastructure (VDI) devices",
@@ -3418,11 +3418,11 @@
     },
     "explanation": "Both recorded answers have this backwards. Microsoft's own guidance for onboarding non-persistent VDI devices is explicit: \"if you're deploying non-persistent VDIs through cloning technology, make sure that your internal template VMs are not onboarded to Defender for Endpoint,\" because doing so gives every clone the same underlying sensor identity instead of \"a single entry for each VDI instance.\" The documented method for a single entry per device is instead to copy the onboarding script (Onboard-NonPersistentMachine.ps1 together with the onboarding package) into the golden or template image's own startup scripts, so it runs once per new instance at first boot and onboards that specific instance with its own identity, which is exactly \"add the Defender for Endpoint onboarding script to the virtual machine template/golden image\" -- the other option this item offers, not the one it recorded.",
     "whyWrong": [
-      "Onboarding the template or golden image directly is precisely what Microsoft’s documentation warns against for non-persistent, cloned deployments, since every clone made from an already-onboarded image inherits the same device identity rather than getting its own single entry. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Onboarding the template or golden image directly is precisely what Microsoft’s documentation warns against for non-persistent, cloned deployments, since every clone made from an already-onboarded image inherits the same device identity rather than getting its own single entry."
     ]
   },
   "std/159": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "About document fingerprinting",
@@ -3430,11 +3430,11 @@
     },
     "explanation": "The recorded Conditional Access option, authentication context, checks out: Microsoft's own tutorial for this exact scenario is titled \"Require step-up authentication (authentication context) upon risky action,\" and describes a Defender for Cloud Apps session policy invoking an authentication context to force Microsoft Entra Conditional Access to re-evaluate a session when a sensitive activity like a download occurs. The recorded inspection method, Exact Data Match (EDM), does not check out: EDM matches content against a hashed table of specific known values (like a customer ID list), which is the wrong tool for recognizing \"documents that are based on a predefined form\" regardless of what data has been filled into it. Microsoft's own guidance is that \"document fingerprinting\" is precisely for this case: \"if you have a standard blank form and want to detect any completed versions of that specific form,\" which is exactly Site1's predefined-form documents.",
     "whyWrong": [
-      "EDM is built to minimize false positives against a specific list of exact sensitive values, not to recognize a document’s underlying template regardless of the values filled into it, which is what fingerprinting is for. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "EDM is built to minimize false positives against a specific list of exact sensitive values, not to recognize a document’s underlying template regardless of the values filled into it, which is what fingerprinting is for."
     ]
   },
   "std/161": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "What is Azure Front Door?",
@@ -3442,11 +3442,11 @@
     },
     "explanation": "Azure Application Gateway, the recorded answer, is a regional resource: it cannot on its own \"maintain access to the apps in the event of a region outage\" across apps spread over four regions, and covering all four regions would need one Application Gateway per region, the opposite of \"minimize the number of resources required.\" Azure Front Door is Microsoft's global, multi-region edge service, built to route across backends in multiple regions and automatically shift traffic away from an unhealthy region without manual failover, all from a single global resource. Front Door's own Web Application Firewall supports the OWASP Core Rule Set, the same managed rule set the requirement calls for, so pairing Front Door with its WAF satisfies both stated requirements from one resource rather than four.",
     "whyWrong": [
-      "Application Gateway is the right tool when an application lives in a single region and needs regional Layer 7 routing, but this scenario’s explicit region-outage and minimal-resource-count requirements point directly at Front Door’s global, multi-region design instead. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Application Gateway is the right tool when an application lives in a single region and needs regional Layer 7 routing, but this scenario’s explicit region-outage and minimal-resource-count requirements point directly at Front Door’s global, multi-region design instead."
     ]
   },
   "std/162": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Understand just-in-time virtual machine access",
@@ -3454,11 +3454,11 @@
     },
     "explanation": "The recorded answer for allowed source IPs, \"any public IP addresses provided before the connection is established,\" already describes just-in-time (JIT) VM access's own mechanism: a user requests access, and Defender for Cloud opens the NSG rule to that specific requester's IP for a limited time before the connection happens. The recorded answer for managing the NSG rules, Azure Bastion, doesn't actually do this: Bastion is a browser-based jump-box service that provides its own RDP/SSH connectivity path and doesn't dynamically open or close NSG rules per user request the way JIT does. Microsoft's own JIT documentation describes exactly the mechanism this scenario needs: it \"ensures 'deny all inbound traffic' rules exist... in the network security group,\" then opens access \"when a user requests access to a VM\" after an RBAC check, for a limited time, which is precisely \"each time the support staff connects to a jump server, they must request access.\"",
     "whyWrong": [
-      "Azure Bastion provides a connectivity path but has no per-request NSG-opening workflow of its own; Azure Automation has no built-in per-request access-approval mechanism either. Both would need to be paired with something that actually implements request-based access, which is what just-in-time VM access already is by itself. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Azure Bastion provides a connectivity path but has no per-request NSG-opening workflow of its own; Azure Automation has no built-in per-request access-approval mechanism either. Both would need to be paired with something that actually implements request-based access, which is what just-in-time VM access already is by itself."
     ]
   },
   "std/168": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Group writeback with Microsoft Entra Cloud Sync",
@@ -3466,7 +3466,7 @@
     },
     "explanation": "Neither recorded answer holds up. Verifying that a group contains only current members, with automatic removal after 30 days of an unconfirmed review, is entitlement management's access reviews feature by definition; Privileged Identity Management governs time-bound elevation into privileged roles, an unrelated concept to periodically re-certifying a regular project group's membership. For the group configuration, Microsoft's own documentation on group writeback is explicit that \"only cloud-created security groups are synchronized from [Microsoft] Entra ID back to Active Directory\" -- writeback moves a cloud-native group down to on-premises, not the other way around. The project groups in this scenario are on-premises AD DS groups synced up into Entra ID, the opposite source of authority, so \"enable group writeback for the existing synced groups\" describes a direction writeback doesn't support. Creating a new cloud-native security group per project and enabling writeback for each one gives Entra ID a group Access reviews can actually manage and auto-remove members from, while writeback still pushes that same group down to on-premises AD DS so the Windows Server shared folder's NTFS permissions keep working from the one group -- satisfying both the SharePoint Online and shared-folder access requirements without maintaining two separate groups per project.",
     "whyWrong": [
-      "PIM protects privileged role activation, not membership verification of an ordinary project security group. Writeback cannot be \"enabled\" on a group whose source of authority is already on-premises AD DS; it only ever pushes a cloud-created group down to on-premises, which is why a new cloud-native group is needed in the first place. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "PIM protects privileged role activation, not membership verification of an ordinary project security group. Writeback cannot be \"enabled\" on a group whose source of authority is already on-premises AD DS; it only ever pushes a cloud-created group down to on-premises, which is why a new cloud-native group is needed in the first place."
     ]
   },
   "std/174": {
@@ -3482,7 +3482,7 @@
     ]
   },
   "std/178": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Securing workload identities with Microsoft Entra ID Protection",
@@ -3542,7 +3542,7 @@
     ]
   },
   "std/199": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
@@ -3550,11 +3550,11 @@
     },
     "explanation": "The recorded answer for lateral movement across domain-joined computers, Microsoft Defender for Identity, checks out: Defender for Identity's sensors run on domain controllers specifically to catch this behavior. The recorded answer for exfiltrating data to external websites, also Microsoft Defender for Identity, does not check out: Defender for Identity's visibility is limited to on-premises Active Directory Domain Services signal, not traffic to external websites. Detecting data exfiltration to external or unsanctioned sites is Microsoft Defender for Cloud Apps' documented anomaly-detection territory, which is what the exfiltration box should point to instead.",
     "whyWrong": [
-      "Defender for Identity has no visibility into web traffic to external sites at all; it only sees authentication and directory activity inside the on-premises AD DS environment, which is why it fits the lateral-movement box but not the exfiltration one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Defender for Identity has no visibility into web traffic to external sites at all; it only sees authentication and directory activity inside the on-premises AD DS environment, which is why it fits the lateral-movement box but not the exfiltration one."
     ]
   },
   "std/201": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Enable infrastructure encryption for double encryption of data",
@@ -3562,11 +3562,11 @@
     },
     "explanation": "The recorded second layer for the dedicated pool, infrastructure encryption, checks out: Microsoft's own documentation describes infrastructure encryption as encrypting storage-account data \"twice -- once at the service level and once at the infrastructure level -- with two different encryption algorithms and two different keys,\" which stacks as a genuine second layer on top of the dedicated pool's existing Transparent Data Encryption. The recorded second layer for the serverless pool, server-side encryption (SSE), does not check out: SSE is the service-level encryption that already protects the serverless pool's underlying storage by default (the serverless pool has no TDE of its own to layer on top of), making SSE the first layer, not a second one. The genuine second, additional layer available on top of SSE is the same infrastructure encryption used for the dedicated pool, since it is a storage-account-level feature that covers whichever data sits in that account.",
     "whyWrong": [
-      "Recommending SSE as a \"second\" layer for the serverless pool recommends something that is already the pool’s existing, default protection rather than an additional one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Recommending SSE as a \"second\" layer for the serverless pool recommends something that is already the pool’s existing, default protection rather than an additional one."
     ]
   },
   "std/202": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
@@ -3574,7 +3574,7 @@
     },
     "explanation": "The two recorded answers are swapped. Securing a Git workflow is a matter of branch governance -- requiring pull requests, reviewers, and status checks before code merges -- which is what protected branches provide, not what Azure Key Vault does (Key Vault has no concept of a Git branch or pull request at all). Securing deployment credentials, by contrast, means keeping the actual secrets a pipeline uses out of its YAML and source code, which is precisely what Azure Key Vault is for; protected branches govern how code changes are reviewed and merged, not how a pipeline authenticates to a target environment.",
     "whyWrong": [
-      "Azure Key Vault cannot enforce anything about how a Git workflow accepts changes, and protected branches store no secrets and control no deployment credentials, so each recorded pairing names a construct that cannot actually deliver the control it is credited with. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Azure Key Vault cannot enforce anything about how a Git workflow accepts changes, and protected branches store no secrets and control no deployment credentials, so each recorded pairing names a construct that cannot actually deliver the control it is credited with."
     ]
   },
   "std/204": {
@@ -3614,7 +3614,7 @@
     ]
   },
   "std/207": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Management platform for Azure landing zones",
@@ -3622,11 +3622,11 @@
     },
     "explanation": "All three boxes describe structurally the same choice (a Log Analytics workspace, Application Insights, a matching Defender for Cloud plan, or Microsoft Sentinel), and Microsoft's own landing zone guidance answers all three the same way: \"a landing zone must include centralized monitoring from day one with a Log Analytics workspace... that collects logs from all subscriptions.\" The recorded answers instead give three different answers to the same underlying question, crediting Microsoft Defender for SQL with storing the SQL audit logs and Microsoft Sentinel with storing the App Service audit logs -- but neither a Defender for Cloud plan nor Sentinel is itself a log-retention destination; both sit on top of a Log Analytics workspace and add their own cost on top of it, which works against \"minimize costs\" when plain centralized retention is all three requirements actually call for.",
     "whyWrong": [
-      "A Defender for Cloud plan assesses and alerts on a resource’s security posture; it does not retain 365 days of that resource’s own audit logs. Enabling Microsoft Sentinel on top of a workspace adds analytics costs beyond what centralizing and retaining logs requires on its own. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "A Defender for Cloud plan assesses and alerts on a resource’s security posture; it does not retain 365 days of that resource’s own audit logs. Enabling Microsoft Sentinel on top of a workspace adds analytics costs beyond what centralizing and retaining logs requires on its own."
     ]
   },
   "std/210": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Work with Microsoft Sentinel incidents in many workspaces at once",
@@ -3634,11 +3634,11 @@
     },
     "explanation": "Azure Lighthouse, the recorded answer for delegating permissions, checks out for letting Tenant1's users manage Sub2 and Sub3's resources without switching tenants. The recorded Sentinel feature, analytics rules, does not check out: Microsoft's own documentation is explicit that Microsoft Sentinel's \"multiple workspace view... is currently available only for incidents,\" letting a user see and work with incidents from several workspaces and tenants in one unified list. Analytics rules are configured per workspace and have no cross-workspace viewing mode of their own.",
     "whyWrong": [
-      "Analytics rules generate the incidents that live inside a single workspace; the feature that then lets a user see those incidents aggregated across Sentinel2 and Sentinel3 at once is the multiple workspace view for incidents specifically, not analytics rules or workbooks. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Analytics rules generate the incidents that live inside a single workspace; the feature that then lets a user see those incidents aggregated across Sentinel2 and Sentinel3 at once is the multiple workspace view for incidents specifically, not analytics rules or workbooks."
     ]
   },
   "std/212": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "What is Microsoft Defender for Identity?",
@@ -3674,7 +3674,7 @@
     ]
   },
   "std/226": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
@@ -3682,7 +3682,7 @@
     },
     "explanation": "Both recorded stages are one step later than where the Cloud Adoption Framework places these controls. Static application security testing scans source code before it is built, which is why it belongs at the Commit the code stage, the same placement this review has already confirmed for SAST elsewhere (std/148, std/186) -- not Build and test, where the recorded answer puts it. Infrastructure scanning, which checks infrastructure-as-code templates for misconfigurations, is documented as belonging to the Build and test stage, where the templates are validated alongside the application build -- not Go to production, which is a stage later than where the scan is meant to catch problems.",
     "whyWrong": [
-      "Placing either control one stage later than documented defeats the shift-left purpose of running it early: infrastructure scanning at Go to production catches misconfigurations only once deployment is already underway, and SAST at Build and test scans code that should already have been scanned when it was committed. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Placing either control one stage later than documented defeats the shift-left purpose of running it early: infrastructure scanning at Go to production catches misconfigurations only once deployment is already underway, and SAST at Build and test scans code that should already have been scanned when it was committed."
     ]
   },
   "std/228": {
@@ -3758,7 +3758,7 @@
     ]
   },
   "std/244": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "About Microsoft Azure Backup Server (MABS)",
@@ -3766,7 +3766,7 @@
     },
     "explanation": "The recorded destination, a Recovery Services vault, checks out -- both the MARS agent and Microsoft Azure Backup Server ultimately back up to one. The recorded agent, the MARS agent, does not check out given the stated constraint that a firewall prevents Server1 from reaching the internet: the MARS agent runs directly on the protected machine and needs that machine itself to have internet access to reach the vault, which Server1 explicitly does not have. Microsoft Azure Backup Server is built for exactly this: it backs up Server1 to local disk over the LAN first, and only the MABS server itself (which can sit on a different, internet-connected part of the network) needs to reach Azure to upload that data to the vault.",
     "whyWrong": [
-      "Installing the MARS agent directly on Server1 would require exactly the internet access the scenario says Server1 doesn’t have; an Azure VM extension has no role in backing up an on-premises server at all. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Installing the MARS agent directly on Server1 would require exactly the internet access the scenario says Server1 doesn’t have; an Azure VM extension has no role in backing up an on-premises server at all."
     ]
   },
   "std/246": {
@@ -3794,7 +3794,7 @@
     ]
   },
   "std/248": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Microsoft Entra smart lockout",
@@ -3802,11 +3802,11 @@
     },
     "explanation": "Both boxes are testing settings that belong to Microsoft Entra ID specifically, not to a value shared between Entra ID and AD DS. Microsoft's own smart lockout documentation is explicit that the Microsoft Entra lockout threshold and the AD DS account lockout threshold are two separately configured values that must be tuned relative to each other (\"the Microsoft Entra lockout threshold must be LESS than the AD DS account lockout threshold,\" and separately, \"the Microsoft Entra lockout duration must be LONGER than the AD DS account lockout duration\"). Since Microsoft Entra smart lockout's own failed-attempt count and lockout duration are each configured purely within Microsoft Entra ID, and deliberately set to a different number than the separate on-premises AD DS policy, evaluating \"Microsoft Entra smart lockout\" considerations means evaluating Microsoft Entra ID-only settings, not a value that spans both systems.",
     "whyWrong": [
-      "If the same number applied to both AD DS and Microsoft Entra ID, Microsoft’s own guidance to set the Entra threshold lower and the Entra duration longer than AD DS’s separate values would be contradictory, which is why these are documented as two independently configured settings rather than one shared setting. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "If the same number applied to both AD DS and Microsoft Entra ID, Microsoft’s own guidance to set the Entra threshold lower and the Entra duration longer than AD DS’s separate values would be contradictory, which is why these are documented as two independently configured settings rather than one shared setting."
     ]
   },
   "std/255": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "AWS S3 data connector for Microsoft Sentinel",
@@ -3814,7 +3814,7 @@
     },
     "explanation": "The two recorded answers are swapped. Automatically identifying threats in AWS CloudTrail events is a log-ingestion-and-analytics task: Microsoft Sentinel's AWS connector ingests CloudTrail logs and ships with dozens of built-in analytics rules to detect suspicious activity in them, which is exactly what \"automatically identify threats found in AWS CloudTrail events\" needs, not Defender for Cloud (which assesses resource configuration rather than analyzing log events for threats). Enforcing security settings on AWS virtual machines by using Azure Policy is a governance task that runs through Defender for Cloud's AWS connector: once AWS EC2 instances are Arc-onboarded through Defender for Cloud, Azure Policy can be applied to them to enforce configuration settings, which is documented for exactly this scenario -- not Microsoft Sentinel, which has no policy-enforcement capability of its own.",
     "whyWrong": [
-      "Microsoft Sentinel has no mechanism to enforce configuration settings on a resource via Azure Policy, and Microsoft Defender for Cloud does not analyze log events like CloudTrail entries for threats the way Sentinel’s analytics rules do; each recorded answer names the product built for the other box’s job. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Microsoft Sentinel has no mechanism to enforce configuration settings on a resource via Azure Policy, and Microsoft Defender for Cloud does not analyze log events like CloudTrail entries for threats the way Sentinel’s analytics rules do; each recorded answer names the product built for the other box’s job."
     ]
   },
   "std/256": {
@@ -3938,7 +3938,7 @@
     ]
   },
   "std/273": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "ExpressRoute circuit peerings",
@@ -3946,7 +3946,7 @@
     },
     "explanation": "The recorded answer for connectors, two connectors in the default connector group, checks out for redundancy without adding the complexity of a second group. The recorded peering type, Microsoft peering, does not check out here: Microsoft peering is documented as the ExpressRoute peering type for reaching Microsoft's own cloud-hosted services (Microsoft 365, Dynamics 365, Azure PaaS endpoints), not for reaching resources inside a customer's own virtual network. Here the connector sits in VNet1 (Azure) and needs to reach App1, an on-premises application in the New York City office, over the same ExpressRoute circuit -- exactly what private peering is documented for: connecting an on-premises network to a customer's own Azure virtual network resources.",
     "whyWrong": [
-      "Microsoft peering would route toward Microsoft’s own multi-tenant services, not toward an on-premises application reachable only through the customer’s own VNet, which is the opposite of what connecting the connector in VNet1 to App1 in New York City actually requires. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "Microsoft peering would route toward Microsoft’s own multi-tenant services, not toward an on-premises application reachable only through the customer’s own VNet, which is the opposite of what connecting the connector in VNet1 to App1 in New York City actually requires."
     ]
   },
   "std/279": {
@@ -3986,7 +3986,7 @@
     ]
   },
   "std/287": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "source": {
       "title": "Azure Policy effect: Modify",
@@ -3994,7 +3994,7 @@
     },
     "explanation": "Modify is the right effect for auto-remediating a missing tag, and that half of the recorded answer checks out. The recorded property, existenceCondition, does not check out for a Modify-effect policy: Microsoft's own documentation describes existenceCondition as a property used with AuditIfNotExists and DeployIfNotExists policies to check whether a related resource exists, not with Modify. For a Modify-effect policy, Microsoft's documentation states that roleDefinitionIds \"is a required property\" specifying which RBAC roles the policy's remediation identity needs to actually add the missing tag, which is the property this scenario's auto-remediating tag policy actually needs to configure.",
     "whyWrong": [
-      "existenceCondition belongs to a different effect type entirely (checking for a related resource’s existence) and plays no role in a Modify policy’s own required configuration, which is why a Modify policy without roleDefinitionIds set would be missing a property Microsoft documents as required. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+      "existenceCondition belongs to a different effect type entirely (checking for a related resource’s existence) and plays no role in a Modify policy’s own required configuration, which is why a Modify policy without roleDefinitionIds set would be missing a property Microsoft documents as required."
     ]
   },
   "std/291": {

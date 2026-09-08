@@ -6259,6 +6259,29 @@
     }
    ],
    "q": "You have an Azure SQL database named DB1 that contains customer information.",
+   "boxes": [
+    {
+     "label": "For the database administrators",
+     "value": "Always Encrypted",
+     "options": [
+      "Always Encrypted",
+      "Dynamic data masking",
+      "Row-level security (RLS)",
+      "Transparent Data Encryption (TDE)"
+     ]
+    },
+    {
+     "label": "For the operators",
+     "value": "Dynamic data masking",
+     "options": [
+      "Always Encrypted",
+      "Dynamic data masking",
+      "Row-level security (RLS)",
+      "Transparent Data Encryption (TDE)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p042_x811.webp",
@@ -6274,11 +6297,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for the database administrators, Always Encrypted, checks out: Microsoft's own Always Encrypted documentation names exactly this scenario, protecting sensitive data \"from those who manage the data but should have no access: on-premises database administrators, cloud database operators, or other high-privileged unauthorized users,\" since the encryption keys are never exposed to the database engine or the people who administer it. The recorded answer for the operators, Row-level security (RLS), does not check out: RLS controls which rows a user's query returns; it has no mechanism for showing part of a column's value and hiding the rest. \"They must view only the last four digits of the Credit Card attribute\" is, word for word, what Dynamic Data Masking's built-in credit-card masking function does: it \"exposes the last four digits of the designated fields and adds a constant string as a prefix,\" masking the rest of the value for anyone querying through App1 without the unmask permission. Dynamic data masking, not row-level security, is the answer this requirement calls for.",
     "whyWrong": [
-     "Row-level security is a real Azure SQL feature, but it filters which records a query returns rather than obscuring part of a value within a visible record, so it cannot produce \"the last four digits\" of a field the operator can otherwise see. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Row-level security is a real Azure SQL feature, but it filters which records a query returns rather than obscuring part of a value within a visible record, so it cannot produce \"the last four digits\" of a field the operator can otherwise see."
     ],
     "source": {
      "title": "Dynamic data masking - Azure SQL Database",
@@ -6402,6 +6425,29 @@
     }
    ],
    "q": "You have a Microsoft Entra tenant named contoso.com that is linked to an Azure subscription named Sub! and a Microsoft 365 subscription. Sub! contains a publicly accessible Azure App Service web app named App1.",
+   "boxes": [
+    {
+     "label": "Ensures that the fabrikam.com users can be granted permissions to the Teams channels in contoso.com",
+     "value": "Microsoft Entra B2B collaboration",
+     "options": [
+      "B2B direct connect",
+      "Cross-tenant synchronization",
+      "Microsoft Entra B2B collaboration",
+      "Microsoft Entra External ID for customers"
+     ]
+    },
+    {
+     "label": "Ensures that the App1 users can authenticate by using social media accounts",
+     "value": "Microsoft Entra External ID for customers",
+     "options": [
+      "B2B direct connect",
+      "Cross-tenant synchronization",
+      "Microsoft Entra B2B collaboration",
+      "Microsoft Entra External ID for customers"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p045_x855.webp",
@@ -6697,6 +6743,31 @@
     }
    ],
    "q": "Your company wants to optimize using Azure to protect its resources from ransomware.",
+   "boxes": [
+    {
+     "label": "Azure Backup",
+     "value": "A security PIN",
+     "options": [
+      "Access policies",
+      "Access tiers",
+      "Encryption by using platform-managed keys",
+      "Immutable storage",
+      "A security PIN"
+     ]
+    },
+    {
+     "label": "Azure Storage",
+     "value": "Immutable storage",
+     "options": [
+      "Access policies",
+      "Access tiers",
+      "Encryption by using platform-managed keys",
+      "Immutable storage",
+      "A security PIN"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p049_x912.webp",
@@ -6712,11 +6783,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for Azure Storage, immutable storage, checks out: Microsoft positions immutable (WORM) blob storage as its flagship ransomware defense for Azure Storage, since a ransomware actor who compromises an account still cannot alter or delete data locked under an immutable policy. The recorded answer for Azure Backup, encryption by using platform-managed keys, does not check out as the strongest ransomware-specific protection: platform-managed-key encryption is the account's default at-rest encryption, applied automatically regardless of any ransomware scenario, and it does nothing to stop an attacker with compromised admin credentials from deleting or disabling backups, which is what ransomware actually threatens. Microsoft's own documentation on protecting Azure Backup from ransomware centers on requiring a security PIN (generated from the Recovery Services vault) before critical, potentially destructive operations, such as stopping protection with data deletion or changing the passphrase, can be carried out, which is exactly the kind of protection \"strongest protection against ransomware attacks\" is asking for.",
     "whyWrong": [
-     "Encryption by using platform-managed keys is always on by default and is not a ransomware-specific control at all, so recommending it as the strongest available protection misses the actual anti-tampering purpose behind the requirement. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Encryption by using platform-managed keys is always on by default and is not a ransomware-specific control at all, so recommending it as the strongest available protection misses the actual anti-tampering purpose behind the requirement."
     ],
     "source": {
      "title": "Security features to help protect against ransomware - Azure Backup",
@@ -6807,6 +6878,29 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription that contains 1,000 users and two groups named Group1 and Group2. All the users have devices that are onboarded to Microsoft Intune and Microsoft Defender for Endpoint Group1 manages Microsoft Entra and Microsoft 365 services. Group2 manages Intune and Defender for Endpoint.",
+   "boxes": [
+    {
+     "label": "Group1",
+     "value": "A Conditional Access policy",
+     "options": [
+      "A Conditional Access policy",
+      "A sign-in risk policy in Microsoft Entra ID Protection",
+      "A user risk policy in Microsoft Entra ID Protection",
+      "Microsoft Defender for Office 365"
+     ]
+    },
+    {
+     "label": "Group2",
+     "value": "A compliance policy in Intune",
+     "options": [
+      "A compliance policy in Intune",
+      "A configuration profile in Intune",
+      "A Defender for Endpoint attack surface reduction (ASR) rule",
+      "An endpoint security policy"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p051_x960.webp",
@@ -6929,6 +7023,28 @@
     }
    ],
    "q": "You have an Azure subscription.",
+   "boxes": [
+    {
+     "label": "Service",
+     "value": "Azure Key Vault",
+     "options": [
+      "Azure Key Vault",
+      "Microsoft Entra ID Protection",
+      "Privileged Identity Management (PIM)"
+     ]
+    },
+    {
+     "label": "Authentication method",
+     "value": "Managed identity",
+     "options": [
+      "Certificate",
+      "Group managed service account (gMSA)",
+      "Guest account",
+      "Managed identity"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p054_x991.webp",
@@ -7034,6 +7150,29 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription. The subscription contains Windows 11 devices that are protected by using Microsoft Defender XDR You need to block access to file sharing sites from the devices. The solution must meet the following requirements:",
+   "boxes": [
+    {
+     "label": "Identify the sites by using",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender Vulnerability Management"
+     ]
+    },
+    {
+     "label": "Prevent the users from connecting to the sites by using",
+     "value": "Microsoft Defender for Endpoint",
+     "options": [
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender Vulnerability Management"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p055_x1011.webp",
@@ -7049,11 +7188,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for blocking the sites, Microsoft Defender for Endpoint, checks out: once Defender for Cloud Apps marks the discovered file-sharing sites as Unsanctioned, their domains sync to Defender for Endpoint as network-protection indicators, and Defender for Endpoint is the component that actually enforces the block on each device. The recorded answer for identifying the sites, also Microsoft Defender for Endpoint, does not check out: identifying which cloud and file-sharing sites users have connected to over a trailing window is Cloud Discovery, a Microsoft Defender for Cloud Apps capability. Cloud Discovery natively consumes the network traffic signal that already flows from Defender for Endpoint-onboarded devices, so it needs no separate log collector, which is exactly what \"minimize administrative effort\" is pointing to, but the product surfacing that 90-day usage report and scoring the discovered apps is Defender for Cloud Apps, not Defender for Endpoint itself.",
     "whyWrong": [
-     "Microsoft Defender for Cloud and Microsoft Defender Vulnerability Management have no cloud-app-discovery or web-content-filtering capability at all, so neither fits either box. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Microsoft Defender for Cloud and Microsoft Defender Vulnerability Management have no cloud-app-discovery or web-content-filtering capability at all, so neither fits either box."
     ],
     "source": {
      "title": "Discover and manage Shadow IT",
@@ -7196,6 +7335,27 @@
     }
    ],
    "q": "You plan to deploy an Azure API Management solution that will enable different groups of developers to access different sets of APIs at random times and rates.",
+   "boxes": [
+    {
+     "label": "Pricing tier",
+     "value": "Standard V2",
+     "options": [
+      "Basic V2",
+      "Consumption",
+      "Standard V2"
+     ]
+    },
+    {
+     "label": "Scope",
+     "value": "Product",
+     "options": [
+      "API",
+      "Product",
+      "Workspace"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p058_x1048.webp",
@@ -7535,6 +7695,29 @@
     }
    ],
    "q": "You have a Microsoft 365 tenant.",
+   "boxes": [
+    {
+     "label": "Identify data exfiltration attempts",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender for Identity",
+      "Microsoft Defender for Office 365"
+     ]
+    },
+    {
+     "label": "Block Teams messages",
+     "value": "Microsoft Defender for Office 365",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender for Identity",
+      "Microsoft Defender for Office 365"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p064_x1148.webp",
@@ -7710,6 +7893,27 @@
     }
    ],
    "q": "Your company has two offices named Office1 and Office2. The offices contain 1,000 on-premises Windows 11 devices that are Microsoft Entra joined.",
+   "boxes": [
+    {
+     "label": "Compliant devices",
+     "value": "Office1 and Office2",
+     "options": [
+      "Office1 only",
+      "Office2 only",
+      "Office1 and Office2"
+     ]
+    },
+    {
+     "label": "Noncompliant devices",
+     "value": "Office2 only",
+     "options": [
+      "Office1 only",
+      "Office2 only",
+      "Office1 and Office2"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p067_x1180.webp",
@@ -7725,11 +7929,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for compliant devices, Office1 and Office2, checks out, but not for the reason it might appear to: Microsoft's own documented known limitation states that \"Microsoft traffic is accessible through remote network connectivity without the Global Secure Access Client; however, the Conditional Access policy isn't enforced—Conditional Access policies... are only enforced when a user has the Global Secure Access client.\" Office1 only has the remote-network assignment (no client), so its Microsoft 365 traffic passes through Global Secure Access but the linked Conditional Access compliant-network policy is never actually enforced there, meaning nothing blocks any device, compliant or not. Office2 has the client, where Conditional Access is enforced, so a compliant device there is correctly granted access by the policy. Both offices' compliant devices reach Microsoft 365 either way, which is why that box is right. The recorded answer for noncompliant devices, Office1 only, is backwards given that same documented limitation: since Conditional Access is not enforced at Office1 at all, a noncompliant device there is not blocked by this policy either; it is Office2, where the policy is actually enforced, that blocks a noncompliant device from accessing Microsoft 365.",
     "whyWrong": [
-     "Assuming the office with only remote-network connectivity (Office1) is where noncompliant devices get blocked has it backwards: Microsoft’s documented limitation is that Conditional Access enforcement for Global Secure Access Microsoft traffic requires the client, which only Office2 has. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Assuming the office with only remote-network connectivity (Office1) is where noncompliant devices get blocked has it backwards: Microsoft’s documented limitation is that Conditional Access enforcement for Global Secure Access Microsoft traffic requires the client, which only Office2 has."
     ],
     "source": {
      "title": "Known limitations for Global Secure Access",
@@ -7989,6 +8193,27 @@
     }
    ],
    "q": "You have a Microsoft 365 E5 subscription. The subscription contains 1,000 devices that run Windows 11 Pro and are enrolled in Microsoft Intune. You need to recommend a Microsoft Defender for Cloud Apps solution that meets the following requirements:",
+   "boxes": [
+    {
+     "label": "When a user downloads a file from SharePoint Online, a label must be applied to the file in real time based on the file's contents",
+     "value": "File policy",
+     "options": [
+      "Activity policy",
+      "File policy",
+      "Session policy"
+     ]
+    },
+    {
+     "label": "Only users that use Intune-compliant devices must be able to sign in to Dropbox",
+     "value": "Access policy",
+     "options": [
+      "Access policy",
+      "Activity policy",
+      "OAuth app policy"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p071_x1245.webp",
@@ -8213,6 +8438,27 @@
     }
    ],
    "q": "You have a Microsoft Entra tenant named contoso.com. You have 30 Azure subscriptions that are linked to contoso.com. The tenant contains the management groups shown in the following table.",
+   "boxes": [
+    {
+     "label": "Scope",
+     "value": "/providers/microsoft.management/managementGroups/Mgmt1 AND /providers/microsoft.management/managementGroups/Mgmt2",
+     "options": [
+      "/",
+      "/providers/microsoft.management/managementGroups/<Entra Tenant GUID>",
+      "/providers/microsoft.management/managementGroups/Mgmt1 AND /providers/microsoft.management/managementGroups/Mgmt2"
+     ]
+    },
+    {
+     "label": "Minimum number of assignments",
+     "value": "2",
+     "options": [
+      "1",
+      "2",
+      "30"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p075_x1309.webp",
@@ -8409,6 +8655,29 @@
     }
    ],
    "q": "Your on-premises network contains an Active Directory Domain Services (AD DS) domain. The domain contains a group named Group1 and five servers that run Windows Server. Each server contains a standalone app. Each app is used by the members of Group1.",
+   "boxes": [
+    {
+     "label": "Global Secure Access apps",
+     "value": "One enterprise application",
+     "options": [
+      "One enterprise application",
+      "One Quick Access app",
+      "Five enterprise applications",
+      "Five Quick Access apps"
+     ]
+    },
+    {
+     "label": "Private network connectors",
+     "value": "2",
+     "options": [
+      "1",
+      "2",
+      "5",
+      "10"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p078_x1356.webp",
@@ -8424,11 +8693,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Neither recorded answer holds up against how Microsoft documents these two constructs. A single Global Secure Access enterprise application can hold multiple application segments (the FQDNs or IP addresses to tunnel), and Conditional Access for per-app access is \"configured at the application level for each app,\" not per segment. Since all five standalone apps are used by the same group with no stated need to treat any of them differently, adding all five servers as segments under one enterprise application lets a single Conditional Access policy enforce security controls for all of them at once, which is the minimum administrative effort this scenario calls for -- not five separate application objects each needing their own assignment. For private network connectors, Microsoft's own connector documentation states plainly to \"use at least two connectors in each group for high availability\"; connectors serve an entire connector group's traffic regardless of how many app segments sit behind it, so two, not five, is the minimum that satisfies \"highly available.\"",
     "whyWrong": [
-     "Creating five separate enterprise applications, one per server, multiplies the Conditional Access assignments needed for identical protection requirements with no benefit, and deploying five connectors ties connector count to server count rather than to the documented two-per-group floor for redundancy. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Creating five separate enterprise applications, one per server, multiplies the Conditional Access assignments needed for identical protection requirements with no benefit, and deploying five connectors ties connector count to server count rather than to the documented two-per-group floor for redundancy."
     ],
     "source": {
      "title": "Configure per-app access using Global Secure Access applications",
@@ -8503,6 +8772,27 @@
     }
    ],
    "q": "You have a Microsoft Entra tenant and an Azure subscription.",
+   "boxes": [
+    {
+     "label": "Identity type",
+     "value": "Service principal",
+     "options": [
+      "Service principal",
+      "System-assigned managed identity",
+      "User-assigned managed identity"
+     ]
+    },
+    {
+     "label": "Signal source",
+     "value": "Microsoft Entra ID Protection",
+     "options": [
+      "Client app",
+      "Device platform",
+      "Microsoft Entra ID Protection"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p080_x1381.webp",
@@ -8839,6 +9129,29 @@
     }
    ],
    "q": "You have four Azure subscriptions named Sub1, Sub2, Sub3, and Sub4. Each subscription has a unique Microsoft Entra tenant that is linked to a Microsoft 365 subscription. Sub1 contains a user named User1.",
+   "boxes": [
+    {
+     "label": "Number of workspaces",
+     "value": "3",
+     "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ]
+    },
+    {
+     "label": "Service",
+     "value": "Azure Lighthouse",
+     "options": [
+      "Azure Arc",
+      "Azure Bastion",
+      "Azure Lighthouse",
+      "Azure Private Link"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p085_x1445.webp",
@@ -9030,6 +9343,29 @@
     }
    ],
    "q": "You have an Azure subscription. The subscription contains an Azure application gateway that use Azure Web Application Firewall (WAF).",
+   "boxes": [
+    {
+     "label": "To detect vulnerability scans of the apps",
+     "value": "Microsoft Defender for App Service",
+     "options": [
+      "Azure WAF",
+      "Microsoft Defender External Attack Surface Management (Defender EASM)",
+      "Microsoft Defender for App Service",
+      "Microsoft Defender for Cloud Apps"
+     ]
+    },
+    {
+     "label": "To detect whether newly deployed apps are vulnerable to attack",
+     "value": "Microsoft Defender External Attack Surface Management (Defender EASM)",
+     "options": [
+      "Azure WAF",
+      "Microsoft Defender External Attack Surface Management (Defender EASM)",
+      "Microsoft Defender for App Service",
+      "Microsoft Defender for Cloud Apps"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p088_x1499.webp",
@@ -9045,11 +9381,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for detecting vulnerability scans of the apps, Microsoft Defender for App Service, checks out: it is the Defender for Cloud plan that watches an already-onboarded App Service resource's own runtime activity and raises alerts (including a vulnerability-scanner-detected alert) when it is being probed. The recorded answer for detecting whether newly deployed apps are vulnerable to attack, also Microsoft Defender for App Service, does not check out: that plan protects resources that are already known to and onboarded in Defender for Cloud. Discovering and assessing newly deployed, internet-facing apps that a security team may not even know about yet is what Microsoft Defender External Attack Surface Management (Defender EASM) is documented to do, using \"recursive discovery to find unknown internet-facing assets\" and giving organizations \"visibility over newly deployed assets\" so vulnerabilities on them can be identified quickly -- exactly \"newly deployed apps\" registered automatically in the company's DNS domain.",
     "whyWrong": [
-     "Azure WAF inspects and filters HTTP(S) traffic to a published application; it does not discover unknown or newly deployed internet-facing assets. Defender for Cloud Apps governs SaaS usage and session activity, not an organization’s own external attack surface. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Azure WAF inspects and filters HTTP(S) traffic to a published application; it does not discover unknown or newly deployed internet-facing assets. Defender for Cloud Apps governs SaaS usage and session activity, not an organization’s own external attack surface."
     ],
     "source": {
      "title": "What is Microsoft Defender External Attack Surface Management?",
@@ -9516,6 +9852,29 @@
     }
    ],
    "q": "You have an Azure subscription that contains multiple Azure Storage blobs and Azure Files shares.",
+   "boxes": [
+    {
+     "label": "Blobs",
+     "value": "User delegation shared access signatures (SAS)",
+     "options": [
+      "Account shared access signatures (SAS)",
+      "Microsoft Entra Domain Services",
+      "Service shared access signatures (SAS)",
+      "User delegation shared access signatures (SAS)"
+     ]
+    },
+    {
+     "label": "Shares",
+     "value": "Microsoft Entra Domain Services",
+     "options": [
+      "Account shared access signatures (SAS)",
+      "Microsoft Entra Domain Services",
+      "Service shared access signatures (SAS)",
+      "User delegation shared access signatures (SAS)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p094_x1569.webp",
@@ -9531,11 +9890,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Neither recorded answer holds up. For the blobs, Microsoft's own SAS documentation is direct: \"Microsoft recommends using a user delegation SAS when possible for superior security... secured with Microsoft Entra credentials,\" language that maps onto \"include authentication support when possible\" almost exactly, and a user delegation SAS still supports time-boxed access the way an account SAS does. An account SAS is signed with the storage account key alone, with no Entra identity behind it, so it is the account SAS, not the user delegation SAS, that the requirement is steering away from. For the shares, the requirement is access over the SMB protocol specifically, and shared access signatures are an HTTPS/REST construct that ordinary SMB clients do not present at all; Microsoft's own guidance for Azure Files SMB access is to \"use identity-based authentication to access SMB file shares instead of the storage account key,\" naming Microsoft Entra Domain Services as one of the supported identity sources, which is also one of this item's own listed options.",
     "whyWrong": [
-     "An account SAS for the blobs is signed with the account key rather than an Entra identity, missing the \"authentication support when possible\" half of the requirement that a user delegation SAS satisfies. A service SAS for the shares fails a harder constraint: SAS tokens are not a credential an SMB client can present at all, so no SAS variant can satisfy \"support access to the shares by using the SMB protocol.\" This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "An account SAS for the blobs is signed with the account key rather than an Entra identity, missing the \"authentication support when possible\" half of the requirement that a user delegation SAS satisfies. A service SAS for the shares fails a harder constraint: SAS tokens are not a credential an SMB client can present at all, so no SAS variant can satisfy \"support access to the shares by using the SMB protocol.\""
     ],
     "source": {
      "title": "Grant limited access to Azure Storage resources using shared access signatures (SAS)",
@@ -9676,6 +10035,27 @@
     }
    ],
    "q": "You have on-premises servers and virtual machines that run Windows Server or Red Hat Enterprise Linux (RHEL).",
+   "boxes": [
+    {
+     "label": "For update management, use",
+     "value": "Azure Update Manager",
+     "options": [
+      "Azure Automanage",
+      "Azure Update Manager",
+      "System Center Updates Publisher"
+     ]
+    },
+    {
+     "label": "On the on-premises operating systems, install",
+     "value": "The Azure Connected Machine agent",
+     "options": [
+      "Azure Monitor Agent",
+      "The Azure Connected Machine agent",
+      "Azure VPN client"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p096_x1610.webp",
@@ -10115,6 +10495,27 @@
     }
    ],
    "q": "You have a Microsoft 365 E5 subscription that uses Microsoft Teams.",
+   "boxes": [
+    {
+     "label": "Segments",
+     "value": "3",
+     "options": [
+      "2",
+      "3",
+      "4"
+     ]
+    },
+    {
+     "label": "Policies",
+     "value": "2",
+     "options": [
+      "2",
+      "3",
+      "4"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p102_x1681.webp",
@@ -10278,6 +10679,28 @@
     }
    ],
    "q": "You have the resources shown in the following table.",
+   "boxes": [
+    {
+     "label": "Location",
+     "value": "Sub2 in the East US Azure region",
+     "options": [
+      "Sub1 in the East US Azure region",
+      "Sub2 in the East US Azure region",
+      "Sub1 in the West US Azure region",
+      "Sub2 in the West US Azure region"
+     ]
+    },
+    {
+     "label": "Role",
+     "value": "Reader",
+     "options": [
+      "Contributor",
+      "Owner",
+      "Reader"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p105_x1727.webp",
@@ -10503,6 +10926,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains an Azure key vault named Vault1.",
+   "boxes": [
+    {
+     "label": "Endpoint type",
+     "value": "Azure Instance Metadata Service (IMDS)",
+     "options": [
+      "Azure Instance Metadata Service (IMDS)",
+      "Microsoft Graph REST API v1.0",
+      "Microsoft Identity Platform OAuth 2.0 access token"
+     ]
+    },
+    {
+     "label": "Identity type",
+     "value": "User-assigned managed identity",
+     "options": [
+      "Service principal",
+      "System-assigned managed identity",
+      "User-assigned managed identity"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p108_x1759.webp",
@@ -10518,11 +10962,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded endpoint, Azure Instance Metadata Service (IMDS), checks out: IMDS is the non-routable, internal endpoint a VM queries to obtain a token for its own managed identity, which is exactly how App1 would reach Vault1's secrets. The recorded identity type, a system-assigned managed identity, does not check out given \"the virtual machines will be redeployed regularly\": Microsoft's own guidance is direct that system-assigned identities are tied to the lifecycle of the specific VM they're created on and are deleted when that VM is deleted, so a deployment pipeline that regularly destroys and recreates VMs \"creates orphaned RBAC assignments every cycle\" -- a fresh identity, and a fresh Key Vault access grant, every redeploy. A user-assigned managed identity is created once as its own standalone resource and can be attached to each newly redeployed VM in turn, so the same one security principal keeps its access to Vault1 across every redeployment, which is what actually minimizes both the number of security principals touching Vault1 and the administrative effort of re-granting access after each redeploy.",
     "whyWrong": [
-     "A system-assigned identity looks like the simpler default, but it multiplies security principals over time in exactly this redeploy-heavy scenario, since each new VM instance gets its own new identity needing its own new grant on Vault1. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "A system-assigned identity looks like the simpler default, but it multiplies security principals over time in exactly this redeploy-heavy scenario, since each new VM instance gets its own new identity needing its own new grant on Vault1."
     ],
     "source": {
      "title": "Best practice recommendations for managed identities",
@@ -10790,6 +11234,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains a Microsoft Sentinel workspace named MSW1. MSW1 includes 50 scheduled analytics rules.",
+   "boxes": [
+    {
+     "label": "Use",
+     "value": "Automation rules",
+     "options": [
+      "Analytics rules",
+      "Automation rules",
+      "Investigation graphs"
+     ]
+    },
+    {
+     "label": "Trigger type",
+     "value": "Incident",
+     "options": [
+      "Alert",
+      "Entity",
+      "Incident"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p113_x1831.webp",
@@ -10973,6 +11438,29 @@
     }
    ],
    "q": "You have three on-premises servers that run Windows Server and contain shared folders. The folders contain 10,000 files.",
+   "boxes": [
+    {
+     "label": "Storage blobs",
+     "value": "Data Map",
+     "options": [
+      "Compliance Manager",
+      "Data Map",
+      "Insider risk management",
+      "The Information Protection scanner"
+     ]
+    },
+    {
+     "label": "Shared folders",
+     "value": "The Information Protection scanner",
+     "options": [
+      "Compliance Manager",
+      "Data Map",
+      "Insider risk management",
+      "The Information Protection scanner"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p116_x1871.webp",
@@ -11393,6 +11881,29 @@
     }
    ],
    "q": "Your company is migrating data to Azure. The data contains Personally Identifiable Information (Pll). The company plans to use Microsoft Information Protection for the Pll data store in Azure. You need to recommend a solution to discover Pll data at risk in the Azure resources.",
+   "boxes": [
+    {
+     "label": "To connect the Azure data sources to Microsoft Information Protection",
+     "value": "Azure Purview",
+     "options": [
+      "Azure Purview",
+      "Endpoint data loss prevention",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Information Protection"
+     ]
+    },
+    {
+     "label": "To triage security alerts related to resources that contain PII data",
+     "value": "Microsoft Defender for Cloud",
+     "options": [
+      "Azure Monitor",
+      "Endpoint data loss prevention",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p123_x1966.webp",
@@ -11594,6 +12105,29 @@
     }
    ],
    "q": "Your company has offices in 10 countries.",
+   "boxes": [
+    {
+     "label": "Use",
+     "value": "Microsoft Purview Compliance Manager",
+     "options": [
+      "Microsoft Defender for Cloud regulatory compliance",
+      "Microsoft Purview Audit (Premium)",
+      "Microsoft Purview Compliance Manager",
+      "Microsoft Priva Privacy Risk Management"
+     ]
+    },
+    {
+     "label": "Additional costs",
+     "value": "Licenses for premium regulatory templates",
+     "options": [
+      "Microsoft Priva Privacy Risk Management licenses",
+      "Microsoft Purview Data Map capacity units",
+      "Microsoft Syntex pay-as-you-go billing",
+      "Licenses for premium regulatory templates"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p126_x2009.webp",
@@ -12008,6 +12542,29 @@
     }
    ],
    "q": "You have an Azure subscription and an on-premises datacenter. The datacenter contains 100 servers that run Windows Server. AJI the servers are backed up to a Recovery Services vault by using Azure Backup and the Microsoft Azure Recovery Services (MARS) agent.",
+   "boxes": [
+    {
+     "label": "Deleted backups",
+     "value": "Soft delete of backups",
+     "options": [
+      "A security PIN for critical operations",
+      "Encryption by using a customer-managed key",
+      "Multi-user authorization by using Resource Guard",
+      "Soft delete of backups"
+     ]
+    },
+    {
+     "label": "Disabled backups",
+     "value": "A security PIN for critical operations",
+     "options": [
+      "A security PIN for critical operations",
+      "Encryption by using a customer-managed key",
+      "Multi-user authorization by using Resource Guard",
+      "Soft delete of backups"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p131_x2079.webp",
@@ -12023,11 +12580,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded protection against a compromised administrator deleting backups from Azure Backup, soft delete, checks out: soft-deleted backup data is retained and recoverable for a retention period regardless of who issued the delete. The recorded protection against a compromised administrator disabling backups specifically on the MARS agent, multi-user authorization by using Resource Guard, targets the wrong layer: Microsoft's own documentation for protecting Azure Backup from ransomware describes a security PIN, generated from the Recovery Services vault and required before critical operations such as \"Stop Protection with Delete Data\" or changing the passphrase can be carried out from the MARS agent itself, on the on-premises server. Multi-user authorization/Resource Guard adds its own separate layer of approval for operations performed against the vault through Azure (the portal, PowerShell, or the API); the risk described here is specifically an admin acting through the on-premises MARS agent software, which is exactly what the security PIN requirement is built to stop.",
     "whyWrong": [
-     "Multi-user authorization is a real and valuable Azure Backup protection, but it is not what gates a critical operation triggered locally from the MARS agent on the server itself; the security PIN is. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Multi-user authorization is a real and valuable Azure Backup protection, but it is not what gates a critical operation triggered locally from the MARS agent on the server itself; the security PIN is."
     ],
     "source": {
      "title": "Security features to help protect against ransomware - Azure Backup",
@@ -12163,6 +12720,27 @@
     }
    ],
    "q": "You have an Azure subscription.",
+   "boxes": [
+    {
+     "label": "RBAC roles",
+     "value": "Workspaces",
+     "options": [
+      "Products",
+      "Subscriptions",
+      "Workspaces"
+     ]
+    },
+    {
+     "label": "Keys",
+     "value": "Subscriptions",
+     "options": [
+      "Products",
+      "Subscriptions",
+      "Workspaces"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p134_x2111.webp",
@@ -12372,6 +12950,29 @@
     }
    ],
    "q": "You have an Azure subscription that contains Azure App Service web apps. The apps have the following characteristics:",
+   "boxes": [
+    {
+     "label": "Pre-deployment",
+     "value": "Static application security testing (SAST)",
+     "options": [
+      "Dynamic application security testing (DAST)",
+      "Penetration testing",
+      "Security smoke testing",
+      "Static application security testing (SAST)"
+     ]
+    },
+    {
+     "label": "Post-deployment to the test environment",
+     "value": "Dynamic application security testing (DAST)",
+     "options": [
+      "Dynamic application security testing (DAST)",
+      "Security acceptance testing",
+      "Security smoke testing",
+      "Static application security testing (SAST)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p137_x2148.webp",
@@ -12691,6 +13292,28 @@
     }
    ],
    "q": "You have 1,000 on-premises servers that run Linux.",
+   "boxes": [
+    {
+     "label": "To minimize the number of events",
+     "value": "Create Data Collection rules (DCRs)",
+     "options": [
+      "Create Data Collection rules (DCRs)",
+      "Filter Microsoft Sentinel scheduled query rules",
+      "Set a daily cap for WS1"
+     ]
+    },
+    {
+     "label": "To minimize the number of Microsoft Entra identities, enable",
+     "value": "System-assigned managed identities for the on-premises servers and user-assigned managed identities for the Azure virtual machines",
+     "options": [
+      "System-assigned managed identities for all the on-premises servers and Azure virtual machines",
+      "System-assigned managed identities for the on-premises servers and user-assigned managed identities for the Azure virtual machines",
+      "User-assigned managed identities for all the on-premises servers and Azure virtual machines",
+      "User-assigned identities for the on-premises servers and system-assigned identities for the Azure virtual machines"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p141_x2209.webp",
@@ -12846,6 +13469,27 @@
     }
    ],
    "q": "You have an Active Directory Domain Services (AD DS) domain that contains a virtual desktop infrastructure (VDI). The VDI uses non-persistent images and cloned virtual machine templates. VDI devices are members of the domain.",
+   "boxes": [
+    {
+     "label": "For the VDI",
+     "value": "Add the Defender for Endpoint onboarding script to the virtual machine template",
+     "options": [
+      "Add the Defender for Endpoint onboarding script to the virtual machine template",
+      "Deploy Defender for Endpoint by using a custom Group Policy Object (GPO)",
+      "Onboard the virtual machine template to Defender for Endpoint"
+     ]
+    },
+    {
+     "label": "For Azure Virtual Desktop",
+     "value": "Add the Defender for Endpoint onboarding script to the golden image",
+     "options": [
+      "Add the Defender for Endpoint onboarding script to the golden image",
+      "Deploy Defender for Endpoint by using a custom Group Policy Object (GPO)",
+      "Onboard the golden image to Defender for Endpoint"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p143_x2251.webp",
@@ -12861,11 +13505,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Both recorded answers have this backwards. Microsoft's own guidance for onboarding non-persistent VDI devices is explicit: \"if you're deploying non-persistent VDIs through cloning technology, make sure that your internal template VMs are not onboarded to Defender for Endpoint,\" because doing so gives every clone the same underlying sensor identity instead of \"a single entry for each VDI instance.\" The documented method for a single entry per device is instead to copy the onboarding script (Onboard-NonPersistentMachine.ps1 together with the onboarding package) into the golden or template image's own startup scripts, so it runs once per new instance at first boot and onboards that specific instance with its own identity, which is exactly \"add the Defender for Endpoint onboarding script to the virtual machine template/golden image\" -- the other option this item offers, not the one it recorded.",
     "whyWrong": [
-     "Onboarding the template or golden image directly is precisely what Microsoft’s documentation warns against for non-persistent, cloned deployments, since every clone made from an already-onboarded image inherits the same device identity rather than getting its own single entry. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Onboarding the template or golden image directly is precisely what Microsoft’s documentation warns against for non-persistent, cloned deployments, since every clone made from an already-onboarded image inherits the same device identity rather than getting its own single entry."
     ],
     "source": {
      "title": "Onboard non-persistent virtual desktop infrastructure (VDI) devices",
@@ -12901,6 +13545,27 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription that contains a Microsoft SharePoint Online site named Site1. Site1 stores documents that are based on a predefined form and include confidential employee information.",
+   "boxes": [
+    {
+     "label": "Inspection method",
+     "value": "Fingerprint",
+     "options": [
+      "Exact data match (EDM)",
+      "Fingerprint",
+      "Trainable classifier"
+     ]
+    },
+    {
+     "label": "Option",
+     "value": "Authentication context",
+     "options": [
+      "Authentication context",
+      "Authentication strength",
+      "Custom control"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p144_x2275.webp",
@@ -12916,11 +13581,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded Conditional Access option, authentication context, checks out: Microsoft's own tutorial for this exact scenario is titled \"Require step-up authentication (authentication context) upon risky action,\" and describes a Defender for Cloud Apps session policy invoking an authentication context to force Microsoft Entra Conditional Access to re-evaluate a session when a sensitive activity like a download occurs. The recorded inspection method, Exact Data Match (EDM), does not check out: EDM matches content against a hashed table of specific known values (like a customer ID list), which is the wrong tool for recognizing \"documents that are based on a predefined form\" regardless of what data has been filled into it. Microsoft's own guidance is that \"document fingerprinting\" is precisely for this case: \"if you have a standard blank form and want to detect any completed versions of that specific form,\" which is exactly Site1's predefined-form documents.",
     "whyWrong": [
-     "EDM is built to minimize false positives against a specific list of exact sensitive values, not to recognize a document’s underlying template regardless of the values filled into it, which is what fingerprinting is for. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "EDM is built to minimize false positives against a specific list of exact sensitive values, not to recognize a document’s underlying template regardless of the values filled into it, which is what fingerprinting is for."
     ],
     "source": {
      "title": "About document fingerprinting",
@@ -13003,6 +13668,29 @@
     }
    ],
    "q": "You have an Azure subscription that contains App Service web apps in four Azure regions. Users connect to the apps from the internet.",
+   "boxes": [
+    {
+     "label": "Resource type to provision",
+     "value": "Azure Front Door",
+     "options": [
+      "Azure Application Gateway",
+      "Azure Firewall Premium",
+      "Azure Front Door",
+      "Microsoft Defender for App Service"
+     ]
+    },
+    {
+     "label": "Option to enable",
+     "value": "Azure Web Application Firewall (WAF)",
+     "options": [
+      "Azure Firewall web categories",
+      "Azure Web Application Firewall (WAF)",
+      "Intrusion detection and prevention system (IDPS)",
+      "Threat intelligence-based filtering"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p146_x2296.webp",
@@ -13018,11 +13706,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Azure Application Gateway, the recorded answer, is a regional resource: it cannot on its own \"maintain access to the apps in the event of a region outage\" across apps spread over four regions, and covering all four regions would need one Application Gateway per region, the opposite of \"minimize the number of resources required.\" Azure Front Door is Microsoft's global, multi-region edge service, built to route across backends in multiple regions and automatically shift traffic away from an unhealthy region without manual failover, all from a single global resource. Front Door's own Web Application Firewall supports the OWASP Core Rule Set, the same managed rule set the requirement calls for, so pairing Front Door with its WAF satisfies both stated requirements from one resource rather than four.",
     "whyWrong": [
-     "Application Gateway is the right tool when an application lives in a single region and needs regional Layer 7 routing, but this scenario’s explicit region-outage and minimal-resource-count requirements point directly at Front Door’s global, multi-region design instead. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Application Gateway is the right tool when an application lives in a single region and needs regional Layer 7 routing, but this scenario’s explicit region-outage and minimal-resource-count requirements point directly at Front Door’s global, multi-region design instead."
     ],
     "source": {
      "title": "What is Azure Front Door?",
@@ -13067,6 +13755,27 @@
     }
    ],
    "q": "You plan to deploy a dynamically scaling, Linux-based Azure Virtual Machine Scale Set that will host jump servers. The jump servers will be used by support staff who connect from personal and kiosk devices via the internet. The subnet of the jump servers will be associated to a network security group (NSG).",
+   "boxes": [
+    {
+     "label": "Manage NSG rules by using",
+     "value": "Just-in-time (JIT) VM access",
+     "options": [
+      "Azure Automation",
+      "Azure Bastion",
+      "Just-in-time (JIT) VM access"
+     ]
+    },
+    {
+     "label": "Only allow SSH connections to the jump servers from",
+     "value": "Any public IP addresses provided before the connection is established",
+     "options": [
+      "Any public IP addresses provided before the connection is established",
+      "AzureBastionSubnet",
+      "GatewaySubnet"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p147_x2326.webp",
@@ -13082,11 +13791,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for allowed source IPs, \"any public IP addresses provided before the connection is established,\" already describes just-in-time (JIT) VM access's own mechanism: a user requests access, and Defender for Cloud opens the NSG rule to that specific requester's IP for a limited time before the connection happens. The recorded answer for managing the NSG rules, Azure Bastion, doesn't actually do this: Bastion is a browser-based jump-box service that provides its own RDP/SSH connectivity path and doesn't dynamically open or close NSG rules per user request the way JIT does. Microsoft's own JIT documentation describes exactly the mechanism this scenario needs: it \"ensures 'deny all inbound traffic' rules exist... in the network security group,\" then opens access \"when a user requests access to a VM\" after an RBAC check, for a limited time, which is precisely \"each time the support staff connects to a jump server, they must request access.\"",
     "whyWrong": [
-     "Azure Bastion provides a connectivity path but has no per-request NSG-opening workflow of its own; Azure Automation has no built-in per-request access-approval mechanism either. Both would need to be paired with something that actually implements request-based access, which is what just-in-time VM access already is by itself. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Azure Bastion provides a connectivity path but has no per-request NSG-opening workflow of its own; Azure Automation has no built-in per-request access-approval mechanism either. Both would need to be paired with something that actually implements request-based access, which is what just-in-time VM access already is by itself."
     ],
     "source": {
      "title": "Understand just-in-time virtual machine access",
@@ -13358,6 +14067,28 @@
     }
    ],
    "q": "Your network contains an on-premises Active Directory Domain Services (AO DS) domain. The domain contains a server that runs Windows Server and hosts shared folders The domain syncs with Azure AD by using Azure AD Connect Azure AD Connect has group writeback enabled.",
+   "boxes": [
+    {
+     "label": "Identity Governance feature",
+     "value": "Access reviews",
+     "options": [
+      "Access reviews",
+      "Azure AD Privileged Identity Management (PIM)",
+      "Entitlement management",
+      "Lifecycle workflows"
+     ]
+    },
+    {
+     "label": "Project team configuration",
+     "value": "Azure AD, create a security group for each project and enable group writeback for each group",
+     "options": [
+      "Enable group writeback for the existing synced groups",
+      "From Azure AD, create a new cloud-only security group for each project",
+      "Azure AD, create a security group for each project and enable group writeback for each group"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p151_x2384.webp",
@@ -13373,11 +14104,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Neither recorded answer holds up. Verifying that a group contains only current members, with automatic removal after 30 days of an unconfirmed review, is entitlement management's access reviews feature by definition; Privileged Identity Management governs time-bound elevation into privileged roles, an unrelated concept to periodically re-certifying a regular project group's membership. For the group configuration, Microsoft's own documentation on group writeback is explicit that \"only cloud-created security groups are synchronized from [Microsoft] Entra ID back to Active Directory\" -- writeback moves a cloud-native group down to on-premises, not the other way around. The project groups in this scenario are on-premises AD DS groups synced up into Entra ID, the opposite source of authority, so \"enable group writeback for the existing synced groups\" describes a direction writeback doesn't support. Creating a new cloud-native security group per project and enabling writeback for each one gives Entra ID a group Access reviews can actually manage and auto-remove members from, while writeback still pushes that same group down to on-premises AD DS so the Windows Server shared folder's NTFS permissions keep working from the one group -- satisfying both the SharePoint Online and shared-folder access requirements without maintaining two separate groups per project.",
     "whyWrong": [
-     "PIM protects privileged role activation, not membership verification of an ordinary project security group. Writeback cannot be \"enabled\" on a group whose source of authority is already on-premises AD DS; it only ever pushes a cloud-created group down to on-premises, which is why a new cloud-native group is needed in the first place. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "PIM protects privileged role activation, not membership verification of an ordinary project security group. Writeback cannot be \"enabled\" on a group whose source of authority is already on-premises AD DS; it only ever pushes a cloud-created group down to on-premises, which is why a new cloud-native group is needed in the first place."
     ],
     "source": {
      "title": "Group writeback with Microsoft Entra Cloud Sync",
@@ -13789,6 +14520,27 @@
     }
    ],
    "q": "You have a Microsoft Entra tenant that is linked to a Microsoft 365 subscription and an Azure subscription. The tenant contains service principals that are used to access applications in the Azure subscription.",
+   "boxes": [
+    {
+     "label": "Service",
+     "value": "Microsoft Entra ID Protection",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Identity",
+      "Microsoft Entra ID Protection"
+     ]
+    },
+    {
+     "label": "License type",
+     "value": "Microsoft Entra Workload ID Premium",
+     "options": [
+      "Microsoft Entra ID P1",
+      "Microsoft Entra ID P2",
+      "Microsoft Entra Workload ID Premium"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p156_x2470.webp",
@@ -13804,7 +14556,7 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded service, Microsoft Entra ID Protection, checks out: Identity Protection detects, investigates, and can remediate risky workload identities (service principals) in addition to user identities. The recorded license, Microsoft Entra ID P2, does not check out against \"minimize costs\": Microsoft's own documentation is specific that full risk detail and risk-based Conditional Access for workload identities requires the Microsoft Entra Workload ID Premium license, a narrower add-on scoped to exactly this workload-identity capability, rather than Entra ID P2, which licenses the full breadth of Identity Protection and Privileged Identity Management across every user in the tenant. Recommending the workload-identity-specific license is the minimal-cost way to reach full risk detection and response for service principals specifically.",
     "whyWrong": [
@@ -14129,6 +14881,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains 100 virtual machines. The virtual machines are accessed by using Azure Bastion.",
+   "boxes": [
+    {
+     "label": "For the network controls",
+     "value": "Microsoft Defender for Cloud",
+     "options": [
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint"
+     ]
+    },
+    {
+     "label": "For the authorization controls",
+     "value": "Microsoft Entra Privileged Identity Management (PIM)",
+     "options": [
+      "Microsoft Entra Privileged Identity Management (PIM)",
+      "Microsoft Purview Privileged Access Management",
+      "Microsoft Entra Permissions Management"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p161_x2545.webp",
@@ -14181,6 +14954,29 @@
     }
    ],
    "q": "You have an Azure subscription that contains multiple apps. The apps are managed by using continuous integration and continuous deployment (CI/CD) pipelines in Azure DevOps.",
+   "boxes": [
+    {
+     "label": "Commit the code",
+     "value": "Static application security testing (SAST)",
+     "options": [
+      "Dynamic application security testing (DAST)",
+      "Penetration testing",
+      "Smoke testing",
+      "Static application security testing (SAST)"
+     ]
+    },
+    {
+     "label": "Build and test",
+     "value": "Dynamic application security testing (DAST)",
+     "options": [
+      "Dynamic application security testing (DAST)",
+      "Penetration testing",
+      "Smoke testing",
+      "Static application security testing (SAST)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p162_x2563.webp",
@@ -14372,6 +15168,36 @@
     }
    ],
    "q": "You are planning the security levels for a security access strategy.",
+   "boxes": [
+    {
+     "label": "Developer",
+     "value": "Specialized security",
+     "options": [
+      "Enterprise security",
+      "Privileged security",
+      "Specialized security"
+     ]
+    },
+    {
+     "label": "Standard user",
+     "value": "Enterprise security",
+     "options": [
+      "Enterprise security",
+      "Privileged security",
+      "Specialized security"
+     ]
+    },
+    {
+     "label": "IT administrator",
+     "value": "Privileged security",
+     "options": [
+      "Enterprise security",
+      "Privileged security",
+      "Specialized security"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p164_x2603.webp",
@@ -14796,6 +15622,27 @@
     }
    ],
    "q": "You have an Azure subscription. The subscription contains 20 App Service web apps that provide services to external customers.",
+   "boxes": [
+    {
+     "label": "Azure service",
+     "value": "Azure Key Vault Managed HSM",
+     "options": [
+      "Azure Key Vault Premium SKU",
+      "Azure Key Vault Standard SKU",
+      "Azure Key Vault Managed HSM"
+     ]
+    },
+    {
+     "label": "Authorization mechanism",
+     "value": "A single vault with role-based access control (RBAC) authorization",
+     "options": [
+      "20 vaults with role-based access control (RBAC) authorization",
+      "A single vault with role-based access control (RBAC) authorization",
+      "A single vault with role-based access control (RBAC) authorization and access policy-based authorization"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p171_x2703.webp",
@@ -14848,6 +15695,27 @@
     }
    ],
    "q": "For a Microsoft cloud environment, you are designing a security architecture based on the Microsoft Cybersecurity Reference Architectures (MCRA). You need to protect against the following external threats of an attack chain:",
+   "boxes": [
+    {
+     "label": "An attacker attempts to exfiltrate data to external websites",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Identity",
+      "Microsoft Defender for Office 365"
+     ]
+    },
+    {
+     "label": "An attacker attempts lateral movement across domain-joined computers",
+     "value": "Microsoft Defender for Identity",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Identity",
+      "Microsoft Defender for Office 365"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p172_x2735.webp",
@@ -14863,11 +15731,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for lateral movement across domain-joined computers, Microsoft Defender for Identity, checks out: Defender for Identity's sensors run on domain controllers specifically to catch this behavior. The recorded answer for exfiltrating data to external websites, also Microsoft Defender for Identity, does not check out: Defender for Identity's visibility is limited to on-premises Active Directory Domain Services signal, not traffic to external websites. Detecting data exfiltration to external or unsanctioned sites is Microsoft Defender for Cloud Apps' documented anomaly-detection territory, which is what the exfiltration box should point to instead.",
     "whyWrong": [
-     "Defender for Identity has no visibility into web traffic to external sites at all; it only sees authentication and directory activity inside the on-premises AD DS environment, which is why it fits the lateral-movement box but not the exfiltration one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Defender for Identity has no visibility into web traffic to external sites at all; it only sees authentication and directory activity inside the on-premises AD DS environment, which is why it fits the lateral-movement box but not the exfiltration one."
     ],
     "source": {
      "title": "Built-in anomaly detection policies - Microsoft Defender for Cloud Apps",
@@ -14939,6 +15807,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains an Azure Synapse Analytics workspace named workspace1. workspace1 contains a built-in serverless SQL pool and a dedicated SQL pool named Pool1.",
+   "boxes": [
+    {
+     "label": "Pool1",
+     "value": "Infrastructure encryption",
+     "options": [
+      "Infrastructure encryption",
+      "Server-side encryption (SSE)",
+      "Transparent Data Encryption (TDE)"
+     ]
+    },
+    {
+     "label": "Serverless SQL pool",
+     "value": "Infrastructure encryption",
+     "options": [
+      "Infrastructure encryption",
+      "Server-side encryption (SSE)",
+      "Transparent Data Encryption (TDE)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p174_x2762.webp",
@@ -14954,11 +15843,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded second layer for the dedicated pool, infrastructure encryption, checks out: Microsoft's own documentation describes infrastructure encryption as encrypting storage-account data \"twice -- once at the service level and once at the infrastructure level -- with two different encryption algorithms and two different keys,\" which stacks as a genuine second layer on top of the dedicated pool's existing Transparent Data Encryption. The recorded second layer for the serverless pool, server-side encryption (SSE), does not check out: SSE is the service-level encryption that already protects the serverless pool's underlying storage by default (the serverless pool has no TDE of its own to layer on top of), making SSE the first layer, not a second one. The genuine second, additional layer available on top of SSE is the same infrastructure encryption used for the dedicated pool, since it is a storage-account-level feature that covers whichever data sits in that account.",
     "whyWrong": [
-     "Recommending SSE as a \"second\" layer for the serverless pool recommends something that is already the pool’s existing, default protection rather than an additional one. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Recommending SSE as a \"second\" layer for the serverless pool recommends something that is already the pool’s existing, default protection rather than an additional one."
     ],
     "source": {
      "title": "Enable infrastructure encryption for double encryption of data",
@@ -14991,6 +15880,29 @@
     }
    ],
    "q": "You use Azure Pipelines with Azure Repos to implement continuous integration and continuous deployment (CI/CO) workflows.",
+   "boxes": [
+    {
+     "label": "Git workflow",
+     "value": "Protected branches",
+     "options": [
+      "Azure Key Vault",
+      "Custom roles for build agents",
+      "Protected branches",
+      "Resource locks in Azure"
+     ]
+    },
+    {
+     "label": "Secure deployment credentials",
+     "value": "Azure Key Vault",
+     "options": [
+      "Azure Key Vault",
+      "Custom roles for build agents",
+      "Protected branches",
+      "Resource locks in Azure"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p175_x2780.webp",
@@ -15006,11 +15918,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The two recorded answers are swapped. Securing a Git workflow is a matter of branch governance -- requiring pull requests, reviewers, and status checks before code merges -- which is what protected branches provide, not what Azure Key Vault does (Key Vault has no concept of a Git branch or pull request at all). Securing deployment credentials, by contrast, means keeping the actual secrets a pipeline uses out of its YAML and source code, which is precisely what Azure Key Vault is for; protected branches govern how code changes are reviewed and merged, not how a pipeline authenticates to a target environment.",
     "whyWrong": [
-     "Azure Key Vault cannot enforce anything about how a Git workflow accepts changes, and protected branches store no secrets and control no deployment credentials, so each recorded pairing names a construct that cannot actually deliver the control it is credited with. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Azure Key Vault cannot enforce anything about how a Git workflow accepts changes, and protected branches store no secrets and control no deployment credentials, so each recorded pairing names a construct that cannot actually deliver the control it is credited with."
     ],
     "source": {
      "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
@@ -15102,6 +16014,31 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription that is protected by using Microsoft 365 Defender",
+   "boxes": [
+    {
+     "label": "Integrate Microsoft Sentinel with a third-party security vendor",
+     "value": "A threat intelligence connector",
+     "options": [
+      "Custom entity activities",
+      "A playbook",
+      "A threat detection rule",
+      "A threat indicator",
+      "A threat intelligence connector"
+     ]
+    },
+    {
+     "label": "Automatically generate incidents",
+     "value": "A threat detection rule",
+     "options": [
+      "Custom entity activities",
+      "A playbook",
+      "A threat detection rule",
+      "A threat indicator",
+      "A threat intelligence connector"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p176_x2807.webp",
@@ -15206,6 +16143,29 @@
     }
    ],
    "q": "Your company has an Azure App Service plan that is used to deploy containerized web apps. You are designing a secure DevOps strategy for deploying the web apps to the App Service plan. You need to recommend a strategy to integrate code scanning tools into a secure software development lifecycle. The code must be scanned during the following two phases:",
+   "boxes": [
+    {
+     "label": "Uploading the code to repositories",
+     "value": "GitHub Enterprise",
+     "options": [
+      "Azure Boards",
+      "Azure Pipelines",
+      "GitHub Enterprise",
+      "Microsoft Defender for Cloud"
+     ]
+    },
+    {
+     "label": "Building containers",
+     "value": "Azure Pipelines",
+     "options": [
+      "Azure Boards",
+      "Azure Pipelines",
+      "GitHub Enterprise",
+      "Microsoft Defender for Cloud"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p178_x2857.webp",
@@ -15279,6 +16239,39 @@
     }
    ],
    "q": "You are designing an auditing solution for Azure landing zones that will contain the following components:",
+   "boxes": [
+    {
+     "label": "For the SQL audit logs",
+     "value": "A Log Analytics workspace",
+     "options": [
+      "A Log Analytics workspace",
+      "Azure Application Insights",
+      "Microsoft Defender for SQL",
+      "Microsoft Sentinel"
+     ]
+    },
+    {
+     "label": "For the Windows Security logs",
+     "value": "A Log Analytics workspace",
+     "options": [
+      "A Log Analytics workspace",
+      "Application Insights",
+      "Microsoft Defender for servers",
+      "Microsoft Sentinel"
+     ]
+    },
+    {
+     "label": "For the App Service audit logs",
+     "value": "A Log Analytics workspace",
+     "options": [
+      "A Log Analytics workspace",
+      "Application Insights",
+      "Microsoft Defender for App Service",
+      "Microsoft Sentinel"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p180_x2879.webp",
@@ -15287,11 +16280,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "All three boxes describe structurally the same choice (a Log Analytics workspace, Application Insights, a matching Defender for Cloud plan, or Microsoft Sentinel), and Microsoft's own landing zone guidance answers all three the same way: \"a landing zone must include centralized monitoring from day one with a Log Analytics workspace... that collects logs from all subscriptions.\" The recorded answers instead give three different answers to the same underlying question, crediting Microsoft Defender for SQL with storing the SQL audit logs and Microsoft Sentinel with storing the App Service audit logs -- but neither a Defender for Cloud plan nor Sentinel is itself a log-retention destination; both sit on top of a Log Analytics workspace and add their own cost on top of it, which works against \"minimize costs\" when plain centralized retention is all three requirements actually call for.",
     "whyWrong": [
-     "A Defender for Cloud plan assesses and alerts on a resource’s security posture; it does not retain 365 days of that resource’s own audit logs. Enabling Microsoft Sentinel on top of a workspace adds analytics costs beyond what centralizing and retaining logs requires on its own. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "A Defender for Cloud plan assesses and alerts on a resource’s security posture; it does not retain 365 days of that resource’s own audit logs. Enabling Microsoft Sentinel on top of a workspace adds analytics costs beyond what centralizing and retaining logs requires on its own."
     ],
     "source": {
      "title": "Management platform for Azure landing zones",
@@ -15443,6 +16436,27 @@
     }
    ],
    "q": "You have three Microsoft Entra tenants named Tenant 1. Tenant2. and Tenant3.",
+   "boxes": [
+    {
+     "label": "Delegate permissions by using",
+     "value": "Azure Lighthouse",
+     "options": [
+      "Azure Blueprints",
+      "Azure Lighthouse",
+      "Azure Sphere"
+     ]
+    },
+    {
+     "label": "Microsoft Sentinel feature",
+     "value": "Incidents",
+     "options": [
+      "Analytics rules",
+      "Incidents",
+      "Workbooks"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p182_x2921.webp",
@@ -15458,11 +16472,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Azure Lighthouse, the recorded answer for delegating permissions, checks out for letting Tenant1's users manage Sub2 and Sub3's resources without switching tenants. The recorded Sentinel feature, analytics rules, does not check out: Microsoft's own documentation is explicit that Microsoft Sentinel's \"multiple workspace view... is currently available only for incidents,\" letting a user see and work with incidents from several workspaces and tenants in one unified list. Analytics rules are configured per workspace and have no cross-workspace viewing mode of their own.",
     "whyWrong": [
-     "Analytics rules generate the incidents that live inside a single workspace; the feature that then lets a user see those incidents aggregated across Sentinel2 and Sentinel3 at once is the multiple workspace view for incidents specifically, not analytics rules or workbooks. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Analytics rules generate the incidents that live inside a single workspace; the feature that then lets a user see those incidents aggregated across Sentinel2 and Sentinel3 at once is the multiple workspace view for incidents specifically, not analytics rules or workbooks."
     ],
     "source": {
      "title": "Work with Microsoft Sentinel incidents in many workspaces at once",
@@ -15558,6 +16572,27 @@
     }
    ],
    "q": "You are designing the security architecture for a cloud-only environment.",
+   "boxes": [
+    {
+     "label": "DLP",
+     "value": "Microsoft Purview",
+     "options": [
+      "Azure Data Catalog",
+      "Azure Data Explorer",
+      "Microsoft Purview"
+     ]
+    },
+    {
+     "label": "UEBA",
+     "value": "Microsoft Defender for Identity",
+     "options": [
+      "Azure AD Identity Protection",
+      "Microsoft Defender for Identity",
+      "Microsoft Entra Verified ID"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p184_x2952.webp",
@@ -15573,7 +16608,7 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded DLP answer, Microsoft Purview, checks out: Purview's DLP policies are manageable from the unified Microsoft Defender/Purview portal experience. The recorded UEBA answer, Azure AD Identity Protection, does not check out as the service documented for UEBA with unified alerting: Microsoft Defender for Identity is the one of the four native Microsoft 365 Defender workloads explicitly built around \"User and Entity Behavior Analytics (UEBA)\" with full unified incident and alert correlation in the Defender portal, whereas Identity Protection's sign-in and user risk detections are a related but separate signal, not the product Microsoft brands and documents as its UEBA capability.",
     "whyWrong": [
@@ -16261,6 +17296,31 @@
     }
    ],
    "q": "Your company plans to follow DevSecOps best practices of the Microsoft Cloud Adoption Framework for Azure to integrate DevSecOps processes into continuous integration and continuous deployment (Cl/CD) DevOps pipelines",
+   "boxes": [
+    {
+     "label": "Infrastructure scanning",
+     "value": "Build and test",
+     "options": [
+      "Build and test",
+      "Commit the code",
+      "Go to production",
+      "Operate",
+      "Plan and develop"
+     ]
+    },
+    {
+     "label": "Static application security testing",
+     "value": "Commit the code",
+     "options": [
+      "Build and test",
+      "Commit the code",
+      "Go to production",
+      "Operate",
+      "Plan and develop"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p193_x3086.webp",
@@ -16276,11 +17336,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Both recorded stages are one step later than where the Cloud Adoption Framework places these controls. Static application security testing scans source code before it is built, which is why it belongs at the Commit the code stage, the same placement this review has already confirmed for SAST elsewhere (std/148, std/186) -- not Build and test, where the recorded answer puts it. Infrastructure scanning, which checks infrastructure-as-code templates for misconfigurations, is documented as belonging to the Build and test stage, where the templates are validated alongside the application build -- not Go to production, which is a stage later than where the scan is meant to catch problems.",
     "whyWrong": [
-     "Placing either control one stage later than documented defeats the shift-left purpose of running it early: infrastructure scanning at Go to production catches misconfigurations only once deployment is already underway, and SAST at Build and test scans code that should already have been scanned when it was committed. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Placing either control one stage later than documented defeats the shift-left purpose of running it early: infrastructure scanning at Go to production catches misconfigurations only once deployment is already underway, and SAST at Build and test scans code that should already have been scanned when it was committed."
     ],
     "source": {
      "title": "Secure DevOps environments for Zero Trust (Cloud Adoption Framework)",
@@ -16361,6 +17421,31 @@
     }
    ],
    "q": "You have an Azure subscription that contains a virtual network named VNet1. VNet1 contains a 10-node virtual machine scale set that hosts a web search app named App1. Customers access App1 from the internet. The nodes establish outbound HTTP and HTTPS connections to the internet.",
+   "boxes": [
+    {
+     "label": "For the inbound connections",
+     "value": "Azure Web Application Firewall (WAF)",
+     "options": [
+      "Application security groups",
+      "Azure Firewall",
+      "Azure Web Application Firewall (WAF)",
+      "Microsoft Entra application proxy",
+      "Network security groups (NSGs)"
+     ]
+    },
+    {
+     "label": "For the outbound connections",
+     "value": "Azure Firewall",
+     "options": [
+      "Application security groups",
+      "Azure Firewall",
+      "Azure Web Application Firewall (WAF)",
+      "Microsoft Entra application proxy",
+      "Network security groups (NSGs)"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p195_x3111.webp",
@@ -16564,6 +17649,27 @@
     }
    ],
    "q": "Your company has offices in New York City and London. The London office contains an on-premises app named Appl.",
+   "boxes": [
+    {
+     "label": "To optimize the connection between the users and the application proxy, deploy",
+     "value": "A connector to the default connector group and a connector to a new connector group",
+     "options": [
+      "A connector to the default connector group and a connector to a new connector group",
+      "Two connectors to a new connector group",
+      "Two connectors to the default connector group"
+     ]
+    },
+    {
+     "label": "To optimize the connection between the application proxy and the connectors, use",
+     "value": "ExpressRoute with Microsoft peering",
+     "options": [
+      "ExpressRoute with Microsoft peering",
+      "ExpressRoute with Microsoft peering and the premium add-on",
+      "ExpressRoute with private peering"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p198_x3158.webp",
@@ -16618,6 +17724,33 @@
     }
    ],
    "q": "You have a hybrid cloud infrastructure.",
+   "boxes": [
+    {
+     "label": "App1",
+     "value": "Azure Application Gateway Web Application Firewall policies",
+     "options": [
+      "Azure AD B2B authentication with Conditional Access",
+      "Azure AD B2C custom policies with Conditional Access",
+      "Azure Application Gateway Web Application Firewall policies",
+      "Azure Firewall",
+      "Azure VPN Gateway with network security group rules",
+      "Azure VPN Point-to-Site connections"
+     ]
+    },
+    {
+     "label": "App2",
+     "value": "Azure AD B2C custom policies with Conditional Access",
+     "options": [
+      "Azure AD B2B authentication with Conditional Access",
+      "Azure AD B2C custom policies with Conditional Access",
+      "Azure Application Gateway Web Application Firewall policies",
+      "Azure Firewall",
+      "Azure VPN Gateway with network security group rules",
+      "Azure VPN Point-to-Site connections"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p199_x3170.webp",
@@ -16914,6 +18047,27 @@
     }
    ],
    "q": "You plan to deploy a dynamically scaling, Linux-based Azure Virtual Machine Scale Set that will host jump servers. The jump servers will be used by support staff who connect f personal and kiosk devices via the internet. The subnet of the jump servers will be associated to a network security group (NSG)",
+   "boxes": [
+    {
+     "label": "Manage NSG rules by using",
+     "value": "Just-in-time (JIT) VM access",
+     "options": [
+      "Azure Automation",
+      "Azure Bastion",
+      "Just-in-time (JIT) VM access"
+     ]
+    },
+    {
+     "label": "Only allow SSH connections to the jump servers from",
+     "value": "Any public IP addresses provided before the connection is established",
+     "options": [
+      "Any public IP addresses provided before the connection is established",
+      "AzureBastionSubnet",
+      "GatewaySubnet"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p203_x3239.webp",
@@ -17027,6 +18181,27 @@
     }
    ],
    "q": "You have multiple on-premises Hyper-V hosts that contain virtual machines. The virtual machines run Windows Server.",
+   "boxes": [
+    {
+     "label": "In Azure, deploy",
+     "value": "Azure Monitor Data collection rules (DCRs)",
+     "options": [
+      "Azure Monitor data collection endpoints",
+      "Azure Monitor Data collection rules (DCRs)",
+      "Microsoft Defender for Cloud data collection settings"
+     ]
+    },
+    {
+     "label": "On the virtual machines, install",
+     "value": "the Azure Connected Machine agent",
+     "options": [
+      "the Azure Connected Machine agent",
+      "the Network Controller role",
+      "the Azure Pipelines agent"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p205_x3283.webp",
@@ -17228,6 +18403,27 @@
     }
    ],
    "q": "You have an on-premises datacenter. The datacenter contains a server named Server1 that runs Windows Server 2022 and a firewall that prevents Server1 from connecting to the internet.",
+   "boxes": [
+    {
+     "label": "For the on-premises datacenter",
+     "value": "Microsoft Azure Backup Server (MABS)",
+     "options": [
+      "An Azure virtual machine extension",
+      "Microsoft Azure Backup Server (MABS)",
+      "The Microsoft Azure Recovery Services (MARS) agent"
+     ]
+    },
+    {
+     "label": "For Sub1",
+     "value": "A Recovery Services vault",
+     "options": [
+      "A Recovery Services vault",
+      "An Azure Backup vault",
+      "Azure Storage block blobs"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p208_x3318.webp",
@@ -17243,11 +18439,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded destination, a Recovery Services vault, checks out -- both the MARS agent and Microsoft Azure Backup Server ultimately back up to one. The recorded agent, the MARS agent, does not check out given the stated constraint that a firewall prevents Server1 from reaching the internet: the MARS agent runs directly on the protected machine and needs that machine itself to have internet access to reach the vault, which Server1 explicitly does not have. Microsoft Azure Backup Server is built for exactly this: it backs up Server1 to local disk over the LAN first, and only the MABS server itself (which can sit on a different, internet-connected part of the network) needs to reach Azure to upload that data to the vault.",
     "whyWrong": [
-     "Installing the MARS agent directly on Server1 would require exactly the internet access the scenario says Server1 doesn’t have; an Azure VM extension has no role in backing up an on-premises server at all. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Installing the MARS agent directly on Server1 would require exactly the internet access the scenario says Server1 doesn’t have; an Azure VM extension has no role in backing up an on-premises server at all."
     ],
     "source": {
      "title": "About Microsoft Azure Backup Server (MABS)",
@@ -17330,6 +18526,27 @@
     }
    ],
    "q": "You have a Microsoft Entra tenant that contains two users named User! and User2.",
+   "boxes": [
+    {
+     "label": "Role",
+     "value": "Privileged Role Administrator",
+     "options": [
+      "Global Administrator",
+      "Privileged Role Administrator",
+      "Security Administrator"
+     ]
+    },
+    {
+     "label": "Tool",
+     "value": "Access reviews",
+     "options": [
+      "Access packages",
+      "Access reviews",
+      "Lifecycle workflows"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p209_x3341.webp",
@@ -17388,6 +18605,27 @@
     }
    ],
    "q": "You have an Azure DevOps organization that is used to manage the development and deployment of internal apps to multiple Azure subscriptions.",
+   "boxes": [
+    {
+     "label": "All pull requests must be enforced",
+     "value": "Protected branches",
+     "options": [
+      "Environments",
+      "Protected branches",
+      "Resource locks"
+     ]
+    },
+    {
+     "label": "All deployments to production must be approved",
+     "value": "Environments",
+     "options": [
+      "Environments",
+      "Resource locks",
+      "Triggers"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p210_x3350.webp",
@@ -17443,6 +18681,27 @@
     }
    ],
    "q": "Your network contains an Active Directory Domain Services (AD DS) domain named Domain1.",
+   "boxes": [
+    {
+     "label": "The number of failed sign-in attempts that trigger a lockout",
+     "value": "Microsoft Entra ID only",
+     "options": [
+      "AD DS only",
+      "Microsoft Entra ID only",
+      "AD DS and Microsoft Entra ID"
+     ]
+    },
+    {
+     "label": "The duration of the lockout",
+     "value": "Microsoft Entra ID only",
+     "options": [
+      "AD DS only",
+      "Microsoft Entra ID only",
+      "AD DS and Microsoft Entra ID"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p212_x3393.webp",
@@ -17458,11 +18717,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Both boxes are testing settings that belong to Microsoft Entra ID specifically, not to a value shared between Entra ID and AD DS. Microsoft's own smart lockout documentation is explicit that the Microsoft Entra lockout threshold and the AD DS account lockout threshold are two separately configured values that must be tuned relative to each other (\"the Microsoft Entra lockout threshold must be LESS than the AD DS account lockout threshold,\" and separately, \"the Microsoft Entra lockout duration must be LONGER than the AD DS account lockout duration\"). Since Microsoft Entra smart lockout's own failed-attempt count and lockout duration are each configured purely within Microsoft Entra ID, and deliberately set to a different number than the separate on-premises AD DS policy, evaluating \"Microsoft Entra smart lockout\" considerations means evaluating Microsoft Entra ID-only settings, not a value that spans both systems.",
     "whyWrong": [
-     "If the same number applied to both AD DS and Microsoft Entra ID, Microsoft’s own guidance to set the Entra threshold lower and the Entra duration longer than AD DS’s separate values would be contradictory, which is why these are documented as two independently configured settings rather than one shared setting. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "If the same number applied to both AD DS and Microsoft Entra ID, Microsoft’s own guidance to set the Entra threshold lower and the Entra duration longer than AD DS’s separate values would be contradictory, which is why these are documented as two independently configured settings rather than one shared setting."
     ],
     "source": {
      "title": "Microsoft Entra smart lockout",
@@ -17740,6 +18999,29 @@
     }
    ],
    "q": "You have a multi-cloud environment that contains an Azure subscription and an Amazon Web Services (AWS) account.",
+   "boxes": [
+    {
+     "label": "Automatically identify threats found in AWS CloudTrail events",
+     "value": "Microsoft Sentinel",
+     "options": [
+      "Azure Arc",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Sentinel"
+     ]
+    },
+    {
+     "label": "Enforce security settings on AWS virtual machines by using Azure policies",
+     "value": "Microsoft Defender for Cloud",
+     "options": [
+      "Azure Arc",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Sentinel"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p216_x3449.webp",
@@ -17755,11 +19037,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The two recorded answers are swapped. Automatically identifying threats in AWS CloudTrail events is a log-ingestion-and-analytics task: Microsoft Sentinel's AWS connector ingests CloudTrail logs and ships with dozens of built-in analytics rules to detect suspicious activity in them, which is exactly what \"automatically identify threats found in AWS CloudTrail events\" needs, not Defender for Cloud (which assesses resource configuration rather than analyzing log events for threats). Enforcing security settings on AWS virtual machines by using Azure Policy is a governance task that runs through Defender for Cloud's AWS connector: once AWS EC2 instances are Arc-onboarded through Defender for Cloud, Azure Policy can be applied to them to enforce configuration settings, which is documented for exactly this scenario -- not Microsoft Sentinel, which has no policy-enforcement capability of its own.",
     "whyWrong": [
-     "Microsoft Sentinel has no mechanism to enforce configuration settings on a resource via Azure Policy, and Microsoft Defender for Cloud does not analyze log events like CloudTrail entries for threats the way Sentinel’s analytics rules do; each recorded answer names the product built for the other box’s job. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Microsoft Sentinel has no mechanism to enforce configuration settings on a resource via Azure Policy, and Microsoft Defender for Cloud does not analyze log events like CloudTrail entries for threats the way Sentinel’s analytics rules do; each recorded answer names the product built for the other box’s job."
     ],
     "source": {
      "title": "AWS S3 data connector for Microsoft Sentinel",
@@ -17801,6 +19083,31 @@
     }
    ],
    "q": "Your company has a Microsoft 365 E5 subscription, an Azure subscription, on-premises applications, and Active Directory Domain Services (AD DS).",
+   "boxes": [
+    {
+     "label": "For the customers",
+     "value": "Azure AD B2C authentication",
+     "options": [
+      "Azure AD B2B authentication with access package assignments",
+      "Azure AD B2C authentication",
+      "Federation in Azure AD Connect with Active Directory Federation Services",
+      "Pass-through authentication in Azure AD Connect",
+      "Password hash synchronization in Azure AD Connect"
+     ]
+    },
+    {
+     "label": "For the partners",
+     "value": "Azure AD B2B authentication with access package assignments",
+     "options": [
+      "Azure AD B2B authentication with access package assignments",
+      "Azure AD B2C authentication",
+      "Federation in Azure AD Connect with Active Directory Federation Services",
+      "Pass-through authentication in Azure AD Connect",
+      "Password hash synchronization in Azure AD Connect"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p217_x3467.webp",
@@ -17983,6 +19290,32 @@
     }
    ],
    "q": "Your company has a multi-cloud environment that contains a Microsoft 365 subscription, an Azure subscription, and Amazon Web Services (AWS) implementation. You need to recommend a security posture management solution for the following components:",
+   "boxes": [
+    {
+     "label": "For the IoT Edge devices",
+     "value": "Microsoft Defender for IoT",
+     "options": [
+      "Azure Arc",
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender for IoT"
+     ]
+    },
+    {
+     "label": "For the AWS EC2 instances",
+     "value": "Microsoft Defender for Cloud and Azure Arc",
+     "options": [
+      "Azure Arc only",
+      "Microsoft Defender for Cloud and Azure Arc",
+      "Microsoft Defender for Cloud Apps only",
+      "Microsoft Defender for Cloud only",
+      "Microsoft Defender for Endpoint and Azure Arc",
+      "Microsoft Defender for Endpoint only"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p219_x3497.webp",
@@ -18134,6 +19467,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains a Microsoft Sentinel workspace named WS1.",
+   "boxes": [
+    {
+     "label": "Custom dashboards",
+     "value": "Workbooks",
+     "options": [
+      "Notebooks",
+      "Playbooks",
+      "Workbooks"
+     ]
+    },
+    {
+     "label": "Automated responses",
+     "value": "Playbooks",
+     "options": [
+      "Notebooks",
+      "Playbooks",
+      "Workbooks"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p222_x3540.webp",
@@ -18343,6 +19697,29 @@
     }
    ],
    "q": "You have a Microsoft 365 subscription and an Azure subscription. Microsoft 365 Defender and Microsoft Defender for Cloud are enabled.",
+   "boxes": [
+    {
+     "label": "EDR",
+     "value": "Onboard the servers to Defender for Cloud",
+     "options": [
+      "Add a Microsoft Sentinel data connector for Azure Active Directory (Azure AD)",
+      "Add a Microsoft Sentinel data connector for Microsoft Defender for Cloud Apps",
+      "Onboard the servers to Azure Arc",
+      "Onboard the servers to Defender for Cloud"
+     ]
+    },
+    {
+     "label": "SOAR",
+     "value": "Configure Microsoft Sentinel playbooks",
+     "options": [
+      "Configure Microsoft Sentinel analytics rules",
+      "Configure Microsoft Sentinel playbooks",
+      "Configure regulatory compliance standards in Defender for Cloud",
+      "Configure workflow automation in Defender for Cloud"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p225_x3598.webp",
@@ -18437,6 +19814,29 @@
     }
    ],
    "q": "You have a Microsoft 365 E5 subscription that uses Microsoft Defender XDR and Microsoft Purview.",
+   "boxes": [
+    {
+     "label": "Service",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Office 365",
+      "Microsoft Purview Data Loss Prevention (DLP)",
+      "Microsoft Purview Information Protection"
+     ]
+    },
+    {
+     "label": "Policy",
+     "value": "An anomaly detection policy",
+     "options": [
+      "A data loss prevention (DLP) policy applied to SharePoint Online",
+      "A file policy",
+      "An anomaly detection policy",
+      "An Endpoint data loss prevention (Endpoint DLP) policy"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p227_x3638.webp",
@@ -18489,6 +19889,29 @@
     }
    ],
    "q": "You have an Azure subscription that contains two virtual machines named VM1 and VM2 and an Azure App Service Standard web app named App1 VM1 is used to upload data to App1. App1 stores data on VM2.",
+   "boxes": [
+    {
+     "label": "Inbound connectivity",
+     "value": "Private endpoints",
+     "options": [
+      "Private endpoints",
+      "Service endpoints",
+      "Static IP restrictions",
+      "Virtual network integration"
+     ]
+    },
+    {
+     "label": "Outbound connectivity",
+     "value": "Virtual network integration",
+     "options": [
+      "Private endpoint",
+      "Service endpoint",
+      "Static IP restrictions",
+      "Virtual network integration"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p228_x3658.webp",
@@ -18541,6 +19964,29 @@
     }
    ],
    "q": "You have a Microsoft 365 E5 subscription that uses Microsoft Exchange Online.",
+   "boxes": [
+    {
+     "label": "Service",
+     "value": "Microsoft Defender for Office 365",
+     "options": [
+      "Azure AD Identity Protection",
+      "Microsoft Defender for DNS",
+      "Microsoft Defender for Office 365",
+      "Microsoft Purview"
+     ]
+    },
+    {
+     "label": "Policy type",
+     "value": "Anti-phishing",
+     "options": [
+      "Anti-phishing",
+      "Anti-spam",
+      "Data loss prevention (DLP)",
+      "Insider risk management"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p229_x3679.webp",
@@ -18678,6 +20124,27 @@
     }
    ],
    "q": "Your company has offices in New York City and Los Angeles.",
+   "boxes": [
+    {
+     "label": "To optimize the connection between the users and the application proxy, deploy",
+     "value": "Two connectors to the default connector group",
+     "options": [
+      "A connector to the default connector group and a connector to a new connector group",
+      "Two connectors to a new connector group",
+      "Two connectors to the default connector group"
+     ]
+    },
+    {
+     "label": "To optimize the connection between the connector and App1, use",
+     "value": "ExpressRoute with private peering",
+     "options": [
+      "ExpressRoute with Microsoft peering",
+      "ExpressRoute with Microsoft peering and the premium add-on",
+      "ExpressRoute with private peering"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p232_x3722.webp",
@@ -18693,11 +20160,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "The recorded answer for connectors, two connectors in the default connector group, checks out for redundancy without adding the complexity of a second group. The recorded peering type, Microsoft peering, does not check out here: Microsoft peering is documented as the ExpressRoute peering type for reaching Microsoft's own cloud-hosted services (Microsoft 365, Dynamics 365, Azure PaaS endpoints), not for reaching resources inside a customer's own virtual network. Here the connector sits in VNet1 (Azure) and needs to reach App1, an on-premises application in the New York City office, over the same ExpressRoute circuit -- exactly what private peering is documented for: connecting an on-premises network to a customer's own Azure virtual network resources.",
     "whyWrong": [
-     "Microsoft peering would route toward Microsoft’s own multi-tenant services, not toward an on-premises application reachable only through the customer’s own VNet, which is the opposite of what connecting the connector in VNet1 to App1 in New York City actually requires. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "Microsoft peering would route toward Microsoft’s own multi-tenant services, not toward an on-premises application reachable only through the customer’s own VNet, which is the opposite of what connecting the connector in VNet1 to App1 in New York City actually requires."
     ],
     "source": {
      "title": "ExpressRoute circuit peerings",
@@ -18950,6 +20417,31 @@
     }
    ],
    "q": "You have a Microsoft 365 E5 subscription.",
+   "boxes": [
+    {
+     "label": "Automatically identifies and stops external, brute force attacks against accounts",
+     "value": "Microsoft Entra ID Protection",
+     "options": [
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Identity",
+      "Microsoft Entra ID Identity Governance",
+      "Microsoft Entra ID Protection"
+     ]
+    },
+    {
+     "label": "Automatically identifies and stops external attacks that use an internal account to exfiltrate data from SharePoint Online sites",
+     "value": "Microsoft Defender for Cloud Apps",
+     "options": [
+      "Microsoft Defender for Cloud",
+      "Microsoft Defender for Cloud Apps",
+      "Microsoft Defender for Identity",
+      "Microsoft Entra ID Identity Governance",
+      "Microsoft Entra ID Protection"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p236_x3763.webp",
@@ -19266,6 +20758,27 @@
     }
    ],
    "q": "You have an Azure subscription.",
+   "boxes": [
+    {
+     "label": "Authorization mechanism",
+     "value": "Attribute-based access control (ABAC)",
+     "options": [
+      "Access control list (ACL)",
+      "Attribute-based access control (ABAC)",
+      "Shared access signature (SAS)"
+     ]
+    },
+    {
+     "label": "Resource type",
+     "value": "Blob",
+     "options": [
+      "Blob",
+      "File",
+      "Table"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p241_x3843.webp",
@@ -19360,6 +20873,27 @@
     }
    ],
    "q": "You have an Azure subscription.",
+   "boxes": [
+    {
+     "label": "Property to add",
+     "value": "roleDefinitionIds",
+     "options": [
+      "conflictEffect",
+      "existenceCondition",
+      "roleDefinitionIds"
+     ]
+    },
+    {
+     "label": "Effect to use",
+     "value": "Modify",
+     "options": [
+      "append",
+      "Modify",
+      "mutate"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p242_x3872.webp",
@@ -19375,11 +20909,11 @@
     }
    ],
    "review": {
-    "status": "MANUAL_REVIEW",
+    "status": "VERIFIED",
     "confidence": "HIGH",
     "explanation": "Modify is the right effect for auto-remediating a missing tag, and that half of the recorded answer checks out. The recorded property, existenceCondition, does not check out for a Modify-effect policy: Microsoft's own documentation describes existenceCondition as a property used with AuditIfNotExists and DeployIfNotExists policies to check whether a related resource exists, not with Modify. For a Modify-effect policy, Microsoft's documentation states that roleDefinitionIds \"is a required property\" specifying which RBAC roles the policy's remediation identity needs to actually add the missing tag, which is the property this scenario's auto-remediating tag policy actually needs to configure.",
     "whyWrong": [
-     "existenceCondition belongs to a different effect type entirely (checking for a related resource’s existence) and plays no role in a Modify policy’s own required configuration, which is why a Modify policy without roleDefinitionIds set would be missing a property Microsoft documents as required. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+     "existenceCondition belongs to a different effect type entirely (checking for a related resource’s existence) and plays no role in a Modify policy’s own required configuration, which is why a Modify policy without roleDefinitionIds set would be missing a property Microsoft documents as required."
     ],
     "source": {
      "title": "Azure Policy effect: Modify",
@@ -19544,6 +21078,27 @@
     }
    ],
    "q": "You have an Azure subscription that contains an Azure Kubernetes Service (AKS) cluster named AKS1. AKS1 hosts a Windows node pool named Pool1 and a Linux node pool named Pool2.",
+   "boxes": [
+    {
+     "label": "Pool1",
+     "value": "Monthly",
+     "options": [
+      "Weekly",
+      "Monthly",
+      "Quarterly"
+     ]
+    },
+    {
+     "label": "Pool2",
+     "value": "Weekly",
+     "options": [
+      "Weekly",
+      "Monthly",
+      "Quarterly"
+     ]
+    }
+   ],
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p245_x3909.webp",
