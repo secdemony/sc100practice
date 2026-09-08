@@ -3288,5 +3288,209 @@
     "whyWrong": [
       "Assigning the backup team Contributor or Owner on the Resource Guard would let the very team the guard is meant to check circumvent it by modifying or removing it themselves, defeating the separation of duties multi-user authorization exists to enforce."
     ]
+  },
+  "std/110": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Best practice recommendations for managed identities",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/managed-identity-best-practice-recommendations"
+    },
+    "explanation": "The recorded endpoint, Azure Instance Metadata Service (IMDS), checks out: IMDS is the non-routable, internal endpoint a VM queries to obtain a token for its own managed identity, which is exactly how App1 would reach Vault1's secrets. The recorded identity type, a system-assigned managed identity, does not check out given \"the virtual machines will be redeployed regularly\": Microsoft's own guidance is direct that system-assigned identities are tied to the lifecycle of the specific VM they're created on and are deleted when that VM is deleted, so a deployment pipeline that regularly destroys and recreates VMs \"creates orphaned RBAC assignments every cycle\" -- a fresh identity, and a fresh Key Vault access grant, every redeploy. A user-assigned managed identity is created once as its own standalone resource and can be attached to each newly redeployed VM in turn, so the same one security principal keeps its access to Vault1 across every redeployment, which is what actually minimizes both the number of security principals touching Vault1 and the administrative effort of re-granting access after each redeploy.",
+    "whyWrong": [
+      "A system-assigned identity looks like the simpler default, but it multiplies security principals over time in exactly this redeploy-heavy scenario, since each new VM instance gets its own new identity needing its own new grant on Vault1. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/116": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Create and use Microsoft Sentinel automation rules to manage response",
+      "url": "https://learn.microsoft.com/en-us/azure/sentinel/create-manage-use-automation-rules"
+    },
+    "explanation": "Automation rules are what let a playbook be attached once and apply broadly rather than being configured on each of MSW1's 50 analytics rules individually, which is exactly \"minimize the administrative effort required to configure individual analytics rules.\" Microsoft's own documentation confirms that when finalizing an automation rule, an admin can set a \"Rule expiration\" date so the rule (and the playbook run it invokes) stops applying after a given date, which is the recorded expiration-date requirement. Incident-trigger automation rules, rather than a rule for every individual alert, are the documented pattern for applying a playbook broadly across whatever analytics rule generated the incident.",
+    "whyWrong": [
+      "Analytics rules and investigation graphs are not what invokes a playbook across many analytics rules at once; automation rules are the construct built for that. An alert-type trigger would tie the playbook to individual alerts rather than the incident level, working against the goal of configuring this once rather than per analytics rule."
+    ]
+  },
+  "std/120": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Discover and govern Azure Blob Storage in Microsoft Purview",
+      "url": "https://learn.microsoft.com/en-us/purview/register-scan-azure-blob-storage-source"
+    },
+    "explanation": "Microsoft Purview's Data Map is what registers and scans Azure data sources, including Azure Blob Storage accounts, applying classification rules (including custom sensitive information types) to what it finds there. On-premises Windows Server shared folders are a different kind of source entirely, one with no Azure resource to register; the Microsoft Purview Information Protection scanner is specifically built to crawl on-premises file shares (and SharePoint Server) and apply the same custom SITs to what it finds, which is why the two boxes point to two different Purview components rather than one covering both storage types.",
+    "whyWrong": [
+      "Compliance Manager assesses regulatory posture rather than scanning content for custom sensitive information types, and insider risk management analyzes user activity signals, not file content. Neither the scanner nor Data Map can be swapped for the other: the scanner has no way to register and enumerate an Azure Blob Storage account, and Data Map has no way to reach an on-premises file share directly."
+    ]
+  },
+  "std/128": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Prioritize security actions by data sensitivity in Microsoft Defender for Cloud",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/information-protection"
+    },
+    "explanation": "Azure Purview (Microsoft Purview's Data Map) is what connects Azure data sources into Microsoft Information Protection's classification and labeling, matching \"connect the Azure data sources to Microsoft Information Protection.\" For triaging security alerts on resources known to hold PII, Microsoft Defender for Cloud's own information-protection integration is documented to \"prioritize security actions by data sensitivity,\" surfacing and ranking alerts on resources that Purview has identified as containing sensitive data higher than alerts on resources that don't -- exactly \"triage security alerts related to resources that contain PII data.\"",
+    "whyWrong": [
+      "Endpoint DLP and Defender for Cloud Apps both operate on user activity and session behavior in Microsoft 365 and SaaS apps, not on connecting Azure resources to Microsoft Information Protection or triaging Defender for Cloud alerts by data sensitivity. Azure Monitor is a general telemetry platform with no data-sensitivity-aware alert prioritization of its own."
+    ]
+  },
+  "std/132": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Regulatory compliance templates in Microsoft Purview Compliance Manager",
+      "url": "https://learn.microsoft.com/en-us/purview/compliance-manager-templates-list"
+    },
+    "explanation": "Microsoft Purview Compliance Manager is built to assess against a large catalog of regulatory templates, including country- and region-specific ones, and its Improvement Actions are exactly the \"improvement action guidance to ensure compliance\" the requirement calls for -- matching \"compliance is assessed based on the regulations of the country of each office\" across offices in 10 countries. Compliance Manager ships a set of free templates, but many country- and industry-specific regulatory templates are premium and require additional licensing, which is the additional cost this scenario should expect to identify once assessments expand beyond the default templates to cover every office's local regulations.",
+    "whyWrong": [
+      "Microsoft Defender for Cloud regulatory compliance and Microsoft Purview Audit (Premium) serve different purposes (Azure resource compliance and unified audit logging, respectively) and are not the documented tool for assessing Microsoft 365 subscription compliance against country-specific regulations. Microsoft Priva assesses privacy risk, a related but distinct discipline from general regulatory compliance assessment."
+    ]
+  },
+  "std/141": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Security features to help protect against ransomware - Azure Backup",
+      "url": "https://learn.microsoft.com/en-us/azure/backup/backup-azure-security-feature"
+    },
+    "explanation": "The recorded protection against a compromised administrator deleting backups from Azure Backup, soft delete, checks out: soft-deleted backup data is retained and recoverable for a retention period regardless of who issued the delete. The recorded protection against a compromised administrator disabling backups specifically on the MARS agent, multi-user authorization by using Resource Guard, targets the wrong layer: Microsoft's own documentation for protecting Azure Backup from ransomware describes a security PIN, generated from the Recovery Services vault and required before critical operations such as \"Stop Protection with Delete Data\" or changing the passphrase can be carried out from the MARS agent itself, on the on-premises server. Multi-user authorization/Resource Guard adds its own separate layer of approval for operations performed against the vault through Azure (the portal, PowerShell, or the API); the risk described here is specifically an admin acting through the on-premises MARS agent software, which is exactly what the security PIN requirement is built to stop.",
+    "whyWrong": [
+      "Multi-user authorization is a real and valuable Azure Backup protection, but it is not what gates a critical operation triggered locally from the MARS agent on the server itself; the security PIN is. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/144": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What are workspaces in Azure API Management?",
+      "url": "https://learn.microsoft.com/en-us/azure/api-management/workspaces-overview"
+    },
+    "explanation": "Azure API Management workspaces are Microsoft's documented mechanism for a federated model: \"teams' access to resources within a workspace is managed through Azure's role-based access control (RBAC)... scoped to a workspace,\" letting each team manage its own set of APIs without touching the rest of the APIM instance, matching \"support the use of RBAC to manage the APIs.\" Subscription keys, which is what \"support the use of keys to control the consumption of the APIs\" refers to, are generated against a Subscription object in APIM, so associating key-based consumption control with Subscriptions is simply naming the construct the key mechanism is built on.",
+    "whyWrong": [
+      "Associating RBAC with Subscriptions or keys with Workspaces would each name the wrong construct: Subscriptions generate consumption keys, not RBAC scopes, and Workspaces are an RBAC-delegation boundary, not a key-issuing object. Products group APIs for publishing but are not themselves the RBAC or key-association scope being asked for here."
+    ]
+  },
+  "std/148": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "DevSecOps controls in the Cloud Adoption Framework for Azure",
+      "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/secure/devsecops-controls"
+    },
+    "explanation": "Static application security testing (SAST) examines source code without running it, which is exactly what \"all the source code must be tested for security vulnerabilities in Azure Repos before deploying\" calls for: the code has not been built into a running app yet at that point. Dynamic application security testing (DAST) needs a running, deployed target to send test traffic against, so it is the documented method for the second stage: \"once the apps are deployed to the test environment they must be tested for security vulnerabilities.\"",
+    "whyWrong": [
+      "Penetration testing and security acceptance testing are broader, typically manual or later-stage validation activities rather than the specific automated pre-deployment code scan and post-deployment running-app scan this scenario calls for. Security smoke testing is a lightweight post-deployment sanity check, not a substitute for either SAST on source code or full DAST against a running test deployment."
+    ]
+  },
+  "std/155": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Azure Monitor Agent requirements",
+      "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-requirements"
+    },
+    "explanation": "Data Collection Rules are what let the Azure Monitor Agent be told exactly which CEF events to forward rather than everything the source produces, which is what minimizes events delivered to WS1 while still ensuring the required events are ingested. For identities, Microsoft's own Azure Monitor Agent requirements state plainly that \"system-assigned managed identity is the only supported authentication for Azure Arc-enabled servers,\" so the 1,000 on-premises servers have no choice in the matter, while for the 1,000 Azure virtual machines, Microsoft recommends user-assigned managed identities for large-scale deployments specifically because one user-assigned identity can be reused across many VMs, cutting 1,000 potential identities down to as few as one.",
+    "whyWrong": [
+      "Filtering with Microsoft Sentinel scheduled query rules or a daily cap on WS1 would still ingest (and pay to ingest) the unwanted events before discarding or capping them, rather than preventing their collection in the first place the way a DCR does. Using user-assigned identities for the Arc-enabled servers isn’t an option Microsoft supports at all, and using system-assigned identities for 1,000 Azure VMs would create 1,000 separate identities where one shared user-assigned identity would do."
+    ]
+  },
+  "std/156": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Microsoft Incident Response ransomware approach and best practices",
+      "url": "https://learn.microsoft.com/en-us/security/ransomware/incident-response-playbook-dart-ransomware-approach"
+    },
+    "explanation": "This order matches Microsoft Incident Response's own published ransomware investigation steps exactly: \"1. Assess the current situation\" (understand the scope), \"2. Identify the [affected] line-of-business (LOB) apps\" (get systems back online), \"3. Determine the compromise recovery (CR) process\" (remove the threat actor from the environment). The recorded order reproduces this sequence and the accompanying goals word for word.",
+    "whyWrong": [
+      "Any reordering of these three steps would run ahead of the information the earlier step is meant to produce -- identifying affected LOB apps before scoping the incident, or planning compromise recovery before knowing which apps and accounts are actually affected -- which is why Microsoft documents them in this specific sequence."
+    ]
+  },
+  "std/158": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Onboard non-persistent virtual desktop infrastructure (VDI) devices",
+      "url": "https://learn.microsoft.com/en-us/defender-endpoint/configure-endpoints-vdi"
+    },
+    "explanation": "Both recorded answers have this backwards. Microsoft's own guidance for onboarding non-persistent VDI devices is explicit: \"if you're deploying non-persistent VDIs through cloning technology, make sure that your internal template VMs are not onboarded to Defender for Endpoint,\" because doing so gives every clone the same underlying sensor identity instead of \"a single entry for each VDI instance.\" The documented method for a single entry per device is instead to copy the onboarding script (Onboard-NonPersistentMachine.ps1 together with the onboarding package) into the golden or template image's own startup scripts, so it runs once per new instance at first boot and onboards that specific instance with its own identity, which is exactly \"add the Defender for Endpoint onboarding script to the virtual machine template/golden image\" -- the other option this item offers, not the one it recorded.",
+    "whyWrong": [
+      "Onboarding the template or golden image directly is precisely what Microsoft’s documentation warns against for non-persistent, cloned deployments, since every clone made from an already-onboarded image inherits the same device identity rather than getting its own single entry. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/159": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "About document fingerprinting",
+      "url": "https://learn.microsoft.com/en-us/purview/sit-document-fingerprinting"
+    },
+    "explanation": "The recorded Conditional Access option, authentication context, checks out: Microsoft's own tutorial for this exact scenario is titled \"Require step-up authentication (authentication context) upon risky action,\" and describes a Defender for Cloud Apps session policy invoking an authentication context to force Microsoft Entra Conditional Access to re-evaluate a session when a sensitive activity like a download occurs. The recorded inspection method, Exact Data Match (EDM), does not check out: EDM matches content against a hashed table of specific known values (like a customer ID list), which is the wrong tool for recognizing \"documents that are based on a predefined form\" regardless of what data has been filled into it. Microsoft's own guidance is that \"document fingerprinting\" is precisely for this case: \"if you have a standard blank form and want to detect any completed versions of that specific form,\" which is exactly Site1's predefined-form documents.",
+    "whyWrong": [
+      "EDM is built to minimize false positives against a specific list of exact sensitive values, not to recognize a document’s underlying template regardless of the values filled into it, which is what fingerprinting is for. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/161": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "What is Azure Front Door?",
+      "url": "https://learn.microsoft.com/en-us/azure/frontdoor/front-door-overview"
+    },
+    "explanation": "Azure Application Gateway, the recorded answer, is a regional resource: it cannot on its own \"maintain access to the apps in the event of a region outage\" across apps spread over four regions, and covering all four regions would need one Application Gateway per region, the opposite of \"minimize the number of resources required.\" Azure Front Door is Microsoft's global, multi-region edge service, built to route across backends in multiple regions and automatically shift traffic away from an unhealthy region without manual failover, all from a single global resource. Front Door's own Web Application Firewall supports the OWASP Core Rule Set, the same managed rule set the requirement calls for, so pairing Front Door with its WAF satisfies both stated requirements from one resource rather than four.",
+    "whyWrong": [
+      "Application Gateway is the right tool when an application lives in a single region and needs regional Layer 7 routing, but this scenario’s explicit region-outage and minimal-resource-count requirements point directly at Front Door’s global, multi-region design instead. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/162": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Understand just-in-time virtual machine access",
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+    },
+    "explanation": "The recorded answer for allowed source IPs, \"any public IP addresses provided before the connection is established,\" already describes just-in-time (JIT) VM access's own mechanism: a user requests access, and Defender for Cloud opens the NSG rule to that specific requester's IP for a limited time before the connection happens. The recorded answer for managing the NSG rules, Azure Bastion, doesn't actually do this: Bastion is a browser-based jump-box service that provides its own RDP/SSH connectivity path and doesn't dynamically open or close NSG rules per user request the way JIT does. Microsoft's own JIT documentation describes exactly the mechanism this scenario needs: it \"ensures 'deny all inbound traffic' rules exist... in the network security group,\" then opens access \"when a user requests access to a VM\" after an RBAC check, for a limited time, which is precisely \"each time the support staff connects to a jump server, they must request access.\"",
+    "whyWrong": [
+      "Azure Bastion provides a connectivity path but has no per-request NSG-opening workflow of its own; Azure Automation has no built-in per-request access-approval mechanism either. Both would need to be paired with something that actually implements request-based access, which is what just-in-time VM access already is by itself. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/168": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Group writeback with Microsoft Entra Cloud Sync",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/hybrid/group-writeback-cloud-sync"
+    },
+    "explanation": "Neither recorded answer holds up. Verifying that a group contains only current members, with automatic removal after 30 days of an unconfirmed review, is entitlement management's access reviews feature by definition; Privileged Identity Management governs time-bound elevation into privileged roles, an unrelated concept to periodically re-certifying a regular project group's membership. For the group configuration, Microsoft's own documentation on group writeback is explicit that \"only cloud-created security groups are synchronized from [Microsoft] Entra ID back to Active Directory\" -- writeback moves a cloud-native group down to on-premises, not the other way around. The project groups in this scenario are on-premises AD DS groups synced up into Entra ID, the opposite source of authority, so \"enable group writeback for the existing synced groups\" describes a direction writeback doesn't support. Creating a new cloud-native security group per project and enabling writeback for each one gives Entra ID a group Access reviews can actually manage and auto-remove members from, while writeback still pushes that same group down to on-premises AD DS so the Windows Server shared folder's NTFS permissions keep working from the one group -- satisfying both the SharePoint Online and shared-folder access requirements without maintaining two separate groups per project.",
+    "whyWrong": [
+      "PIM protects privileged role activation, not membership verification of an ordinary project security group. Writeback cannot be \"enabled\" on a group whose source of authority is already on-premises AD DS; it only ever pushes a cloud-created group down to on-premises, which is why a new cloud-native group is needed in the first place. This item is left flagged rather than corrected because it is an unscored, picture-only answer-area item with no text key a correction could change."
+    ]
+  },
+  "std/174": {
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Zero Trust guidance overview",
+      "url": "https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview"
+    },
+    "explanation": "Microsoft's own Zero Trust guiding principles map onto these three methodologies as recorded. Assume breach is implemented by minimizing blast radius through segmentation, matching \"segmenting access.\" Verify explicitly means authenticating and authorizing based on all available signals, and Microsoft's own definition of that principle explicitly lists data classification among the signals used, matching that pairing. Use least privilege access means giving users and workloads only the access they need for the shortest time required, which Microsoft's own Zero Trust materials illustrate with just-in-time and just-enough-access, matching the third pairing.",
+    "whyWrong": [
+      "Swapping any of these three would misattribute the methodology: segmenting access limits blast radius after a breach is assumed, not what verifies a request explicitly; just-in-time access limits the duration and scope of a grant, which is least privilege’s job, not a substitute for explicit verification or breach containment."
+    ]
+  },
+  "std/178": {
+    "status": "MANUAL_REVIEW",
+    "confidence": "HIGH",
+    "source": {
+      "title": "Securing workload identities with Microsoft Entra ID Protection",
+      "url": "https://learn.microsoft.com/en-us/entra/id-protection/concept-workload-identity-risk"
+    },
+    "explanation": "The recorded service, Microsoft Entra ID Protection, checks out: Identity Protection detects, investigates, and can remediate risky workload identities (service principals) in addition to user identities. The recorded license, Microsoft Entra ID P2, does not check out against \"minimize costs\": Microsoft's own documentation is specific that full risk detail and risk-based Conditional Access for workload identities requires the Microsoft Entra Workload ID Premium license, a narrower add-on scoped to exactly this workload-identity capability, rather than Entra ID P2, which licenses the full breadth of Identity Protection and Privileged Identity Management across every user in the tenant. Recommending the workload-identity-specific license is the minimal-cost way to reach full risk detection and response for service principals specifically.",
+    "whyWrong": [
+      "Entra ID P2 would also enable workload identity risk detection, but at the cost of a per-user premium license across the whole tenant rather than the narrower, purpose-built Workload ID Premium add-on, which is what \"minimize costs\" is steering the recommendation toward."
+    ]
   }
 }
