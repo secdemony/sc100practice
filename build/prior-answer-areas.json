@@ -109,20 +109,6 @@
    "value": "Network security groups (NSGs)"
   }
  ],
- "std/31": [
-  {
-   "label": "SharePoint Online",
-   "value": "Groups and sites"
-  },
-  {
-   "label": "Microsoft Teams",
-   "value": "Groups and sites"
-  },
-  {
-   "label": "Exchange Online",
-   "value": "Files and emails"
-  }
- ],
  "std/34": [
   {
    "label": "Security baselines",
@@ -131,54 +117,6 @@
   {
    "label": "Remote lock",
    "value": "Windows and macOS"
-  }
- ],
- "std/45": [
-  {
-   "label": "Serverless SQL pool",
-   "value": "Azure Storage infrastructure encryption and Microsoft-managed keys"
-  },
-  {
-   "label": "Dedicated SQL pool",
-   "value": "Transparent Data Encryption (TDE) and customer-managed keys"
-  }
- ],
- "std/48": [
-  {
-   "label": "Tenant",
-   "value": "An enterprise application"
-  },
-  {
-   "label": "Server2",
-   "value": "Microsoft Entra private network connector"
-  }
- ],
- "std/57": [
-  {
-   "label": "Windows 11 devices",
-   "value": "Microsoft 365 Defender (Microsoft Defender for Endpoint)"
-  },
-  {
-   "label": "Azure virtual machines",
-   "value": "Microsoft Defender for Cloud"
-  },
-  {
-   "label": "Azure Storage accounts",
-   "value": "Microsoft Defender for Cloud"
-  }
- ],
- "std/59": [
-  {
-   "label": "Threat modeling",
-   "value": "Plan and develop"
-  },
-  {
-   "label": "Actionable intelligence",
-   "value": "Operate"
-  },
-  {
-   "label": "Dynamic application security testing (DAST)",
-   "value": "Build and test"
   }
  ],
  "std/121": [

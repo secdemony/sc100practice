@@ -304,9 +304,20 @@
     "explanation": "Flagged as a defective question rather than a wrong key. The stem asks which **two** solutions to include and says each correct answer is a complete solution, but the source records a single letter. Resource-based RBAC in Microsoft Sentinel is what separates the two teams’ log access, and the Azure Monitor agent is what collects the perimeter servers’ event logs — both are needed, and the near-identical Standalone 122 keys exactly that pair. The likeliest explanation is that this copy lost an option or half its key. Answer it as Azure Monitor agent plus resource-based RBAC, and do not treat the graded result here as meaningful."
   },
   "std/87": {
-    "status": "MANUAL_REVIEW",
-    "confidence": "LOW",
-    "explanation": "Flagged: the key looks wrong and the source seems to know it. The question asks what forces an upgrade from Microsoft Entra ID Free to Premium; the key says multifactor authentication, but the source’s own explanation links to the Privileged Identity Management documentation, which points at option B instead. That fits the licensing: some MFA is available on the Free tier through security defaults, whereas PIM has always required Entra ID P2. Treat B as the more defensible answer. The key is left as the source has it pending a licensing page check."
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "answer": "B",
+    "originalAnswer": "D",
+    "source": {
+      "title": "Microsoft Entra ID Governance licensing fundamentals — Privileged Identity Management licensing",
+      "url": "https://learn.microsoft.com/en-us/entra/id-governance/licensing-fundamentals"
+    },
+    "explanation": "Microsoft's own licensing page settles this directly: \"You need either Microsoft Entra ID Governance licenses or Microsoft Entra ID P2 licenses to use PIM and all of its settings.\" Its feature table lists Privileged Identity Management with no checkmark under Free or P1 at all -- P2 (or Governance/Suite) is where it starts. So a customer on Azure AD Free who needs PIM's just-in-time role activation, approval workflows, and time-bound privileged access has no path to it without upgrading. Multi-factor authentication, by contrast, doesn't force that upgrade: Microsoft Entra security defaults, which are available on the Free tier, already let an organization require MFA for all users at no extra license. Since the customer here is specifically being evaluated for what a Premium upgrade would unlock, and MFA is achievable without one, PIM is the feature that actually necessitates it.",
+    "whyWrong": [
+      "A. Role-based authorization (Azure RBAC / basic Entra ID roles) works in the Free tier; assigning built-in roles needs no Premium license.",
+      "C. Resource-based authorization is an application-design pattern (authorizing against a resource's own access control list), not a licensed Entra ID feature at all -- it doesn't move by license tier.",
+      "D. The keyed answer, Multi-Factor Authentication, is available on Azure AD Free through security defaults, so needing MFA alone doesn't force an upgrade to Premium the way PIM does."
+    ]
   },
   "std/103": {
     "status": "OUTDATED",
@@ -387,13 +398,20 @@
     ]
   },
   "std/88": {
-    "status": "AMBIGUOUS",
-    "confidence": "MEDIUM",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "answer": "B",
+    "originalAnswer": "C",
     "source": {
-      "title": "Learn about sensitivity labels",
-      "url": "https://learn.microsoft.com/en-us/purview/sensitivity-labels"
+      "title": "Learn about data loss prevention",
+      "url": "https://learn.microsoft.com/en-us/purview/dlp-learn-about-dlp"
     },
-    "explanation": "Flagged as genuinely contestable rather than wrong. The source keys sensitivity label policies, and that defends well: a label applies encryption whose usage rights follow the file, so an external recipient cannot open it wherever it ends up. But DLP policies are the control literally designed to prevent sharing outside the organisation, and the near-identical Standalone 235 keys the two together as a pair. Either is defensible as written. On the exam, read for the verb: “classify and protect” points at labels, “prevent from being shared” points at DLP, and where both appear the intended answer is usually both."
+    "explanation": "The stem's verb is \"prevent ... from being shared outside the company,\" and that is DLP's own stated purpose: organizations \"need a way to help prevent their users from inappropriately sharing sensitive data with people who shouldn't have it. This practice is called data loss prevention (DLP).\" DLP ships a predefined \"Medical and health data\" policy template for exactly PHI, covers precisely the workloads named in the stem (\"Exchange, SharePoint, OneDrive accounts, and Teams chat and channel messages\"), and acts in real time: for SharePoint/Exchange/OneDrive it can \"block people who are outside your organization from accessing the content,\" and for Teams it can \"block sensitive information from being shared in the chat or channel.\" A sensitivity label, by contrast, classifies content and can carry encryption with it, but applying a label is not itself an external-sharing block -- enforcing that requires a DLP policy (or a label-aware Conditional Access/DLP rule) layered on top. Given the stem asks for the single thing to recommend to stop PHI leaving the company, DLP is the control built for that job.",
+    "whyWrong": [
+      "A. Insider risk management policies detect risky user behaviour (unusual downloads, data leaks in progress) for investigators to review. Detection isn't prevention -- it doesn't block a share from happening.",
+      "C. Sensitivity label policies classify content and can encrypt it, but a label alone doesn't stop a user from emailing or sharing a file outside the company; that enforcement step is DLP's job, not the label's.",
+      "D. Retention policies govern how long content is kept and what happens to it at the end of that period. They have no control over who content can be shared with."
+    ]
   },
   "std/107": {
     "status": "AMBIGUOUS",
@@ -1665,16 +1683,19 @@
     ]
   },
   "std/98": {
-    "status": "AMBIGUOUS",
-    "confidence": "MEDIUM",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "answer": "B",
+    "originalAnswer": "A",
     "source": {
       "title": "Add an enterprise application to your Microsoft Entra tenant",
       "url": "https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal"
     },
-    "explanation": "Flagged because the word \"first\" pulls against the keyed answer, and the stem does not say which reading is intended. The control that enforces the requirement is certainly a Conditional Access policy: target App1, scope it to Group1, and require a Microsoft Entra joined device. But a Conditional Access policy can only target an application that already exists in the tenant as an enterprise application, and the stem describes App1 as an external SaaS app that supports Microsoft Entra credentials, which reads as capable of single sign-on rather than already integrated. On that reading the enterprise application is what you create first and the policy second, which is the only reading in which the word \"first\" does any work. If App1 is already registered, the keyed answer stands and nothing else is needed. Both readings are defensible, so the key is left alone.",
+    "explanation": "The stem asks what to create *first*, and that word does real work here: a Conditional Access policy cannot target an application that doesn't yet exist as an object in the tenant. App1 is described as an external SaaS app that merely \"supports the use of Microsoft Entra credentials\" -- capable of Entra-based sign-in, not already wired into the tenant. Before Conditional Access, SSO, or any assignment policy can reference App1 at all, it has to be added to the tenant as an enterprise application (via the app gallery or a non-gallery/custom registration), which is what creates the service principal those policies target. Only after that exists can a Conditional Access policy be created to require a Microsoft Entra joined device and scope access to Group1. If App1 were already registered, there would be nothing left to \"create first\" and the question wouldn't need that word at all -- so B is the answer the stem's own phrasing points to.",
     "whyWrong": [
-      "C. An application proxy connector group publishes on-premises apps. App1 is external SaaS.",
-      "D. An access package governs who may request access over time. It does not restrict the device a user signs in from."
+      "A. A Conditional Access policy is the control that eventually enforces the device and group requirements, but it can't be created first: it has nothing to target until App1 exists in the tenant as an enterprise application.",
+      "C. A Microsoft Entra application proxy connector group publishes on-premises web apps to remote users. App1 is an external SaaS app, so app proxy doesn't apply.",
+      "D. An access package (Entitlement Management) manages who may request access to a resource over time. It's not the prerequisite object a device-based Conditional Access policy needs to exist first."
     ]
   },
   "std/182": {
@@ -2309,7 +2330,7 @@
     "explanation": "The three keyed actions replace a single choke-point RDP server with a Zero Trust access path built for a remote, latency-sensitive contractor team. Migrating from the Remote Desktop server to Azure Virtual Desktop removes the shared jump-box and its custom administrative tools, giving each developer a session that terminates close to the Azure resources instead of hairpinning through Seattle. Azure Firewall restricting host pool outbound access (host pool is the AVD term for the set of session hosts) hardens that new AVD deployment's egress rather than leaving it wide open. Conditional Access with MFA and named locations then applies explicit, per-sign-in verification for a workforce connecting from France, which is the identity control a Zero Trust design substitutes for trusting the network path.",
     "whyWrong": [
       "A. Restricting NSGs to specific IP ranges is a network-perimeter control from the model Zero Trust is replacing, and static IP allowlisting for developers in France does nothing to reduce the latency of relaying through a single Seattle-based server.",
-      "E. Deploying a second Remote Desktop server into a French Azure region still centralises access through a jump-box with locally installed admin tools, which is the pattern the redesign is meant to retire, not relocate."
+      "E. Deploying a second Remote Desktop server into a French Azure region still centralises access through a jump-box with locally installed admin tools, which is the pattern the redesign is meant to retire, not relocate. It also directly contradicts D in the same answer: D retires the Remote Desktop server in favour of Azure Virtual Desktop, so a three-part answer can't also stand up a brand-new Remote Desktop server elsewhere -- picking both D and E describes an architecture that migrates away from RDS and stands up more RDS in the same breath."
     ]
   },
   "std/1": {
@@ -3281,7 +3302,8 @@
     },
     "explanation": "Three segments cover this scenario with nothing left unaccounted for: one for Investment's regular employees, one for Research's regular employees, and a single combined segment for both departments' compliance-team members, so that the compliance segment is never split into two separate ones needing an explicit allow between them. Microsoft's own Information Barriers documentation shows that blocking two segments from each other takes two policies, one per direction (blocking Investment from Research and Research from Investment); with no policy at all referencing the compliance segment, its members remain free to communicate with everyone, including each other and their own department's colleagues, which is exactly \"the compliance team of each department must be able to communicate with the compliance team of the other department\" while the two departments' regular employees stay isolated from each other.",
     "whyWrong": [
-      "Splitting the compliance team into two department-specific segments would need an explicit allow policy between them to satisfy their cross-department communication requirement, raising the segment and policy count above the minimum without changing what the solution actually accomplishes."
+      "Splitting the compliance team into two department-specific segments would need an explicit allow policy between them to satisfy their cross-department communication requirement, raising the segment and policy count above the minimum without changing what the solution actually accomplishes.",
+      "It's tempting to worry that one merged compliance segment can also reach ordinary Investment and Research employees, not just fellow compliance staff -- but splitting it into Investment-Compliance and Research-Compliance segments instead doesn't fix that: with only 2 policies spent blocking Investment-general from Research-general, neither compliance segment is named in any policy either way, so it remains just as free to reach the other department's regular employees. Microsoft's own worked example demonstrates the same default: a segment (HR, in their scenario) that isn't named in any block or allow policy is described as able to communicate with \"everyone,\" no restrictions -- naming a segment in zero policies produces that same unrestricted reach whether it's one merged segment or two unreferenced ones. Actually closing that gap would require additional block policies naming the compliance segment(s) directly, which pushes the policy count above 2 -- so it's outside what the minimum-segments/minimum-policies question is asking for, not something either 3- or 4-segment design achieves for free."
     ]
   },
   "std/105": {

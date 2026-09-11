@@ -66,6 +66,17 @@ ANSWER_AREAS = {
          'value': 'Password Administrator',
          'options': ['Directory Readers', 'Helpdesk Administrator', 'Password Administrator']}
     ],
+    ('std', 31): [
+        {'label': "SharePoint Online",
+         'value': "Groups and sites",
+         'options': ["Files and emails", "Groups and sites", "Schematized data assets"]},
+        {'label': "Microsoft Teams",
+         'value': "Groups and sites",
+         'options': ["Files and emails", "Groups and sites", "Schematized data assets"]},
+        {'label': "Exchange Online",
+         'value': "Files and emails",
+         'options': ["Files and emails", "Groups and sites", "Schematized data assets"]}
+    ],
     ('std', 28): [
         {'label': "For the database administrators",
          'value': "Always Encrypted",
@@ -122,6 +133,26 @@ ANSWER_AREAS = {
          'value': "Product",
          'options': ["API", "Product", "Workspace"]}
     ],
+    ('std', 45): [
+        {'label': "Serverless SQL pool",
+         'value': "Azure Storage infrastructure encryption and Microsoft-managed keys",
+         'options': ["Azure Storage infrastructure encryption and Microsoft-managed keys",
+                     "Transparent Data Encryption (TDE) and customer-managed keys",
+                     "Transparent Data Encryption (TDE) and Microsoft-managed keys"]},
+        {'label': "Dedicated SQL pool",
+         'value': "Transparent Data Encryption (TDE) and customer-managed keys",
+         'options': ["Azure Storage infrastructure encryption and Microsoft-managed keys",
+                     "Transparent Data Encryption (TDE) and customer-managed keys",
+                     "Transparent Data Encryption (TDE) and Microsoft-managed keys"]}
+    ],
+    ('std', 48): [
+        {'label': "Tenant",
+         'value': "An enterprise application",
+         'options': ["An access package", "An app registration", "An enterprise application", "A managed identity"]},
+        {'label': "Server2",
+         'value': "Microsoft Entra private network connector",
+         'options': ["The Azure Connected Machine agent", "Microsoft Entra Connect Sync", "Microsoft Entra private network connector"]}
+    ],
     ('std', 50): [
         {'label': "Identify data exfiltration attempts",
          'value': "Microsoft Defender for Cloud Apps",
@@ -145,6 +176,28 @@ ANSWER_AREAS = {
         {'label': "Only users that use Intune-compliant devices must be able to sign in to Dropbox",
          'value': "Access policy",
          'options': ["Access policy", "Activity policy", "OAuth app policy"]}
+    ],
+    ('std', 57): [
+        {'label': "Windows 11 devices",
+         'value': "Microsoft 365 Defender",
+         'options': ["Microsoft 365 compliance center", "Microsoft 365 Defender", "Microsoft Defender for Cloud", "Microsoft Sentinel"]},
+        {'label': "Azure virtual machines",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Microsoft 365 compliance center", "Microsoft 365 Defender", "Microsoft Defender for Cloud", "Microsoft Sentinel"]},
+        {'label': "Azure Storage accounts",
+         'value': "Microsoft Defender for Cloud",
+         'options': ["Microsoft 365 compliance center", "Microsoft 365 Defender", "Microsoft Defender for Cloud", "Microsoft Sentinel"]}
+    ],
+    ('std', 59): [
+        {'label': "Threat modeling",
+         'value': "Plan and develop",
+         'options': ["Plan and develop", "Build and test", "Commit the code", "Go to production", "Operate"]},
+        {'label': "Actionable intelligence",
+         'value': "Operate",
+         'options': ["Plan and develop", "Build and test", "Commit the code", "Go to production", "Operate"]},
+        {'label': "Dynamic application security testing (DAST)",
+         'value': "Build and test",
+         'options': ["Plan and develop", "Build and test", "Commit the code", "Go to production", "Operate"]}
     ],
     ('std', 62): [
         {'label': "Scope",
