@@ -6,11 +6,11 @@
   "scorable": 297,
   "examined": 310,
   "notReviewed": 0,
-  "corrected": 42,
-  "verified": 243,
+  "corrected": 43,
   "outdated": 12,
-  "not_reviewed": 0,
   "ambiguous": 3,
+  "not_reviewed": 0,
+  "verified": 242,
   "manual_review": 10
  },
  "findings": {
@@ -1310,13 +1310,18 @@
   },
   "std/129": {
    "question": "Standalone 129",
-   "status": "VERIFIED",
-   "confidence": "MEDIUM",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "answer": "B",
+   "originalAnswer": "A",
    "source": {
-    "title": "Set up Azure App Service access restrictions",
-    "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
+    "title": "Secure traffic to origins - Azure Front Door",
+    "url": "https://learn.microsoft.com/en-us/azure/frontdoor/origin-security"
    },
-   "explanation": "Yes. An access restriction rule built on the AzureFrontDoor.Backend service tag allows the app to accept traffic only from Front Door's backend address ranges, and Azure keeps the tag current as those ranges change, so nothing breaks when the platform scales. One refinement is worth carrying into the exam: a service tag admits any Front Door instance, not only yours, so Microsoft's own guidance pairs the rule with a check on the X-Azure-FDID header carrying your Front Door ID. The keyed answer is the mechanism the question is testing; the header is what pins it to your instance."
+   "explanation": "No. The goal is narrower than \"allow traffic from Front Door\" -- it's to ensure the apps accept traffic only through *this specific* Front Door instance. Microsoft's own guidance says plainly: \"IP address filtering alone isn't sufficient to secure traffic to your origin, because other Azure customers use the same IP addresses. You should also configure your origin to ensure that traffic has originated from your Front Door profile.\" The AzureFrontDoor.Backend service tag is shared across every Front Door deployment in Azure, so a service-tag-only access restriction admits traffic from anyone else's Front Door instance too, not just the one this solution is meant to require. Meeting the actual goal needs the second half of Microsoft's documented two-part approach: also validating the X-Azure-FDID request header against this profile's own Front Door ID, which the proposed solution doesn't do. Since a solution that only partly satisfies the stated goal doesn't meet it, the answer is No.",
+   "whyWrong": [
+    "The service tag rule isn't wrong on its own terms -- it correctly restricts traffic to Front Door's address space, and Azure keeps that address list current. It just doesn't finish the job the question asks for: distinguishing this Front Door instance from every other customer's, which is what the X-Azure-FDID header check is for."
+   ]
   },
   "std/56": {
    "question": "Standalone 56",

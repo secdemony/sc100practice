@@ -119,26 +119,6 @@
    "value": "Windows and macOS"
   }
  ],
- "std/121": [
-  {
-   "label": "Rate limit",
-   "value": "A custom rule"
-  },
-  {
-   "label": "Block malicious bots",
-   "value": "A managed rule set"
-  }
- ],
- "std/126": [
-  {
-   "label": "For WAF",
-   "value": "Data connectors"
-  },
-  {
-   "label": "For the virtual machines",
-   "value": "The Log Analytics agent"
-  }
- ],
  "std/167": [
   {
    "label": "To streamline creation",

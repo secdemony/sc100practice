@@ -11696,14 +11696,24 @@
    "boxes": [
     {
      "label": "Rate limit",
-     "value": "A custom rule"
+     "value": "A custom rule",
+     "options": [
+      "A custom rule",
+      "An exclusion list",
+      "A managed rule set"
+     ]
     },
     {
      "label": "Block malicious bots",
-     "value": "A managed rule set"
+     "value": "A managed rule set",
+     "options": [
+      "A custom rule",
+      "An exclusion list",
+      "A managed rule set"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p117_x1885.webp",
@@ -11956,14 +11966,27 @@
    "boxes": [
     {
      "label": "For WAF",
-     "value": "Data connectors"
+     "value": "Data connectors",
+     "options": [
+      "The Azure Diagnostics extension",
+      "Azure Network Watcher",
+      "Data connectors",
+      "Workflow automation"
+     ]
     },
     {
      "label": "For the virtual machines",
-     "value": "The Log Analytics agent"
+     "value": "The Log Analytics agent",
+     "options": [
+      "The Azure Diagnostics extension",
+      "Azure Storage Analytics",
+      "Data connectors",
+      "The Log Analytics agent",
+      "Workflow automation"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p121_x1941.webp",
@@ -12129,20 +12152,26 @@
     "Yes",
     "No"
    ],
-   "a": "A",
+   "a": "B",
    "e": [
     {
      "p": "https://docs.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions#restrict-access-to-a-specific- azure-f ront-door-instan ce"
     }
    ],
+   "srcA": "A",
    "review": {
-    "status": "VERIFIED",
-    "confidence": "MEDIUM",
-    "explanation": "Yes. An access restriction rule built on the AzureFrontDoor.Backend service tag allows the app to accept traffic only from Front Door's backend address ranges, and Azure keeps the tag current as those ranges change, so nothing breaks when the platform scales. One refinement is worth carrying into the exam: a service tag admits any Front Door instance, not only yours, so Microsoft's own guidance pairs the rule with a check on the X-Azure-FDID header carrying your Front Door ID. The keyed answer is the mechanism the question is testing; the header is what pins it to your instance.",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nNo. The goal is narrower than \"allow traffic from Front Door\" -- it's to ensure the apps accept traffic only through *this specific* Front Door instance. Microsoft's own guidance says plainly: \"IP address filtering alone isn't sufficient to secure traffic to your origin, because other Azure customers use the same IP addresses. You should also configure your origin to ensure that traffic has originated from your Front Door profile.\" The AzureFrontDoor.Backend service tag is shared across every Front Door deployment in Azure, so a service-tag-only access restriction admits traffic from anyone else's Front Door instance too, not just the one this solution is meant to require. Meeting the actual goal needs the second half of Microsoft's documented two-part approach: also validating the X-Azure-FDID request header against this profile's own Front Door ID, which the proposed solution doesn't do. Since a solution that only partly satisfies the stated goal doesn't meet it, the answer is No.",
+    "whyWrong": [
+     "The service tag rule isn't wrong on its own terms -- it correctly restricts traffic to Front Door's address space, and Azure keeps that address list current. It just doesn't finish the job the question asks for: distinguishing this Front Door instance from every other customer's, which is what the X-Azure-FDID header check is for."
+    ],
     "source": {
-     "title": "Set up Azure App Service access restrictions",
-     "url": "https://learn.microsoft.com/en-us/azure/app-service/app-service-ip-restrictions"
-    }
+     "title": "Secure traffic to origins - Azure Front Door",
+     "url": "https://learn.microsoft.com/en-us/azure/frontdoor/origin-security"
+    },
+    "corrected": true,
+    "originalAnswer": "A"
    }
   },
   {

@@ -295,6 +295,22 @@ ANSWER_AREAS = {
          'value': "The Information Protection scanner",
          'options': ["Compliance Manager", "Data Map", "Insider risk management", "The Information Protection scanner"]}
     ],
+    ('std', 121): [
+        {'label': "Rate limit",
+         'value': "A custom rule",
+         'options': ["A custom rule", "An exclusion list", "A managed rule set"]},
+        {'label': "Block malicious bots",
+         'value': "A managed rule set",
+         'options': ["A custom rule", "An exclusion list", "A managed rule set"]}
+    ],
+    ('std', 126): [
+        {'label': "For WAF",
+         'value': "Data connectors",
+         'options': ["The Azure Diagnostics extension", "Azure Network Watcher", "Data connectors", "Workflow automation"]},
+        {'label': "For the virtual machines",
+         'value': "The Log Analytics agent",
+         'options': ["The Azure Diagnostics extension", "Azure Storage Analytics", "Data connectors", "The Log Analytics agent", "Workflow automation"]}
+    ],
     ('std', 128): [
         {'label': "To connect the Azure data sources to Microsoft Information Protection",
          'value': "Azure Purview",
