@@ -650,6 +650,13 @@
   @media (max-width: 640px){
     .review-panel{margin:14px 16px 0;padding:13px 15px;}
   }
+
+  /* All-Time Missed Questions date-range presets: same pill as the question-
+     range presets above, plus a selected state neither of them needed before. */
+  .preset-btn.active{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .preset-btn.active:hover{color:#fff;}
 </style>
 </head>
 <body>
@@ -1392,19 +1399,33 @@ async function saveHistory(list){
 // ever removed automatically; the only things that take a question out are the
 // explicit user actions ("Clear list", or "Remove correct from missed list"
 // on the results screen). Items that cannot be scored never enter it.
+//
+// Each entry is {qn, missedAt}: missedAt is the ISO timestamp of the LAST time
+// that question was missed, so missing it again later just bumps the date —
+// it does not create a second entry or lose the fact that it was ever missed
+// before. missedAt is null for entries saved before this field existed; those
+// still count toward the all-time pool but can never match a specific-date
+// filter, since there is no date to compare (see wrongPoolInRange below).
 // ---------------------------------------------------------------------------
 
 function normalizeWrongPool(arr){
-  const seen = new Set();
-  const out = [];
+  const byQn = new Map();
   (Array.isArray(arr) ? arr : []).forEach(v => {
-    const n = Number(v);
-    if(!Number.isFinite(n) || seen.has(n)) return;
-    if(!isScorable(QMAP[n])) return;
-    seen.add(n);
-    out.push(n);
+    // Accept both the current {qn, missedAt} shape and the plain-number shape
+    // this pool used before date filtering existed, so nobody's saved list is
+    // lost when this ships — a bare number just becomes a dated-unknown entry.
+    const isRecord = v && typeof v === 'object';
+    const qn = Number(isRecord ? v.qn : v);
+    const missedAt = isRecord ? (v.missedAt || null) : null;
+    if(!Number.isFinite(qn) || !isScorable(QMAP[qn])) return;
+    const existing = byQn.get(qn);
+    // A real date beats "unknown", and a later date beats an earlier one —
+    // this is what lets re-missing a question bump it into today's filter.
+    if(!existing || (missedAt && (!existing.missedAt || missedAt > existing.missedAt))){
+      byQn.set(qn, {qn, missedAt});
+    }
   });
-  return out.sort((a,b)=>a-b);
+  return Array.from(byQn.values()).sort((a,b)=>a.qn-b.qn);
 }
 
 async function loadWrongPool(){
@@ -1419,26 +1440,84 @@ async function saveWrongPool(arr){
   }catch(e){ console.error('save wrong pool failed', e); }
 }
 
-// Merge question ids into the persistent pool. Never removes. Writes to storage
-// only when something actually changed, so this is cheap enough to call once
-// per graded question. Returns true if the pool grew.
+// Merge question ids into the persistent pool, stamped with the current time.
+// Never removes — re-adding an id already on the list just refreshes its date.
 async function addToWrongPool(qns){
   const list = Array.isArray(qns) ? qns : [qns];
-  const merged = normalizeWrongPool((state.wrongPool || []).concat(list));
-  if(merged.length === (state.wrongPool || []).length) return false;
-  state.wrongPool = merged;
+  if(list.length === 0) return;
+  const now = new Date().toISOString();
+  const incoming = list.map(qn => ({qn, missedAt: now}));
+  state.wrongPool = normalizeWrongPool((state.wrongPool || []).concat(incoming));
   await saveWrongPool(state.wrongPool);
-  return true;
 }
 
 // The only removal path other than a full clear — driven by an explicit click.
 async function removeFromWrongPool(qns){
   const drop = new Set((Array.isArray(qns) ? qns : [qns]).map(Number));
-  const kept = (state.wrongPool || []).filter(n => !drop.has(n));
+  const kept = (state.wrongPool || []).filter(r => !drop.has(r.qn));
   if(kept.length === (state.wrongPool || []).length) return false;
   state.wrongPool = kept;
   await saveWrongPool(state.wrongPool);
   return true;
+}
+
+// ---------------------------------------------------------------------------
+// DATE-RANGE FILTERING for the all-time missed pool (setup screen control).
+// Ranges are local calendar days, not UTC, so "Today" matches what the
+// candidate's own clock says today is.
+// ---------------------------------------------------------------------------
+const MISSED_PRESETS = [
+  ['all', 'All time'],
+  ['today', 'Today'],
+  ['2day', 'Today + yesterday'],
+  ['7day', 'Last 7 days'],
+  ['custom', 'Custom range']
+];
+function missedPresetLabel(key){
+  const p = MISSED_PRESETS.find(p => p[0] === key);
+  return p ? p[1] : 'All time';
+}
+function startOfLocalDay(daysAgo){
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - daysAgo);
+  return d;
+}
+function endOfLocalDay(daysAgo){
+  const d = startOfLocalDay(daysAgo);
+  d.setHours(23,59,59,999);
+  return d;
+}
+// filt is {preset, from, to} where from/to are 'YYYY-MM-DD' strings from a
+// <input type=date>, only meaningful when preset === 'custom'. Returns the
+// [from, to] Date bounds for the selected preset, or [null, null] for "all
+// time" (no bound at all — every dated entry matches, undated ones included
+// by the caller separately since "all time" is the one range they DO belong to).
+function missedRangeBounds(filt){
+  if(filt.preset === 'today') return [startOfLocalDay(0), endOfLocalDay(0)];
+  if(filt.preset === '2day') return [startOfLocalDay(1), endOfLocalDay(0)];
+  if(filt.preset === '7day') return [startOfLocalDay(6), endOfLocalDay(0)];
+  if(filt.preset === 'custom'){
+    const from = filt.from ? new Date(filt.from + 'T00:00:00') : null;
+    const to = filt.to ? new Date(filt.to + 'T23:59:59.999') : null;
+    return [from, to];
+  }
+  return [null, null];
+}
+// The question numbers from the all-time pool that fall in filt's range.
+// "All time" (no bound) returns everything, undated entries included; any
+// other range excludes undated entries outright, since there is no date to
+// compare them against.
+function wrongPoolInRange(filt){
+  const [from, to] = missedRangeBounds(filt);
+  if(!from && !to) return state.wrongPool.map(r => r.qn);
+  return state.wrongPool.filter(r => {
+    if(!r.missedAt) return false;
+    const t = new Date(r.missedAt).getTime();
+    if(from && t < from.getTime()) return false;
+    if(to && t > to.getTime()) return false;
+    return true;
+  }).map(r => r.qn);
 }
 
 // Is this recorded answer a miss (wrong OR never answered)? Empty selection
@@ -1750,8 +1829,50 @@ function renderSetup(app){
     wrongPad.appendChild(el('div',{class:'subtitle'},[
       "Every question you've gotten wrong or skipped, accumulated across every exam you've taken on this device — including runs you exited part-way. Questions stay on this list until you remove them yourself."
     ]));
+
+    // Ephemeral UI state (not persisted): which range is currently selected.
+    if(!state.missedFilter) state.missedFilter = {preset:'all', from:'', to:''};
+    const filt = state.missedFilter;
+
+    const presetWrap = el('div',{class:'presets', style:'margin-bottom:4px;'});
+    MISSED_PRESETS.forEach(([key,label])=>{
+      presetWrap.appendChild(el('button',{
+        class: 'preset-btn' + (filt.preset===key ? ' active' : ''),
+        onclick: ()=>{ state.missedFilter.preset = key; render(); }
+      },[label]));
+    });
+    wrongPad.appendChild(presetWrap);
+
+    if(filt.preset === 'custom'){
+      wrongPad.appendChild(el('div',{class:'row', style:'margin-bottom:12px;'},[
+        el('div',{},[
+          el('label',{},['From']),
+          el('input',{type:'date', value: filt.from, onchange:(e)=>{ state.missedFilter.from = e.target.value; render(); }})
+        ]),
+        el('div',{},[
+          el('label',{},['To']),
+          el('input',{type:'date', value: filt.to, onchange:(e)=>{ state.missedFilter.to = e.target.value; render(); }})
+        ])
+      ]));
+    }
+
+    const qns = wrongPoolInRange(filt);
+    const undatedCount = state.wrongPool.filter(r => !r.missedAt).length;
+
+    if(filt.preset !== 'all'){
+      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 8px;'},[
+        `${qns.length} of ${state.wrongPool.length} match ${missedPresetLabel(filt.preset).toLowerCase()}.`
+      ]));
+    }
+    if(undatedCount > 0){
+      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 8px;'},[
+        `${undatedCount} question${undatedCount===1?'':'s'} on this list ${undatedCount===1?'was':'were'} missed before date filtering existed, so ` +
+        `${undatedCount===1?'it has':'they have'} no recorded date — ${undatedCount===1?'it only counts':'they only count'} toward "All time".`
+      ]));
+    }
+
     wrongPad.appendChild(el('div',{class:'btn-row'},[
-      el('button',{class:'btn btn-primary', onclick: async ()=>{
+      el('button',{class:'btn btn-primary', disabled: qns.length===0 ? 'true' : null, onclick: async ()=>{
         const nameVal = nameInput.value.trim();
         if(!nameVal){ errDiv.textContent = 'Please enter the candidate name.'; errDiv.style.display='block'; return; }
         state.session = {
@@ -1759,7 +1880,7 @@ function renderSetup(app){
           secKey: 'all',
           rangeStart: null, rangeEnd: null,
           isWrongPool: true,
-          order: state.wrongPool.slice(),
+          order: qns.slice(),
           currentIndex: 0,
           answers: {},
           flags: {},
@@ -1769,10 +1890,11 @@ function renderSetup(app){
         await saveSession(state.session);
         state.screen = 'exam';
         render();
-      }},[`Practice All-Time Missed Questions (${state.wrongPool.length})`]),
+      }},[`Practice Missed Questions (${qns.length})`]),
       el('button',{class:'btn btn-outline', onclick: async ()=>{
-        if(confirm("Clear your all-time missed-questions list? This can't be undone.")){
+        if(confirm("Clear your ENTIRE all-time missed-questions list — every date, not just the selected range? This can't be undone.")){
           state.wrongPool = [];
+          state.missedFilter = {preset:'all', from:'', to:''};
           await saveWrongPool([]);
           render();
         }
@@ -2538,7 +2660,7 @@ function renderFinished(app){
   // Questions in this run that are on the all-time missed list but were
   // answered correctly here. The list is never pruned automatically, so this
   // gives a targeted way to retire ones that have been mastered.
-  const wrongPoolSet = new Set(state.wrongPool || []);
+  const wrongPoolSet = new Set((state.wrongPool || []).map(r => r.qn));
   const masteredNums = session.order.filter(qn => wrongPoolSet.has(qn) && !isMissedAnswer(qn, session.answers[qn]));
 
   const leftBtns = [

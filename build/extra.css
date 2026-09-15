@@ -246,3 +246,10 @@
   @media (max-width: 640px){
     .review-panel{margin:14px 16px 0;padding:13px 15px;}
   }
+
+  /* All-Time Missed Questions date-range presets: same pill as the question-
+     range presets above, plus a selected state neither of them needed before. */
+  .preset-btn.active{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .preset-btn.active:hover{color:#fff;}
