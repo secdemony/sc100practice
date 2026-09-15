@@ -415,6 +415,14 @@ ANSWER_AREAS = {
          'value': "Microsoft Entra Workload ID Premium",
          'options': ["Microsoft Entra ID P1", "Microsoft Entra ID P2", "Microsoft Entra Workload ID Premium"]}
     ],
+    ('std', 180): [
+        {'label': "Ensure Fabrikam users can use access packages without creating guest accounts",
+         'value': "A connected organization",
+         'options': ["A connected organization", "An external organization", "An identity provider"]},
+        {'label': "Allow non-administrative users to create access packages",
+         'value': "Catalogs",
+         'options': ["Administrative units", "Catalogs", "Programs"]}
+    ],
     ('std', 185): [
         {'label': "For the network controls",
          'value': "Microsoft Defender for Cloud",

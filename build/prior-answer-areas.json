@@ -119,16 +119,6 @@
    "value": "Windows and macOS"
   }
  ],
- "std/180": [
-  {
-   "label": "Ensure Fabrikam users can use access packages without creating guest accounts",
-   "value": "A connected organization"
-  },
-  {
-   "label": "Allow non-administrative users to create access packages",
-   "value": "Catalogs"
-  }
- ],
  "std/219": [
   {
    "label": "Box 1",

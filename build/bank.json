@@ -14905,14 +14905,24 @@
    "boxes": [
     {
      "label": "Ensure Fabrikam users can use access packages without creating guest accounts",
-     "value": "A connected organization"
+     "value": "A connected organization",
+     "options": [
+      "A connected organization",
+      "An external organization",
+      "An identity provider"
+     ]
     },
     {
      "label": "Allow non-administrative users to create access packages",
-     "value": "Catalogs"
+     "value": "Catalogs",
+     "options": [
+      "Administrative units",
+      "Catalogs",
+      "Programs"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p158_x2495.webp",
