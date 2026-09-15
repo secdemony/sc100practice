@@ -391,6 +391,14 @@ ANSWER_AREAS = {
          'value': "Any public IP addresses provided before the connection is established",
          'options': ["Any public IP addresses provided before the connection is established", "AzureBastionSubnet", "GatewaySubnet"]}
     ],
+    ('std', 167): [
+        {'label': "To streamline creation",
+         'value': "The Microsoft Graph API",
+         'options': ["The Microsoft Graph API", "The Microsoft Office 365 Management API", "The Microsoft Office 365 service", "The Microsoft Office 365 Communications API"]},
+        {'label': "To streamline processing",
+         'value': "Microsoft Power Automate",
+         'options': ["Azure Automation", "Azure Logic Apps", "Microsoft Power Automate"]}
+    ],
     ('std', 168): [
         {'label': "Identity Governance feature",
          'value': "Access reviews",

@@ -6,12 +6,12 @@
   "scorable": 297,
   "examined": 310,
   "notReviewed": 0,
-  "corrected": 43,
-  "outdated": 12,
-  "ambiguous": 3,
-  "not_reviewed": 0,
+  "manual_review": 9,
   "verified": 242,
-  "manual_review": 10
+  "outdated": 12,
+  "corrected": 44,
+  "ambiguous": 3,
+  "not_reviewed": 0
  },
  "findings": {
   "std/20": {
@@ -1847,13 +1847,19 @@
   },
   "std/182": {
    "question": "Standalone 182",
-   "status": "MANUAL_REVIEW",
-   "confidence": "LOW",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "answer": "A",
+   "originalAnswer": "C",
    "source": {
-    "title": "Architecture strategies for threat analysis (Well-Architected Framework)",
-    "url": "https://learn.microsoft.com/en-us/azure/well-architected/security/threat-model"
+    "title": "Microsoft cloud security benchmark - DevOps Security (DS-1: Conduct threat modeling)",
+    "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/mcsb-devops-security"
    },
-   "explanation": "Flagged: no Microsoft source establishes the keyed answer, and Microsoft's own methodology points elsewhere. The threat modelling Microsoft documents is the Security Development Lifecycle approach, which starts from a data flow diagram of the system and categorises what it finds with STRIDE, and the Threat Modeling Tool generates its threats that way. That is a top-down decomposition of an architecture, which fits the wording of the stem. OWASP threat modelling is a genuine body of work, but nothing in the Cloud Adoption Framework nominates it as the way to start, and Microsoft's Well-Architected guidance on threat analysis does not name it either. The option list is also short, three choices rather than four, which suggests something was lost in the source. DREAD is a risk-rating scheme rather than a starting point, so it is not the answer whatever else is true. The key is left untouched pending a citable source."
+   "explanation": "The Cloud Adoption Framework's DevSecOps security guidance is built on the Microsoft cloud security benchmark, and its DevOps Security control for exactly this scenario -- DS-1, \"Conduct threat modeling\" -- names the model directly: \"Use threat modeling tools such as the Microsoft threat modeling tool with the Azure threat model template embedded to drive your threat modeling process. Use the STRIDE model to enumerate the threats from both internal and external and identify the controls applicable.\" That is Microsoft's own answer to \"what do you use to start threat modeling\" in a DevSecOps/CAF context: decompose the architecture with the Threat Modeling Tool and classify what you find with STRIDE (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege) -- a top-down sweep across the whole system, which is exactly the stem's wording. OWASP threat modeling is real guidance elsewhere, but nothing in the Cloud Adoption Framework's own DevSecOps material nominates it as the way to start; STRIDE is the model CAF's benchmark actually names.",
+   "whyWrong": [
+    "B. DREAD is a risk-scoring scheme applied to threats after they've already been identified, not a way to start the process -- it ranks findings, it doesn't produce them.",
+    "C. OWASP threat modeling is a legitimate methodology in the broader industry, but it is not what the Cloud Adoption Framework's own DevSecOps/benchmark guidance points to; that guidance names STRIDE specifically."
+   ]
   },
   "std/13": {
    "question": "Standalone 13",

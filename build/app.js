@@ -372,7 +372,19 @@ const storageBackend = (typeof window !== 'undefined' && window.storage)
 async function loadSession(){
   try{
     const r = await storageBackend.get(SESSION_KEY, false);
-    return r ? JSON.parse(r.value) : null;
+    if(!r) return null;
+    const session = JSON.parse(r.value);
+    // Defensive: currentIndex should always point at a real position in
+    // order, but a double-fired "Next Question" click (two overlapping
+    // advance() calls before the first's re-render lands) can push it one
+    // or more past the last valid index. That leaves QMAP[order[currentIndex]]
+    // undefined, which crashes the very next render — including the resume
+    // banner on the setup screen, permanently, until this is caught. Clamp
+    // once here rather than trusting every reader to check bounds itself.
+    if(session && Array.isArray(session.order) && session.order.length > 0){
+      session.currentIndex = Math.min(Math.max(session.currentIndex || 0, 0), session.order.length - 1);
+    }
+    return session;
   }catch(e){ return null; }
 }
 async function saveSession(session){
@@ -1173,7 +1185,17 @@ function renderExam(app){
   const rightActions = el('div',{class:'right-actions'});
   const isLast = s.currentIndex === s.order.length-1;
 
+  // A physical double-click fires this same listener twice on the same
+  // still-attached button before the first call's `await saveSession` gap
+  // closes and render() replaces it — without this guard that increments
+  // currentIndex twice for one click, eventually running it past the end
+  // of order and crashing every future render (including the resume
+  // banner) on QMAP[order[currentIndex]] being undefined. Scoped to this
+  // renderExam call, so a fresh render always gets a fresh, unlatched guard.
+  let advancing = false;
   const advance = async ()=>{
+    if(advancing) return;
+    advancing = true;
     if(isLast){ await finishExam(); }
     else { s.currentIndex += 1; await saveSession(s); render(); }
   };
