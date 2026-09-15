@@ -129,26 +129,6 @@
    "value": "Catalogs"
   }
  ],
- "std/191": [
-  {
-   "label": "Selection 1",
-   "value": "NSG"
-  },
-  {
-   "label": "Selection 2",
-   "value": "Microsoft Defender for servers"
-  }
- ],
- "std/193": [
-  {
-   "label": "Data security",
-   "value": "Access keys stored in Azure Key Vault"
-  },
-  {
-   "label": "Network access control",
-   "value": "Azure Private Link with network service tags"
-  }
- ],
  "std/219": [
   {
    "label": "Box 1",

@@ -442,6 +442,22 @@ ANSWER_AREAS = {
          'value': "Privileged security",
          'options': ["Enterprise security", "Privileged security", "Specialized security"]}
     ],
+    ('std', 191): [
+        {'label': "To increase the score for the Restrict unauthorized network access control, implement",
+         'value': "network security groups (NSGs)",
+         'options': ["Azure Active Directory (Azure AD) Conditional Access policies", "Azure Web Application Firewall (WAF)", "network security groups (NSGs)"]},
+        {'label': "To increase the score for the Enable endpoint protection control, implement",
+         'value': "Microsoft Defender for servers",
+         'options': ["Microsoft Defender for Resource Manager", "Microsoft Defender for servers", "private endpoints"]}
+    ],
+    ('std', 193): [
+        {'label': "Data security",
+         'value': "Access keys stored in Azure Key Vault",
+         'options': ["Access keys stored in Azure Key Vault", "Automation Contributor built-in role", "Azure Private Link with network service tags", "Azure Web Application Firewall rules with network service tags"]},
+        {'label': "Network access control",
+         'value': "Azure Private Link with network service tags",
+         'options': ["Access keys stored in Azure Key Vault", "Automation Contributor built-in role", "Azure Private Link with network service tags", "Azure Web Application Firewall rules with network service tags"]}
+    ],
     ('std', 198): [
         {'label': "Azure service",
          'value': "Azure Key Vault Managed HSM",

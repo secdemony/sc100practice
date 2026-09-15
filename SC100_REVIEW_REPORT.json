@@ -6,12 +6,12 @@
   "scorable": 297,
   "examined": 310,
   "notReviewed": 0,
-  "manual_review": 9,
-  "verified": 242,
   "outdated": 12,
   "corrected": 44,
+  "verified": 242,
   "ambiguous": 3,
-  "not_reviewed": 0
+  "not_reviewed": 0,
+  "manual_review": 9
  },
  "findings": {
   "std/20": {

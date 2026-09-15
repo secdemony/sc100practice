@@ -15522,15 +15522,25 @@
    "q": "You open Microsoft Defender for Cloud as shown in the following exhibit.",
    "boxes": [
     {
-     "label": "Selection 1",
-     "value": "NSG"
+     "label": "To increase the score for the Restrict unauthorized network access control, implement",
+     "value": "network security groups (NSGs)",
+     "options": [
+      "Azure Active Directory (Azure AD) Conditional Access policies",
+      "Azure Web Application Firewall (WAF)",
+      "network security groups (NSGs)"
+     ]
     },
     {
-     "label": "Selection 2",
-     "value": "Microsoft Defender for servers"
+     "label": "To increase the score for the Enable endpoint protection control, implement",
+     "value": "Microsoft Defender for servers",
+     "options": [
+      "Microsoft Defender for Resource Manager",
+      "Microsoft Defender for servers",
+      "private endpoints"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p166_x2640.webp",
@@ -15631,14 +15641,26 @@
    "boxes": [
     {
      "label": "Data security",
-     "value": "Access keys stored in Azure Key Vault"
+     "value": "Access keys stored in Azure Key Vault",
+     "options": [
+      "Access keys stored in Azure Key Vault",
+      "Automation Contributor built-in role",
+      "Azure Private Link with network service tags",
+      "Azure Web Application Firewall rules with network service tags"
+     ]
     },
     {
      "label": "Network access control",
-     "value": "Azure Private Link with network service tags"
+     "value": "Azure Private Link with network service tags",
+     "options": [
+      "Access keys stored in Azure Key Vault",
+      "Automation Contributor built-in role",
+      "Azure Private Link with network service tags",
+      "Azure Web Application Firewall rules with network service tags"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p168_x2665.webp",
