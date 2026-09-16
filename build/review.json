@@ -62,12 +62,19 @@
     }
   },
   "std/217": {
-    "status": "MANUAL_REVIEW",
-    "confidence": "LOW",
-    "explanation": "Flagged: the key is left as the source has it, but it looks wrong and the documentation does not settle the wording. This is the same NIST SP 800-53 scenario as Standalone 85 and 203, except the option 'add a regulatory compliance standard' is missing from the list. The stem already states the subscription has enhanced security enabled, which means the Defender plans in the keyed answer (D) are on — so it cannot be what you do first. Assigning the built-in initiative from Azure Policy (C) is the only remaining action that produces a NIST assessment, and regulatory standards are implemented as Azure Policy initiatives. Treat C as the more defensible answer and verify before relying on this item.",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "answer": "C",
+    "originalAnswer": "D",
+    "explanation": "The stem already states the subscription has enhanced security enabled, which means its Defender for Cloud plans are already on — so option D, enabling Defender plans, cannot be \"what you do first,\" it's already done. Microsoft's own guidance is explicit that a regulatory standard doesn't just appear once Defender plans are on: \"In Defender for Cloud, regulatory compliance standards use Azure Policy initiatives,\" and \"you can assign regulatory compliance standards to specific scopes such as Azure subscriptions.\" NIST SP 800-53 ships as a built-in initiative for exactly this purpose. Only after it's assigned at the subscription does it \"appear in the Regulatory compliance dashboard\" and start being continually assessed. That assignment step is option C, and with the Defender-plans prerequisite already satisfied by the stem, it's the first thing left to do.",
+    "whyWrong": [
+      "A. Reviewing the Azure security baseline audit report reads results for whatever standards are already assigned. The Microsoft cloud security benchmark is on by default, but NIST SP 800-53 is not one of the default standards, so there's nothing NIST-specific to review yet.",
+      "B. Secure score recommendations are driven by the Microsoft cloud security benchmark, not by NIST SP 800-53 -- reviewing them doesn't establish or reflect NIST compliance assessment.",
+      "D. The keyed answer, enabling Defender for Cloud plans, is the prerequisite the stem already says is satisfied (\"enhanced security enabled\"), not the next action."
+    ],
     "source": {
       "title": "Assign regulatory compliance standards in Microsoft Defender for Cloud",
-      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages"
+      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/assign-regulatory-compliance-standards"
     }
   },
   "std/92": {
