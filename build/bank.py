@@ -27,6 +27,54 @@ CASE_META = {'cs1': {'n': 1, 'name': 'Fabrikam, Inc.'},
 # Answer areas whose real choice lists are known from outside the dump, which
 # is the only way one can be graded — the dump itself draws them as pictures.
 ANSWER_AREAS = {
+    ('cs1', 1): [
+        {'label': "To enforce compliance to the regulatory standard, create",
+         'value': "A blueprint",
+         'options': ["An Azure Automation account", "A blueprint", "A managed identity", "Workflow automation"]},
+        {'label': "To exclude TestRG from the compliance assessment",
+         'value': "Update an Azure policy assignment",
+         'options': ["Edit an Azure blueprint", "Modify a Defender for Cloud workflow automation", "Modify an Azure policy definition", "Update an Azure policy assignment"]}
+    ],
+    ('cs1', 6): [
+        {'label': "Account type for the developers",
+         'value': "A guest account in the fabrikam.onmicrosoft.com tenant",
+         'options': ["A guest account in the contoso.onmicrosoft.com tenant", "A guest account in the fabrikam.onmicrosoft.com tenant", "A synced user account in the corp.fabrikam.com domain", "A user account in the fabrikam.onmicrosoft.com tenant"]},
+        {'label': "Component in Identity Governance",
+         'value': "An access review",
+         'options': ["A connected organization", "An access package", "An access review", "An Azure AD role", "An Azure resource role"]}
+    ],
+    ('cs2', 1): [
+        {'label': "Segment Microsoft Sentinel workspaces by",
+         'value': "Region and Azure AD tenant",
+         'options': ["Azure AD tenant", "Enterprise", "Region and Azure AD tenant"]},
+        {'label': "Integrate Azure subscriptions by using",
+         'value': "The Azure Lighthouse subscription onboarding process",
+         'options': ["Self-service sign-up user flows for Azure AD B2B", "Self-service sign-up user flows for Azure AD B2C", "The Azure Lighthouse subscription onboarding process"]}
+    ],
+    ('cs2', 3): [
+        {'label': "For the delegated management of users and groups, use",
+         'value': "Azure AD administrative units",
+         'options': ["AD DS organizational units", "Azure AD administrative units", "Custom Azure AD roles"]},
+        {'label': "To ensure that you can perform leaked credential detection",
+         'value': "Enable password hash synchronization in the Azure AD Connect deployment",
+         'options': ["Enable password hash synchronization in the Azure AD Connect deployment", "Enable Security defaults in the Azure AD tenant of Litware", "Replace pass-through authentication with Active Directory Federation Services"]}
+    ],
+    ('cs2', 5): [
+        {'label': "For connectivity from App Service web apps to virtual machines, use",
+         'value': "Virtual network integration",
+         'options': ["Private endpoints", "Service endpoints", "Virtual network integration"]},
+        {'label': "For connectivity from virtual machines to App Service web apps, use",
+         'value': "Private endpoints",
+         'options': ["Private endpoints", "Service endpoints", "Virtual network integration"]}
+    ],
+    ('cs2', 7): [
+        {'label': "For Azure AD-targeted threats",
+         'value': "Azure AD Identity Protection",
+         'options': ["Azure AD Identity Protection", "Azure AD Password Protection", "Microsoft Defender for Cloud"]},
+        {'label': "For AD DS-targeted threats",
+         'value': "Microsoft Defender for Identity",
+         'options': ["An account lockout policy in AD DS", "Microsoft Defender for Endpoint", "Microsoft Defender for Identity"]}
+    ],
     ('std', 2): [
         {'label': 'To automate vulnerability code scanning',
          'value': 'GitHub Enterprise Cloud',
@@ -85,6 +133,14 @@ ANSWER_AREAS = {
          'value': "Dynamic data masking",
          'options': ["Always Encrypted", "Dynamic data masking", "Row-level security (RLS)", "Transparent Data Encryption (TDE)"]}
     ],
+    ('std', 29): [
+        {'label': "To ensure that only VM1 can access DB1",
+         'value': "A private endpoint",
+         'options': ["A private endpoint", "Azure Application Gateway", "Azure Private Link"]},
+        {'label': "To enforce network security restrictions for DB1",
+         'value': "Network security groups (NSGs)",
+         'options': ["Azure Firewall rules", "Network security groups (NSGs)", "Virtual network rules"]}
+    ],
     ('std', 30): [
         {'label': "Ensures that the fabrikam.com users can be granted permissions to the Teams channels in contoso.com",
          'value': "Microsoft Entra B2B collaboration",
@@ -92,6 +148,14 @@ ANSWER_AREAS = {
         {'label': "Ensures that the App1 users can authenticate by using social media accounts",
          'value': "Microsoft Entra External ID for customers",
          'options': ["B2B direct connect", "Cross-tenant synchronization", "Microsoft Entra B2B collaboration", "Microsoft Entra External ID for customers"]}
+    ],
+    ('std', 34): [
+        {'label': "Security baselines",
+         'value': "Windows only",
+         'options': ["macOS only", "Windows only", "Windows and macOS"]},
+        {'label': "Remote lock",
+         'value': "Windows and macOS",
+         'options': ["macOS only", "Windows only", "Windows and macOS"]}
     ],
     ('std', 35): [
         {'label': "Azure Backup",

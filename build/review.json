@@ -2084,8 +2084,10 @@
     ]
   },
   "std/221": {
-    "status": "VERIFIED",
-    "confidence": "MEDIUM",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "answer": "B",
+    "originalAnswer": "C",
     "source": {
       "title": "Develop secure applications on Azure (SDL implementation/verification, DAST/SAST)",
       "url": "https://learn.microsoft.com/en-us/azure/security/develop/secure-develop"

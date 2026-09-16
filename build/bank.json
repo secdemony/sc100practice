@@ -240,15 +240,27 @@
    "q": "You need to recommend a solution to meet the compliance requirements.",
    "boxes": [
     {
-     "label": "Box 1",
-     "value": "A Blueprint"
+     "label": "To enforce compliance to the regulatory standard, create",
+     "value": "A blueprint",
+     "options": [
+      "An Azure Automation account",
+      "A blueprint",
+      "A managed identity",
+      "Workflow automation"
+     ]
     },
     {
-     "label": "Box 2",
-     "value": "Update an Azure Policy assignment"
+     "label": "To exclude TestRG from the compliance assessment",
+     "value": "Update an Azure policy assignment",
+     "options": [
+      "Edit an Azure blueprint",
+      "Modify a Defender for Cloud workflow automation",
+      "Modify an Azure policy definition",
+      "Update an Azure policy assignment"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p007_x314.webp",
@@ -1546,15 +1558,28 @@
    "q": "What should you create in Azure AD to meet the Contoso developer requirements?",
    "boxes": [
     {
-     "label": "Account type",
-     "value": "A guest account in the fabrikam.onmicrosoft.com tenant"
+     "label": "Account type for the developers",
+     "value": "A guest account in the fabrikam.onmicrosoft.com tenant",
+     "options": [
+      "A guest account in the contoso.onmicrosoft.com tenant",
+      "A guest account in the fabrikam.onmicrosoft.com tenant",
+      "A synced user account in the corp.fabrikam.com domain",
+      "A user account in the fabrikam.onmicrosoft.com tenant"
+     ]
     },
     {
      "label": "Component in Identity Governance",
-     "value": "An access review"
+     "value": "An access review",
+     "options": [
+      "A connected organization",
+      "An access package",
+      "An access review",
+      "An Azure AD role",
+      "An Azure resource role"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p010_x359.webp",
@@ -2836,14 +2861,24 @@
    "boxes": [
     {
      "label": "Segment Microsoft Sentinel workspaces by",
-     "value": "Region and Azure AD tenant"
+     "value": "Region and Azure AD tenant",
+     "options": [
+      "Azure AD tenant",
+      "Enterprise",
+      "Region and Azure AD tenant"
+     ]
     },
     {
      "label": "Integrate Azure subscriptions by using",
-     "value": "Azure Lighthouse subscription onboarding process"
+     "value": "The Azure Lighthouse subscription onboarding process",
+     "options": [
+      "Self-service sign-up user flows for Azure AD B2B",
+      "Self-service sign-up user flows for Azure AD B2C",
+      "The Azure Lighthouse subscription onboarding process"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p017_x437.webp",
@@ -3323,15 +3358,25 @@
    "q": "You need to recommend an identity security solution for the Azure AD tenant of Litware. The solution must meet the identity requirements and the regulatory compliance requirements.",
    "boxes": [
     {
-     "label": "For delegated management of users and groups",
-     "value": "Azure AD administrative units"
+     "label": "For the delegated management of users and groups, use",
+     "value": "Azure AD administrative units",
+     "options": [
+      "AD DS organizational units",
+      "Azure AD administrative units",
+      "Custom Azure AD roles"
+     ]
     },
     {
-     "label": "To ensure leaked credential detection",
-     "value": "Enable password hash synchronization in the Azure AD Connect deployment"
+     "label": "To ensure that you can perform leaked credential detection",
+     "value": "Enable password hash synchronization in the Azure AD Connect deployment",
+     "options": [
+      "Enable password hash synchronization in the Azure AD Connect deployment",
+      "Enable Security defaults in the Azure AD tenant of Litware",
+      "Replace pass-through authentication with Active Directory Federation Services"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p019_x471.webp",
@@ -3801,15 +3846,25 @@
    "q": "You need to recommend a strategy for App Service web app connectivity. The solution must meet the landing zone requirements. What should you recommend? To answer, select the appropriate options in the answer area. NOTE Each correct selection is worth one point.",
    "boxes": [
     {
-     "label": "Box 1",
-     "value": "Virtual Network Integration"
+     "label": "For connectivity from App Service web apps to virtual machines, use",
+     "value": "Virtual network integration",
+     "options": [
+      "Private endpoints",
+      "Service endpoints",
+      "Virtual network integration"
+     ]
     },
     {
-     "label": "Box 2",
-     "value": "Private Endpoints"
+     "label": "For connectivity from virtual machines to App Service web apps, use",
+     "value": "Private endpoints",
+     "options": [
+      "Private endpoints",
+      "Service endpoints",
+      "Virtual network integration"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p020_x498.webp",
@@ -4288,15 +4343,25 @@
    "q": "You need to recommend a strategy for securing the litware.com forest. The solution must meet the identity requirements. What should you include in the recommendation? To answer, select the appropriate options in the answer area. NOTE; Each correct selection is worth one point.",
    "boxes": [
     {
-     "label": "Box 1",
-     "value": "Azure AD Identity Protection"
+     "label": "For Azure AD-targeted threats",
+     "value": "Azure AD Identity Protection",
+     "options": [
+      "Azure AD Identity Protection",
+      "Azure AD Password Protection",
+      "Microsoft Defender for Cloud"
+     ]
     },
     {
-     "label": "Box 2",
-     "value": "Microsoft Defender for Identity"
+     "label": "For AD DS-targeted threats",
+     "value": "Microsoft Defender for Identity",
+     "options": [
+      "An account lockout policy in AD DS",
+      "Microsoft Defender for Endpoint",
+      "Microsoft Defender for Identity"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p022_x523.webp",
@@ -6375,14 +6440,24 @@
    "boxes": [
     {
      "label": "To ensure that only VM1 can access DB1",
-     "value": "A private endpoint"
+     "value": "A private endpoint",
+     "options": [
+      "A private endpoint",
+      "Azure Application Gateway",
+      "Azure Private Link"
+     ]
     },
     {
      "label": "To enforce network security restrictions for DB1",
-     "value": "Network security groups (NSGs)"
+     "value": "Network security groups (NSGs)",
+     "options": [
+      "Azure Firewall rules",
+      "Network security groups (NSGs)",
+      "Virtual network rules"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p043_x823.webp",
@@ -6725,14 +6800,24 @@
    "boxes": [
     {
      "label": "Security baselines",
-     "value": "Windows only"
+     "value": "Windows only",
+     "options": [
+      "macOS only",
+      "Windows only",
+      "Windows and macOS"
+     ]
     },
     {
      "label": "Remote lock",
-     "value": "Windows and macOS"
+     "value": "Windows and macOS",
+     "options": [
+      "macOS only",
+      "Windows only",
+      "Windows and macOS"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p048_x903.webp",
@@ -17412,11 +17497,12 @@
     "dependency testing",
     "threat modeling"
    ],
-   "a": "C",
+   "a": "B",
+   "srcA": "C",
    "review": {
-    "status": "VERIFIED",
-    "confidence": "MEDIUM",
-    "explanation": "Microsoft's own account of DAST folds penetration testing directly into it: perform DAST \"preferably with the assistance of a security professional (a penetration tester or vulnerability assessor)\", and CAF's DevSecOps guidance for the release phase likewise pairs the two, describing automated penetration testing with manual assisted validation as part of dynamic testing in the CI/CD pipeline. Of the four options, penetration testing is the only one that operates the same way DAST does, against a running, deployed instance of the application, which is why it is the one folded into the same pipeline stage.",
+    "status": "CORRECTED",
+    "confidence": "HIGH",
+    "explanation": "THIS ANSWER WAS CORRECTED BY AI\n\nMicrosoft's own account of DAST folds penetration testing directly into it: perform DAST \"preferably with the assistance of a security professional (a penetration tester or vulnerability assessor)\", and CAF's DevSecOps guidance for the release phase likewise pairs the two, describing automated penetration testing with manual assisted validation as part of dynamic testing in the CI/CD pipeline. Of the four options, penetration testing is the only one that operates the same way DAST does, against a running, deployed instance of the application, which is why it is the one folded into the same pipeline stage.",
     "whyWrong": [
      "A. Unit testing runs against code, typically before the application is even built into a deployable artifact, which is earlier and unrelated to DAST’s runtime scope.",
      "C. Dependency testing (SCA) inspects the declared package graph for known-vulnerable versions. It requires no running application and belongs with SAST-adjacent static checks.",
@@ -17425,7 +17511,9 @@
     "source": {
      "title": "Develop secure applications on Azure (SDL implementation/verification, DAST/SAST)",
      "url": "https://learn.microsoft.com/en-us/azure/security/develop/secure-develop"
-    }
+    },
+    "corrected": true,
+    "originalAnswer": "C"
    }
   },
   {
