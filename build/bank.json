@@ -17259,15 +17259,29 @@
    "q": "You are creating the security recommendations for an Azure App Service web app named App1.",
    "boxes": [
     {
-     "label": "Box 1",
-     "value": "Azure AD Application"
+     "label": "To enable Azure AD authentication for App1, use",
+     "value": "Azure AD application",
+     "options": [
+      "Azure AD application",
+      "Azure AD Application Proxy",
+      "Azure Application Gateway",
+      "A managed identity in Azure AD",
+      "Microsoft Defender for App"
+     ]
     },
     {
-     "label": "Box 2",
-     "value": "Access Package in Identity Governance"
+     "label": "To implement access requests for App1, use",
+     "value": "An access package in Identity Governance",
+     "options": [
+      "An access package in Identity Governance",
+      "An access policy in Microsoft Defender for Cloud Apps",
+      "An access review in Identity Governance",
+      "Azure AD Conditional Access App Control",
+      "An OAuth app policy in Microsoft Defender for Cloud Apps"
+     ]
     }
    ],
-   "keynote": "The dump records this answer as a picture, shown above. The values below come from a text export of the same dump, which spelled them out. No list of alternatives survives anywhere, so each drop-down offers this item’s own values — match each one to its box.",
+   "keynote": "The choices for this item were supplied from outside the dump; the dump itself records the answer only as the picture shown above. Grading uses those choices.",
    "ansimg": [
     {
      "img": "img/p188_x3002.webp",

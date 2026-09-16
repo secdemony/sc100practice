@@ -541,6 +541,14 @@ ANSWER_AREAS = {
          'value': "Microsoft Defender for Identity",
          'options': ["Azure AD Identity Protection", "Microsoft Defender for Identity", "Microsoft Entra Verified ID"]}
     ],
+    ('std', 219): [
+        {'label': "To enable Azure AD authentication for App1, use",
+         'value': "Azure AD application",
+         'options': ["Azure AD application", "Azure AD Application Proxy", "Azure Application Gateway", "A managed identity in Azure AD", "Microsoft Defender for App"]},
+        {'label': "To implement access requests for App1, use",
+         'value': "An access package in Identity Governance",
+         'options': ["An access package in Identity Governance", "An access policy in Microsoft Defender for Cloud Apps", "An access review in Identity Governance", "Azure AD Conditional Access App Control", "An OAuth app policy in Microsoft Defender for Cloud Apps"]}
+    ],
     ('std', 226): [
         {'label': "Infrastructure scanning",
          'value': "Build and test",

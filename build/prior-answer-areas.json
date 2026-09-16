@@ -118,15 +118,5 @@
    "label": "Remote lock",
    "value": "Windows and macOS"
   }
- ],
- "std/219": [
-  {
-   "label": "Box 1",
-   "value": "Azure AD Application"
-  },
-  {
-   "label": "Box 2",
-   "value": "Access Package in Identity Governance"
-  }
  ]
 }
