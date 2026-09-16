@@ -488,7 +488,8 @@ const MISSED_PRESETS = [
   ['today', 'Today'],
   ['2day', 'Today + yesterday'],
   ['7day', 'Last 7 days'],
-  ['custom', 'Custom range']
+  ['custom', 'Custom range'],
+  ['undated', 'No date recorded']
 ];
 function missedPresetLabel(key){
   const p = MISSED_PRESETS.find(p => p[0] === key);
@@ -523,9 +524,11 @@ function missedRangeBounds(filt){
 }
 // The question numbers from the all-time pool that fall in filt's range.
 // "All time" (no bound) returns everything, undated entries included; any
-// other range excludes undated entries outright, since there is no date to
-// compare them against.
+// dated range excludes undated entries outright, since there is no date to
+// compare them against — "undated" is the one preset that selects exactly
+// those excluded entries, so they're never a dead end with no way to reach them.
 function wrongPoolInRange(filt){
+  if(filt.preset === 'undated') return state.wrongPool.filter(r => !r.missedAt).map(r => r.qn);
   const [from, to] = missedRangeBounds(filt);
   if(!from && !to) return state.wrongPool.map(r => r.qn);
   return state.wrongPool.filter(r => {
@@ -850,9 +853,12 @@ function renderSetup(app){
     // Ephemeral UI state (not persisted): which range is currently selected.
     if(!state.missedFilter) state.missedFilter = {preset:'all', from:'', to:''};
     const filt = state.missedFilter;
+    const undatedCount = state.wrongPool.filter(r => !r.missedAt).length;
 
     const presetWrap = el('div',{class:'presets', style:'margin-bottom:4px;'});
-    MISSED_PRESETS.forEach(([key,label])=>{
+    // "No date recorded" only earns a pill when there's something it would
+    // show — nothing to select for accounts where every miss is dated.
+    MISSED_PRESETS.filter(([key]) => key !== 'undated' || undatedCount > 0).forEach(([key,label])=>{
       presetWrap.appendChild(el('button',{
         class: 'preset-btn' + (filt.preset===key ? ' active' : ''),
         onclick: ()=>{ state.missedFilter.preset = key; render(); }
@@ -874,17 +880,19 @@ function renderSetup(app){
     }
 
     const qns = wrongPoolInRange(filt);
-    const undatedCount = state.wrongPool.filter(r => !r.missedAt).length;
 
     if(filt.preset !== 'all'){
-      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 8px;'},[
-        `${qns.length} of ${state.wrongPool.length} match ${missedPresetLabel(filt.preset).toLowerCase()}.`
-      ]));
+      const sentence = filt.preset === 'undated'
+        ? `${qns.length} of ${state.wrongPool.length} have no recorded date.`
+        : `${qns.length} of ${state.wrongPool.length} match ${missedPresetLabel(filt.preset).toLowerCase()}.`;
+      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 8px;'},[sentence]));
     }
-    if(undatedCount > 0){
+    // Redundant once "No date recorded" is itself selected — the line above
+    // already says the same thing more directly.
+    if(undatedCount > 0 && filt.preset !== 'undated'){
       wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 8px;'},[
         `${undatedCount} question${undatedCount===1?'':'s'} on this list ${undatedCount===1?'was':'were'} missed before date filtering existed, so ` +
-        `${undatedCount===1?'it has':'they have'} no recorded date — ${undatedCount===1?'it only counts':'they only count'} toward "All time".`
+        `${undatedCount===1?'it has':'they have'} no recorded date — use "No date recorded" above to see just ${undatedCount===1?'it':'them'}.`
       ]));
     }
 
