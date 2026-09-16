@@ -634,7 +634,7 @@ ANSWER_AREAS = {
          'value': "A connector to the default connector group and a connector to a new connector group",
          'options': ["A connector to the default connector group and a connector to a new connector group", "Two connectors to a new connector group", "Two connectors to the default connector group"]},
         {'label': "To optimize the connection between the application proxy and the connectors, use",
-         'value': "ExpressRoute with Microsoft peering",
+         'value': "ExpressRoute with Microsoft peering and the premium add-on",
          'options': ["ExpressRoute with Microsoft peering", "ExpressRoute with Microsoft peering and the premium add-on", "ExpressRoute with private peering"]}
     ],
     ('std', 232): [

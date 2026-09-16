@@ -6,12 +6,12 @@
   "scorable": 297,
   "examined": 310,
   "notReviewed": 0,
-  "corrected": 46,
-  "manual_review": 8,
-  "outdated": 12,
-  "not_reviewed": 0,
+  "corrected": 47,
   "ambiguous": 3,
-  "verified": 241
+  "manual_review": 8,
+  "verified": 240,
+  "not_reviewed": 0,
+  "outdated": 12
  },
  "findings": {
   "std/20": {
@@ -4045,15 +4045,20 @@
   },
   "std/231": {
    "question": "Standalone 231",
-   "status": "VERIFIED",
-   "confidence": "MEDIUM",
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "boxLabel": "To optimize the connection between the users and the application proxy, deploy",
+   "originalAnswer": "A connector to the default connector group and a connector to a new connector group",
+   "answer": "Two connectors to a new connector group",
    "source": {
-    "title": "What is Microsoft Entra Private Access?",
-    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-private-access"
+    "title": "Microsoft Entra Private Network Connector Groups",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/concept-connector-groups"
    },
-   "explanation": "Deploying private network connectors across two connector groups (the default group plus a new one) gives the London deployment redundant connector coverage rather than a single point of failure, supporting \"maximize redundancy.\" For the path from the private network connectors up to the Private Access service, ExpressRoute is a private, dedicated circuit that avoids the public internet entirely, and Microsoft peering is the ExpressRoute peering type used to reach Microsoft's own cloud-hosted services (which is what the multi-tenant Private Access edge service is) privately, which together support minimizing both latency and exposure to the public internet.",
+   "explanation": "Both boxes needed correcting, not just this one. For the connector deployment: an app in Private Access/App Proxy is assigned to exactly one connector group, so splitting the two connectors across the default group and a new group doesn't actually give App1 two working connectors -- only whichever group App1 ends up assigned to serves it, and the connector sitting in the other group does nothing for App1's redundancy. Microsoft's own guidance is explicit that the recommended pattern is \"specific groups and a default idle group\": \"don't assign applications to the default connector group\" and instead \"serve all applications through custom connector groups,\" with \"multiple connectors for high availability\" inside that dedicated group. Two connectors in one new, dedicated group is what actually gives App1 both redundancy (two working connectors, not one) and minimized latency (traffic never risks landing on a connector meant for other apps). For the second box, this bank now grades \"ExpressRoute with Microsoft peering and the premium add-on\": Microsoft's ExpressRoute documentation states that standard Microsoft peering gives \"connectivity to Microsoft cloud services across all regions in the geopolitical region\" of the peering location only, and that reaching services outside that region requires enabling the Premium add-on, which provides \"global connectivity to Microsoft services across all regions.\" The circuit here is provisioned at the peering location closest to London (the Europe geopolitical region), but the tenant is hosted in North America -- a different geopolitical region -- so standard Microsoft peering alone would not reach it; the Premium add-on is what bridges that gap while keeping the path private, which is also what the \"maximize security\" requirement is asking for.",
    "whyWrong": [
-    "A single connector group would leave connectivity to App1 dependent on that one group staying healthy, and private (rather than Microsoft) peering is built to reach resources inside your own Azure virtual networks, not a Microsoft-hosted multi-tenant service like Private Access."
+    "A single connector group (\"two connectors to the default connector group\") satisfies redundancy but violates the guidance against serving production apps from the default group, and gives up the traffic isolation a dedicated group provides.",
+    "Private peering is built to reach resources inside your own Azure virtual networks, not a Microsoft-hosted multi-tenant service like Private Access; Microsoft peering (with or without Premium) is the type for that.",
+    "Plain \"ExpressRoute with Microsoft peering\" (no Premium) only reaches Microsoft services within the same geopolitical region as the peering location -- Europe here -- and the tenant it needs to reach is hosted in North America, a different geopolitical region."
    ]
   },
   "std/232": {
