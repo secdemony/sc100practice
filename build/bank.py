@@ -929,13 +929,24 @@ ORDER_NOTE = ('The choices and their order were supplied from outside the dump; 
 _prior = json.load(open(paths.PRIOR_AREAS, encoding='utf-8'))
 PRIOR_BOXES = {(k.split('/')[0], int(k.split('/')[1])): v for k, v in _prior.items()}
 
+# Question-body exhibits that turned out to be the ANSWER exhibit rather than
+# a blank one -- the dump's own screenshot already has the correct dropdown
+# selection highlighted, which spoils an item that otherwise asks the
+# candidate to work it out. Dropped from the question body only; the
+# separate answer-area reveal image (ansimg), shown only after answering, is
+# untouched.
+SPOILER_BODY_IMAGES = {('std', 144)}
 
-def conv(nodes):
+
+def conv(nodes, drop_images=False):
     """Map extracted nodes onto what the page renders, dropping images that
-    were filtered out of the re-encoded set."""
+    were filtered out of the re-encoded set (or all images, for an item
+    whose body exhibit gives the answer away before it's attempted)."""
     out = []
     for n in nodes:
         if 'img' in n:
+            if drop_images:
+                continue
             e = imgmap.get(n['img'])
             if not e:
                 continue
@@ -954,7 +965,7 @@ for q in parsed['questions']:
     if sec in CASE_META:
         item['cs'] = CASE_META[sec]
 
-    body = conv(q['body'])
+    body = conv(q['body'], drop_images=(sec, num) in SPOILER_BODY_IMAGES)
     item['body'] = body
     # A one-line summary for the review screen and the resume banner.
     first = next((n['p'] for n in reversed(body) if 'p' in n and n['p'].endswith('?')), None)
