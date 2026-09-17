@@ -2353,16 +2353,18 @@
     ]
   },
   "std/99": {
-    "status": "VERIFIED",
+    "status": "CORRECTED",
     "confidence": "MEDIUM",
+    "answer": "C D E",
+    "originalAnswer": "B C D",
     "source": {
-      "title": "Just-in-time machine access in Microsoft Defender for Cloud",
-      "url": "https://learn.microsoft.com/en-us/azure/defender-for-cloud/just-in-time-access-overview"
+      "title": "Azure Virtual Desktop network topology and connectivity design guidance",
+      "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/azure-virtual-desktop/eslz-network-topology-and-connectivity"
     },
-    "explanation": "The three keyed actions replace a single choke-point RDP server with a Zero Trust access path built for a remote, latency-sensitive contractor team. Migrating from the Remote Desktop server to Azure Virtual Desktop removes the shared jump-box and its custom administrative tools, giving each developer a session that terminates close to the Azure resources instead of hairpinning through Seattle. Azure Firewall restricting host pool outbound access (host pool is the AVD term for the set of session hosts) hardens that new AVD deployment's egress rather than leaving it wide open. Conditional Access with MFA and named locations then applies explicit, per-sign-in verification for a workforce connecting from France, which is the identity control a Zero Trust design substitutes for trusting the network path.",
+    "explanation": "Changed at the user's explicit direction, over this reviewer's own documented disagreement -- recorded here so that disagreement isn't lost. The case for C, D, E: migrating off the Remote Desktop server to Azure Virtual Desktop (D) replaces a shared jump-box with an identity-native access model; Conditional Access with MFA and named locations (C) replaces the old IP-allowlist firewall rule with per-sign-in identity verification, which is what a Zero Trust redesign substitutes for trusting a network path; and placing the new session infrastructure in an Azure region close to France (E, read as applying to the post-migration deployment rather than a literal second legacy RDS box) addresses \"minimize latency\" directly -- Microsoft's own AVD network guidance says to \"place session hosts in the region that's closest to end users and has the lowest RTT\" using the round-trip-time samples from the Azure Virtual Desktop Experience Estimator, precisely because connection latency \"varies, depending on the location of the users and the VMs.\" The reviewer's unresolved concern: option E's literal wording is \"deploy a Remote Desktop server,\" not \"place the AVD session hosts\" -- read literally, alongside D it describes retiring the Remote Desktop server and standing up a new one in the same three-part answer, which is why B (Azure Firewall restricting host pool egress) had been keyed as the third action instead. That tension is real and isn't fully resolved by this correction; it's noted here rather than papered over.",
     "whyWrong": [
       "A. Restricting NSGs to specific IP ranges is a network-perimeter control from the model Zero Trust is replacing, and static IP allowlisting for developers in France does nothing to reduce the latency of relaying through a single Seattle-based server.",
-      "E. Deploying a second Remote Desktop server into a French Azure region still centralises access through a jump-box with locally installed admin tools, which is the pattern the redesign is meant to retire, not relocate. It also directly contradicts D in the same answer: D retires the Remote Desktop server in favour of Azure Virtual Desktop, so a three-part answer can't also stand up a brand-new Remote Desktop server elsewhere -- picking both D and E describes an architecture that migrates away from RDS and stands up more RDS in the same breath."
+      "B. Azure Firewall restricting host pool outbound access hardens the new AVD deployment's egress, which is a reasonable hardening step but doesn't address the stem's identity-verification or latency requirements the way C and E do."
     ]
   },
   "std/1": {
