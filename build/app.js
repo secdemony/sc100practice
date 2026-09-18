@@ -781,7 +781,12 @@ function renderSetup(app){
         answers: {},
         flags: {},
         startedAt: new Date().toISOString(),
-        completed: false
+        completed: false,
+        // Snapshot of the all-time missed pool as it stood before this run
+        // even started, so the Final Report can later tell "missed again"
+        // from "missed for the first time" — by then state.wrongPool already
+        // has this run's own misses folded in, so it can't answer that itself.
+        priorMissedQns: state.wrongPool.map(r => r.qn)
       };
       state.session = session;
       await saveSession(session);
@@ -832,7 +837,8 @@ function renderSetup(app){
         answers: {},
         flags: {},
         startedAt: new Date().toISOString(),
-        completed: false
+        completed: false,
+        priorMissedQns: state.wrongPool.map(r => r.qn)
       };
       await saveSession(state.session);
       state.screen = 'exam';
@@ -910,7 +916,8 @@ function renderSetup(app){
           answers: {},
           flags: {},
           startedAt: new Date().toISOString(),
-          completed: false
+          completed: false,
+          priorMissedQns: state.wrongPool.map(r => r.qn)
         };
         await saveSession(state.session);
         state.screen = 'exam';
@@ -1698,6 +1705,31 @@ function renderFinished(app){
   const wrongPoolSet = new Set((state.wrongPool || []).map(r => r.qn));
   const masteredNums = session.order.filter(qn => wrongPoolSet.has(qn) && !isMissedAnswer(qn, session.answers[qn]));
 
+  // Of this run's misses, how many were already on the all-time missed list
+  // *before* this run started — i.e. missed again, not for the first time.
+  // Can't just check state.wrongPool here: by now it already has this run's
+  // own misses folded in (added live as each question was graded), so it
+  // can't tell "already there" from "just added". Uses the snapshot each
+  // session captured at creation time instead. Skipped for the two modes
+  // where the answer is trivially "all of them" — practicing the missed
+  // pool itself, or retaking a prior run's own misses.
+  const repeatMissNums = (session.isWrongPool || session.isRetake) ? [] :
+    retakeNums.filter(qn => (session.priorMissedQns || []).includes(qn));
+
+  if(retakeNums.length > 0 && !session.isWrongPool && !session.isRetake){
+    const repeatWrap = el('div',{class:'repeat-miss'});
+    repeatWrap.appendChild(el('div',{class:'lbl'},[
+      `${repeatMissNums.length} of ${retakeNums.length} missed question${retakeNums.length===1?'':'s'} this run ` +
+      `${repeatMissNums.length===1?'was':'were'} already on your all-time missed list.`
+    ]));
+    if(repeatMissNums.length > 0){
+      repeatWrap.appendChild(el('div',{class:'list'},[
+        repeatMissNums.map(qn => citation(QMAP[qn])).join(' · ')
+      ]));
+    }
+    card.appendChild(repeatWrap);
+  }
+
   const leftBtns = [
     el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='review'; state.reviewSession = session; render(); }},['Review answers'])
   ];
@@ -1721,7 +1753,8 @@ function renderFinished(app){
         answers: {},
         flags: {},
         startedAt: new Date().toISOString(),
-        completed: false
+        completed: false,
+        priorMissedQns: state.wrongPool.map(r => r.qn)
       };
       await saveSession(state.session);
       state.screen = 'exam';

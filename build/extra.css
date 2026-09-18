@@ -182,6 +182,12 @@
   }
   .review-item .qh .badge.unscored{background:var(--gray-200);color:var(--gray-700);}
 
+  /* Final Report: how many of this run's misses were repeats from the
+     all-time missed list, and which ones. */
+  .repeat-miss{padding:0 24px 20px;}
+  .repeat-miss .lbl{font-size:14.5px;color:var(--gray-700);margin-bottom:4px;}
+  .repeat-miss .list{font-size:13.5px;line-height:1.6;color:var(--gray-500);}
+
   /* Checkbox row on the setup screen: the label wraps beside the box rather
      than under it, so a long explanation stays readable. */
   .check-row{
