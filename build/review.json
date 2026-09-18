@@ -3098,15 +3098,20 @@
     ]
   },
   "std/30": {
-    "status": "VERIFIED",
+    "status": "CORRECTED",
     "confidence": "HIGH",
+    "boxLabel": "Ensures that the fabrikam.com users can be granted permissions to the Teams channels in contoso.com",
+    "originalAnswer": "Microsoft Entra B2B collaboration",
+    "answer": "B2B direct connect",
     "source": {
-      "title": "What is Microsoft Entra External ID for customers?",
-      "url": "https://learn.microsoft.com/en-us/entra/external-id/customers/overview-customers-ciam"
+      "title": "Microsoft Entra B2B direct connect overview",
+      "url": "https://learn.microsoft.com/en-us/entra/external-id/b2b-direct-connect-overview"
     },
-    "explanation": "Microsoft Entra B2B collaboration is the documented mechanism for letting an external partner's own users, fabrikam.com's in this case, be granted permissions to specific resources such as Teams channels in contoso.com, without contoso.com having to create or manage a separate account for each of them. Microsoft Entra External ID for customers (the current name for what was Azure AD B2C) is, by contrast, built specifically to let a customer-facing application's users authenticate with social identity providers, which is exactly what \"users of App1 can authenticate by using social media accounts\" needs, and is not something B2B collaboration, cross-tenant synchronization, or B2B direct connect provide.",
+    "explanation": "Microsoft's own comparison of the two features settles this in B2B direct connect's favor, not B2B collaboration's. \"This feature currently works with Microsoft Teams shared channels,\" letting \"users from both organizations work together using their home credentials and a shared channel in Teams, without having to be added to each other's organizations as guests.\" Crucially, the documentation states the opposite is true for the keyed answer: \"With B2B collaboration, you can invite the guest user to a team... Guest users can't see or participate in any shared channels in the team.\" So B2B collaboration is actually documented as NOT supporting shared-channel access, which is exactly what \"granted permissions to the Teams channels\" asks for. B2B direct connect also better satisfies \"minimize administrative effort\": \"B2B direct connect users don't have a presence in your Microsoft Entra organization, so these users are managed in the Teams client by the shared channel owner\" -- no guest object to invite, redeem, or maintain in contoso.com's directory, just a one-time mutual trust relationship at the tenant level. Microsoft Entra External ID for customers remains correct for the second box (App1's social-media sign-in), unchanged.",
     "whyWrong": [
-      "Cross-tenant synchronization and B2B direct connect both govern collaboration between known partner Entra tenants; neither adds social-identity-provider sign-in for an application’s own end users, which only External ID for customers is built to do."
+      "Microsoft Entra B2B collaboration, the source's key, invites fabrikam.com users as guest objects into contoso.com's directory -- but Microsoft's own Teams documentation states guest users \"can't see or participate in any shared channels in the team,\" the opposite of what this requirement needs, and it carries per-user invite/redemption overhead that B2B direct connect's tenant-level trust relationship avoids.",
+      "Cross-tenant synchronization automatically provisions user objects between tenants in an ongoing sync relationship; it's a broader identity-provisioning tool, not the channel-scoped access mechanism this requirement calls for.",
+      "Microsoft Entra External ID for customers is built for an application's own consumer sign-in with social identity providers, which is what the second box needs, not partner-tenant collaboration on a Teams channel."
     ]
   },
   "std/35": {
