@@ -35,6 +35,14 @@ ANSWER_AREAS = {
          'value': "Update an Azure policy assignment",
          'options': ["Edit an Azure blueprint", "Modify a Defender for Cloud workflow automation", "Modify an Azure policy definition", "Update an Azure policy assignment"]}
     ],
+    ('cs1', 4): [
+        {'label': "ClaimsDB must be accessible only from Azure virtual networks",
+         'value': "A private endpoint",
+         'options': ["A NAT gateway", "A network security group", "A private endpoint", "A service endpoint"]},
+        {'label': "The app services permission for ClaimsApp must be assigned to ClaimsDB",
+         'value': "A managed identity",
+         'options': ["A custom role-based access control (RBAC) role", "A managed identity", "An access package", "Azure AD Privileged Identity Management (PIM)"]}
+    ],
     ('cs1', 6): [
         {'label': "Account type for the developers",
          'value': "A guest account in the fabrikam.onmicrosoft.com tenant",

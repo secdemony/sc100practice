@@ -3,14 +3,14 @@
  "objectives": "SC-100 skills measured as of July 28, 2026",
  "totals": {
   "questions": 310,
-  "scorable": 297,
+  "scorable": 298,
   "examined": 310,
   "notReviewed": 0,
-  "corrected": 50,
-  "manual_review": 6,
-  "outdated": 12,
+  "corrected": 51,
   "ambiguous": 3,
   "verified": 239,
+  "manual_review": 5,
+  "outdated": 12,
   "not_reviewed": 0
  },
  "findings": {
@@ -341,9 +341,19 @@
   },
   "std/119": {
    "question": "Standalone 119",
-   "status": "MANUAL_REVIEW",
-   "confidence": "LOW",
-   "explanation": "Flagged as a defective question rather than a wrong key. The stem asks which **two** solutions to include and says each correct answer is a complete solution, but the source records a single letter. Resource-based RBAC in Microsoft Sentinel is what separates the two teams’ log access, and the Azure Monitor agent is what collects the perimeter servers’ event logs — both are needed, and the near-identical Standalone 122 keys exactly that pair. The likeliest explanation is that this copy lost an option or half its key. Answer it as Azure Monitor agent plus resource-based RBAC, and do not treat the graded result here as meaningful."
+   "status": "CORRECTED",
+   "confidence": "HIGH",
+   "answer": "A D",
+   "originalAnswer": "A",
+   "source": {
+    "title": "Manage access to Microsoft Sentinel data by resource",
+    "url": "https://learn.microsoft.com/en-us/azure/sentinel/resource-context-rbac"
+   },
+   "explanation": "The stem asks for **two** solutions and says each correct answer is a complete solution, but the source recorded only a single letter -- the second half of the key was lost somewhere in this copy. Standalone 122 is the same scenario (same hybrid setup, same two teams, same two requirements, worded slightly differently) and keys exactly the pair this item needs: resource-based RBAC in Microsoft Sentinel is what scopes the IT operations team to only the resources their own Azure role already covers, and the Azure Monitor agent (with multi-homing, so one install can feed more than one destination) is the supported way to get the perimeter servers' logs into the Sentinel workspace despite having no direct route to the internet. Corrected to A, D.",
+   "whyWrong": [
+    "B. Conditional Access controls sign-in to apps, not which already-ingested log data a team can see in a Sentinel workspace.",
+    "C. Windows Server event subscription forwards events between servers on the same network; it doesn't get perimeter-network logs into an Azure-hosted Sentinel workspace, and it doesn't scope access between two teams either."
+   ]
   },
   "std/87": {
    "question": "Standalone 87",

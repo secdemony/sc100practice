@@ -12,11 +12,11 @@ authoritative, and this file records which of them have actually been checked.
 | | Count |
 | --- | --- |
 | Questions in the bank | 310 |
-| Of those, scorable (have a gradeable key) | 297 |
+| Of those, scorable (have a gradeable key) | 298 |
 | **Answer keys examined against Microsoft Learn** | **310** |
 | — verified correct | 239 |
-| — corrected | 50 |
-| — flagged for manual review | 9 |
+| — corrected | 51 |
+| — flagged for manual review | 8 |
 | **Not yet reviewed** | **0** |
 
 > **Read this before trusting a key.** 310 of 310 keys have been checked. The
@@ -173,7 +173,7 @@ draw changed from 11/17/11/11 to 11/14/14/11.
 | Standalone 116 | — | — | VERIFIED | HIGH | Automation rules are what let a playbook be attached once and apply broadly rather than being configured on each of MSW1's 50 analytics rules individually, which is exactly "minimize the administrative effort required to configure individual analytics… | [Create and use Microsoft Sentinel automation rules to manage response](https://learn.microsoft.com/en-us/azure/sentinel/create-manage-use-automation-rules) |
 | Standalone 117 | C. Azure AD Application Proxy | A. an Azure AD enterprise application | CORRECTED | HIGH | The stem does the work here: App1 "supports authenticating users by using Azure AD credentials" already. Microsoft's guide to configuring SSO draws the line precisely at this point, distinguishing "app registrations vs. enterprise applications": an… | [Configure OIDC SSO for gallery and custom applications](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal-setup-oidc-sso) |
 | Standalone 118 | A. service chaining | A. service chaining | VERIFIED | HIGH | Routing a landing zone's outbound traffic through the hub firewall is precisely what Azure calls service chaining: "Service chaining enables you to direct traffic from one virtual network to a virtual appliance or gateway in a peered network through… | [Azure Virtual Network Peering (service chaining)](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview) |
-| Standalone 119 | A. the Azure Monitor agent | A. the Azure Monitor agent | MANUAL_REVIEW | LOW | Flagged as a defective question rather than a wrong key. The stem asks which **two** solutions to include and says each correct answer is a complete solution, but the source records a single letter. Resource-based RBAC in Microsoft Sentinel is what… | — |
+| Standalone 119 | A. the Azure Monitor agent | A. the Azure Monitor agent<br>D. resource-based role-based access control (RBAC) | CORRECTED | HIGH | The stem asks for **two** solutions and says each correct answer is a complete solution, but the source recorded only a single letter -- the second half of the key was lost somewhere in this copy. Standalone 122 is the same scenario (same hybrid setup,… | [Manage access to Microsoft Sentinel data by resource](https://learn.microsoft.com/en-us/azure/sentinel/resource-context-rbac) |
 | Standalone 120 | — | — | VERIFIED | HIGH | Microsoft Purview's Data Map is what registers and scans Azure data sources, including Azure Blob Storage accounts, applying classification rules (including custom sensitive information types) to what it finds there. On-premises Windows Server shared… | [Discover and govern Azure Blob Storage in Microsoft Purview](https://learn.microsoft.com/en-us/purview/register-scan-azure-blob-storage-source) |
 | Standalone 121 | — | — | VERIFIED | HIGH | Rate limiting on Front Door's WAF is configured as a custom rule with the rate-limit rule type and a threshold you define yourself, so there is no built-in managed option for it. Blocking malicious bots is the opposite case: Microsoft ships a managed Bot… | [Configure a Front Door bot protection rule](https://learn.microsoft.com/en-us/azure/web-application-firewall/afds/waf-front-door-tuning) |
 | Standalone 122 | B. Use the Azure Monitor agent with the multi-homing configurat<br>C. Implement resource-based role-based access control (RBAC) in | B. Use the Azure Monitor agent with the multi-homing configurat<br>C. Implement resource-based role-based access control (RBAC) in | VERIFIED | HIGH | Same requirement as Standalone 14, and the same two mechanisms answer it: resource-context RBAC scopes what IT operations can see in the workspace to the resources their own Azure role already covers, while the Azure Monitor agent, configured with… | [Manage access to Microsoft Sentinel data by resource](https://learn.microsoft.com/en-us/azure/sentinel/resource-context-rbac) |
