@@ -1611,6 +1611,7 @@ function render(){
   if(state.screen === 'finished') return renderFinished(app);
   if(state.screen === 'review') return renderReview(app);
   if(state.screen === 'history') return renderHistory(app);
+  if(state.screen === 'missed') return renderMissedList(app);
 }
 
 // ---------------- GATE ----------------
@@ -1933,44 +1934,6 @@ function renderSetup(app){
       ]));
     }
 
-    if(qns.length > 0){
-      const passOf = qn => { const r = state.wrongPool.find(x => x.qn === qn); return r ? (r.passCount || 0) : 0; };
-      if(!state.missedSort) state.missedSort = 'qn';
-      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},['Sort by']));
-      const sortWrap = el('div',{class:'presets', style:'margin-bottom:4px;'});
-      MISSED_SORTS.forEach(([key,label])=>{
-        sortWrap.appendChild(el('button',{
-          class: 'preset-btn' + (state.missedSort===key ? ' active' : ''),
-          onclick: ()=>{ state.missedSort = key; render(); }
-        },[label]));
-      });
-      wrongPad.appendChild(sortWrap);
-
-      const sortedQns = qns.slice().sort((a,b)=>{
-        if(state.missedSort === 'passDesc') return passOf(b)-passOf(a) || a-b;
-        if(state.missedSort === 'passAsc') return passOf(a)-passOf(b) || a-b;
-        return a-b;
-      });
-      const list = el('div',{class:'review-list', style:'padding:0 0 4px;'});
-      sortedQns.forEach(qn=>{
-        const passCount = passOf(qn);
-        list.appendChild(el('div',{class:'review-item'},[
-          el('div',{class:'qh'},[
-            citation(QMAP[qn]),
-            el('div',{style:'display:flex;align-items:center;gap:8px;'},[
-              el('span',{class:'badge' + (passCount>0 ? ' correct' : '')},
-                [passCount===1 ? 'Passed 1 time' : `Passed ${passCount} times`]),
-              el('button',{class:'btn btn-danger', style:'padding:5px 12px;font-size:13px;', onclick: async ()=>{
-                await removeFromWrongPool(qn);
-                render();
-              }},['Remove'])
-            ])
-          ])
-        ]));
-      });
-      wrongPad.appendChild(list);
-    }
-
     wrongPad.appendChild(el('div',{class:'btn-row'},[
       el('button',{class:'btn btn-primary', disabled: qns.length===0 ? 'true' : null, onclick: async ()=>{
         const nameVal = nameInput.value.trim();
@@ -1992,6 +1955,8 @@ function renderSetup(app){
         state.screen = 'exam';
         render();
       }},[`Practice Missed Questions (${qns.length})`]),
+      el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen = 'missed'; render(); }},
+        [`Manage Individually (${state.wrongPool.length})`]),
       el('button',{class:'btn btn-outline', onclick: async ()=>{
         if(confirm("Clear your ENTIRE all-time missed-questions list — every date, not just the selected range? This can't be undone.")){
           state.wrongPool = [];
@@ -2915,6 +2880,61 @@ function renderReview(app){
 }
 
 // ---------------- HISTORY ----------------
+// Individual browse/sort/remove view for the all-time missed pool, kept off
+// the setup screen so that screen stays a short list of actions rather than
+// growing one row per missed question.
+function renderMissedList(app){
+  const card = el('div',{class:'card'});
+  card.appendChild(el('div',{class:'pad'},[
+    el('h1',{},['Missed Questions']),
+    el('div',{class:'subtitle'},['Sort, review, or individually remove questions from your all-time missed list.']),
+    el('button',{class:'btn btn-outline', onclick: ()=>{ state.screen='setup'; render(); }},['← Back to menu'])
+  ]));
+  const pad = el('div',{class:'pad', style:'padding-top:0;'});
+
+  if(state.wrongPool.length === 0){
+    pad.appendChild(el('div',{class:'empty-note'},['Nothing on the missed list.']));
+  } else {
+    if(!state.missedSort) state.missedSort = 'qn';
+    pad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},['Sort by']));
+    const sortWrap = el('div',{class:'presets', style:'margin-bottom:12px;'});
+    MISSED_SORTS.forEach(([key,label])=>{
+      sortWrap.appendChild(el('button',{
+        class: 'preset-btn' + (state.missedSort===key ? ' active' : ''),
+        onclick: ()=>{ state.missedSort = key; render(); }
+      },[label]));
+    });
+    pad.appendChild(sortWrap);
+
+    const sorted = state.wrongPool.slice().sort((a,b)=>{
+      if(state.missedSort === 'passDesc') return (b.passCount||0)-(a.passCount||0) || a.qn-b.qn;
+      if(state.missedSort === 'passAsc') return (a.passCount||0)-(b.passCount||0) || a.qn-b.qn;
+      return a.qn-b.qn;
+    });
+    const list = el('div',{class:'review-list'});
+    sorted.forEach(r=>{
+      const passCount = r.passCount || 0;
+      list.appendChild(el('div',{class:'review-item'},[
+        el('div',{class:'qh'},[
+          citation(QMAP[r.qn]),
+          el('div',{style:'display:flex;align-items:center;gap:8px;'},[
+            el('span',{class:'badge' + (passCount>0 ? ' correct' : '')},
+              [passCount===1 ? 'Passed 1 time' : `Passed ${passCount} times`]),
+            el('button',{class:'btn btn-danger', style:'padding:5px 12px;font-size:13px;', onclick: async ()=>{
+              await removeFromWrongPool(r.qn);
+              render();
+            }},['Remove'])
+          ])
+        ])
+      ]));
+    });
+    pad.appendChild(list);
+  }
+
+  card.appendChild(pad);
+  app.appendChild(card);
+}
+
 function renderHistory(app){
   const card = el('div',{class:'card'});
   card.appendChild(el('div',{class:'pad'},[
