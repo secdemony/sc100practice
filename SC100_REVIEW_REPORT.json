@@ -7,11 +7,11 @@
   "examined": 310,
   "notReviewed": 0,
   "corrected": 51,
-  "ambiguous": 3,
-  "verified": 239,
+  "not_reviewed": 0,
   "manual_review": 5,
   "outdated": 12,
-  "not_reviewed": 0
+  "verified": 240,
+  "ambiguous": 2
  },
  "findings": {
   "std/20": {
@@ -1667,13 +1667,17 @@
   },
   "std/282": {
    "question": "Standalone 282",
-   "status": "AMBIGUOUS",
-   "confidence": "MEDIUM",
+   "status": "VERIFIED",
+   "confidence": "HIGH",
    "source": {
-    "title": "Enable compliant network check with Conditional Access",
-    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-compliant-network"
+    "title": "Known limitations for Global Secure Access",
+    "url": "https://learn.microsoft.com/en-us/entra/global-secure-access/reference-current-known-limitations"
    },
-   "explanation": "Two of the keyed options are well supported and one distractor is not clearly excluded, so this is flagged rather than confirmed. Option C is documented outright: compliant network check protects \"Microsoft apps, third-party SaaS apps, and private line-of-business (LoB) apps\" that use Microsoft Entra single sign-on. Option B fits the data plane enforcement description, since Exchange Online is a continuous access evaluation service. Option D is genuinely excluded, because the known limitations state that \"compliant network check is currently not supported for Private Access applications\". The problem is option A. Compliant network is not compliant device: it depends on the user connecting through the Global Secure Access client or a configured remote network, not on Intune enrolment, so the branch office computers being unenrolled does not by itself rule them out. The stem never says whether they have the client, which leaves A defensible on the text as printed. The key is left as the source has it."
+   "explanation": "Option C is documented outright: compliant network check protects \"Microsoft apps, third-party SaaS apps, and private line-of-business (LoB) apps\" that use Microsoft Entra single sign-on. Option B fits the data plane enforcement description, since Exchange Online is a continuous access evaluation service. Option D is explicitly excluded -- Microsoft's current known-limitations page states plainly, \"Compliant network check is currently not supported for Private Access applications,\" and on-premises apps published through Global Secure Access are Private Access applications by definition. Option A is also addressed directly: the same page explains that remote network connectivity (the clientless, IPsec-tunnel-from-the-branch-site approach) means \"Conditional Access policies for Microsoft or Internet traffic are only enforced when a user has the Global Secure Access client.\" The stem's branch office -- 100 computers, explicitly not Intune-enrolled, contrasted with the main office's 500 that are -- reads as exactly this remote-network, no-per-device-client pattern, so compliant network check (a Conditional Access control) doesn't apply to it either. That resolves what was previously flagged as ambiguous: B, C is the well-supported pair, not a close call against A or D.",
+   "whyWrong": [
+    "A. Compliant network check isn't compliant device -- it depends on the Global Secure Access client or a client-based remote network connection, not Intune enrollment. But the branch office's described setup (unenrolled, distinct from the client-managed main office) reads as the clientless remote-network pattern, where Conditional Access for this traffic isn't enforced at all.",
+    "D. Microsoft's own known-limitations page states this outright: compliant network check doesn't currently support Private Access applications, which on-premises apps published through Global Secure Access are."
+   ]
   },
   "std/52": {
    "question": "Standalone 52",
