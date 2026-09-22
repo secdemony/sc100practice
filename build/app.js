@@ -417,12 +417,16 @@ async function saveHistory(list){
 // explicit user actions ("Clear list", or "Remove correct from missed list"
 // on the results screen). Items that cannot be scored never enter it.
 //
-// Each entry is {qn, missedAt}: missedAt is the ISO timestamp of the LAST time
-// that question was missed, so missing it again later just bumps the date —
-// it does not create a second entry or lose the fact that it was ever missed
-// before. missedAt is null for entries saved before this field existed; those
-// still count toward the all-time pool but can never match a specific-date
-// filter, since there is no date to compare (see wrongPoolInRange below).
+// Each entry is {qn, missedAt, passCount}: missedAt is the ISO timestamp of
+// the LAST time that question was missed, so missing it again later just
+// bumps the date — it does not create a second entry or lose the fact that it
+// was ever missed before. missedAt is null for entries saved before this
+// field existed; those still count toward the all-time pool but can never
+// match a specific-date filter, since there is no date to compare (see
+// wrongPoolInRange below). passCount is how many times in a row the question
+// has been answered correctly since it was last missed — addToWrongPool
+// always re-adds at passCount 0, and recordPassesInWrongPool is the only
+// thing that increments it, so a single miss anywhere always wins the reset.
 // ---------------------------------------------------------------------------
 
 function normalizeWrongPool(arr){
@@ -434,12 +438,13 @@ function normalizeWrongPool(arr){
     const isRecord = v && typeof v === 'object';
     const qn = Number(isRecord ? v.qn : v);
     const missedAt = isRecord ? (v.missedAt || null) : null;
+    const passCount = isRecord && Number.isFinite(v.passCount) ? v.passCount : 0;
     if(!Number.isFinite(qn) || !isScorable(QMAP[qn])) return;
     const existing = byQn.get(qn);
     // A real date beats "unknown", and a later date beats an earlier one —
     // this is what lets re-missing a question bump it into today's filter.
     if(!existing || (missedAt && (!existing.missedAt || missedAt > existing.missedAt))){
-      byQn.set(qn, {qn, missedAt});
+      byQn.set(qn, {qn, missedAt, passCount});
     }
   });
   return Array.from(byQn.values()).sort((a,b)=>a.qn-b.qn);
@@ -463,9 +468,26 @@ async function addToWrongPool(qns){
   const list = Array.isArray(qns) ? qns : [qns];
   if(list.length === 0) return;
   const now = new Date().toISOString();
-  const incoming = list.map(qn => ({qn, missedAt: now}));
+  // passCount:0 — a miss always resets the streak, and normalizeWrongPool
+  // picks this record over any existing one since its date is newest.
+  const incoming = list.map(qn => ({qn, missedAt: now, passCount: 0}));
   state.wrongPool = normalizeWrongPool((state.wrongPool || []).concat(incoming));
   await saveWrongPool(state.wrongPool);
+}
+
+// Bumps the consecutive-pass streak for questions already on the pool that
+// were just answered correctly. Never adds a question that isn't already
+// tracked — passing something for the first time isn't a "pass" of anything.
+async function recordPassesInWrongPool(qns){
+  const passed = new Set((Array.isArray(qns) ? qns : [qns]).map(Number));
+  if(passed.size === 0) return;
+  let changed = false;
+  state.wrongPool = (state.wrongPool || []).map(r => {
+    if(!passed.has(r.qn)) return r;
+    changed = true;
+    return Object.assign({}, r, {passCount: (r.passCount || 0) + 1});
+  });
+  if(changed) await saveWrongPool(state.wrongPool);
 }
 
 // The only removal path other than a full clear — driven by an explicit click.
@@ -490,6 +512,14 @@ const MISSED_PRESETS = [
   ['7day', 'Last 7 days'],
   ['custom', 'Custom range'],
   ['undated', 'No date recorded']
+];
+// Sort options for the individual question list under the all-time missed
+// pool — lets a candidate find questions they've nearly mastered (high pass
+// count) or haven't touched since being missed (0 passes).
+const MISSED_SORTS = [
+  ['qn', 'Question #'],
+  ['passDesc', 'Most passes first'],
+  ['passAsc', 'Fewest passes first']
 ];
 function missedPresetLabel(key){
   const p = MISSED_PRESETS.find(p => p[0] === key);
@@ -900,6 +930,44 @@ function renderSetup(app){
         `${undatedCount} question${undatedCount===1?'':'s'} on this list ${undatedCount===1?'was':'were'} missed before date filtering existed, so ` +
         `${undatedCount===1?'it has':'they have'} no recorded date — use "No date recorded" above to see just ${undatedCount===1?'it':'them'}.`
       ]));
+    }
+
+    if(qns.length > 0){
+      const passOf = qn => { const r = state.wrongPool.find(x => x.qn === qn); return r ? (r.passCount || 0) : 0; };
+      if(!state.missedSort) state.missedSort = 'qn';
+      wrongPad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},['Sort by']));
+      const sortWrap = el('div',{class:'presets', style:'margin-bottom:4px;'});
+      MISSED_SORTS.forEach(([key,label])=>{
+        sortWrap.appendChild(el('button',{
+          class: 'preset-btn' + (state.missedSort===key ? ' active' : ''),
+          onclick: ()=>{ state.missedSort = key; render(); }
+        },[label]));
+      });
+      wrongPad.appendChild(sortWrap);
+
+      const sortedQns = qns.slice().sort((a,b)=>{
+        if(state.missedSort === 'passDesc') return passOf(b)-passOf(a) || a-b;
+        if(state.missedSort === 'passAsc') return passOf(a)-passOf(b) || a-b;
+        return a-b;
+      });
+      const list = el('div',{class:'review-list', style:'padding:0 0 4px;'});
+      sortedQns.forEach(qn=>{
+        const passCount = passOf(qn);
+        list.appendChild(el('div',{class:'review-item'},[
+          el('div',{class:'qh'},[
+            citation(QMAP[qn]),
+            el('div',{style:'display:flex;align-items:center;gap:8px;'},[
+              el('span',{class:'badge' + (passCount>0 ? ' correct' : '')},
+                [passCount===1 ? 'Passed 1 time' : `Passed ${passCount} times`]),
+              el('button',{class:'btn btn-danger', style:'padding:5px 12px;font-size:13px;', onclick: async ()=>{
+                await removeFromWrongPool(qn);
+                render();
+              }},['Remove'])
+            ])
+          ])
+        ]));
+      });
+      wrongPad.appendChild(list);
     }
 
     wrongPad.appendChild(el('div',{class:'btn-row'},[
@@ -1591,6 +1659,10 @@ async function finishExam(){
   // pulled out of the pool — the list is a cumulative record of everything
   // ever missed and only the user clears it.
   const newMisses = [];
+  // Questions correctly answered this run that were already on the all-time
+  // missed pool *before* this run started (per session.priorMissedQns) — a
+  // "pass" only counts against a question that was actually being tracked.
+  const passedNums = [];
   s.order.forEach(qn=>{
     const q = QMAP[qn];
     const rec = s.answers[qn];
@@ -1603,10 +1675,14 @@ async function finishExam(){
     // revealed via Next Question / Show Answer without a selection) counts as
     // skipped, not incorrect — "checked" only means the answer was viewed.
     if(!hasResponse(q, rec)){ skipped++; newMisses.push(qn); return; }
-    if(isCorrectAnswer(q, rec)){ correct++; catStats[q.c].correct++; }
+    if(isCorrectAnswer(q, rec)){
+      correct++; catStats[q.c].correct++;
+      if((s.priorMissedQns || []).includes(qn)) passedNums.push(qn);
+    }
     else { incorrect++; newMisses.push(qn); }
   });
   await addToWrongPool(newMisses);
+  await recordPassesInWrongPool(passedNums);
 
   const summary = {
     candidateName: s.candidateName,
