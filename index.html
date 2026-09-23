@@ -1110,6 +1110,7 @@ let state = {
 function letterOf(i){ return String.fromCharCode(65+i); }
 
 function rangeLabelFor(s){
+  if(s.isFailedRerun) return `Failed re-run · ${s.total} question${s.total===1?'':'s'}`;
   if(s.isWrongPool) return `All-time missed · ${s.total} question${s.total===1?'':'s'}`;
   if(s.isRetake) return `Retake · ${s.total} question${s.total===1?'':'s'} (incorrect & skipped)`;
   if(s.isWeighted) return `Weighted exam · ${s.total} questions (by skill-area %)`;
@@ -1123,7 +1124,7 @@ function rangeLabelFor(s){
 // both go through rangeLabelFor via this shim.
 function rangeLabelOf(o){
   return rangeLabelFor({
-    isWrongPool:o.isWrongPool, isRetake:o.isRetake, isWeighted:o.isWeighted,
+    isWrongPool:o.isWrongPool, isRetake:o.isRetake, isWeighted:o.isWeighted, isFailedRerun:o.isFailedRerun,
     secKey:o.secKey, rangeStart:o.rangeStart, rangeEnd:o.rangeEnd,
     total:(o.total != null ? o.total : (o.order ? o.order.length : 0))
   });
@@ -2657,6 +2658,7 @@ async function finishExam(){
     rangeEnd: s.rangeEnd,
     isRetake: !!s.isRetake,
     isWrongPool: !!s.isWrongPool,
+    isFailedRerun: !!s.isFailedRerun,
     isWeighted: !!s.isWeighted,
     total: s.order.length,
     scored: s.order.length - notScored,
@@ -2754,11 +2756,12 @@ function renderFinished(app){
   // can't tell "already there" from "just added". Uses the snapshot each
   // session captured at creation time instead. Skipped for the two modes
   // where the answer is trivially "all of them" — practicing the missed
-  // pool itself, or retaking a prior run's own misses.
-  const repeatMissNums = (session.isWrongPool || session.isRetake) ? [] :
+  // pool itself, retaking a prior run's own misses, or the failed re-run
+  // (also drawn entirely from the missed pool).
+  const repeatMissNums = (session.isWrongPool || session.isRetake || session.isFailedRerun) ? [] :
     retakeNums.filter(qn => (session.priorMissedQns || []).includes(qn));
 
-  if(retakeNums.length > 0 && !session.isWrongPool && !session.isRetake){
+  if(retakeNums.length > 0 && !session.isWrongPool && !session.isRetake && !session.isFailedRerun){
     const repeatWrap = el('div',{class:'repeat-miss'});
     repeatWrap.appendChild(el('div',{class:'lbl'},[
       `${repeatMissNums.length} of ${retakeNums.length} missed question${retakeNums.length===1?'':'s'} this run ` +
@@ -2895,6 +2898,54 @@ function renderMissedList(app){
   if(state.wrongPool.length === 0){
     pad.appendChild(el('div',{class:'empty-note'},['Nothing on the missed list.']));
   } else {
+    // Builds and starts an exam from every question currently failed (passCount
+    // 0 — nothing has redeemed the last miss yet) plus every question passed
+    // fewer than N times in a row since its last miss. N is re-entered each
+    // time this runs rather than remembered, per how streaks keep changing.
+    pad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},
+      ['Failed Questions – Run Again or Passed Less Than ___ Times']));
+    pad.appendChild(el('div',{class:'row', style:'align-items:flex-end;margin-bottom:4px;'},[
+      el('div',{},[
+        el('label',{},['Times']),
+        el('input',{type:'number', min:'0', step:'1', placeholder:'e.g. 3', value: state.failedRerunThreshold || '',
+          oninput:(e)=>{ state.failedRerunThreshold = e.target.value; state.failedRerunMsg = ''; }})
+      ]),
+      el('button',{class:'btn btn-primary', style:'margin-bottom:16px;', onclick: async ()=>{
+        const raw = (state.failedRerunThreshold || '').trim();
+        const n = Number(raw);
+        if(raw === '' || !Number.isInteger(n) || n < 0){
+          state.failedRerunMsg = 'Enter a whole number of 0 or more.';
+          render(); return;
+        }
+        const qns = state.wrongPool
+          .filter(r => (r.passCount || 0) === 0 || (r.passCount || 0) < n)
+          .map(r => r.qn);
+        if(qns.length === 0){
+          state.failedRerunMsg = `No questions are currently failed or passed fewer than ${n} time${n===1?'':'s'}.`;
+          render(); return;
+        }
+        state.session = {
+          candidateName: 'FailedReRun',
+          secKey: 'all',
+          rangeStart: null, rangeEnd: null,
+          isFailedRerun: true,
+          order: qns,
+          currentIndex: 0,
+          answers: {},
+          flags: {},
+          startedAt: new Date().toISOString(),
+          completed: false,
+          priorMissedQns: state.wrongPool.map(r => r.qn)
+        };
+        await saveSession(state.session);
+        state.screen = 'exam';
+        render();
+      }},['Start Re-Run Test'])
+    ]));
+    if(state.failedRerunMsg){
+      pad.appendChild(el('div',{class:'err', style:'margin:-2px 0 12px;'},[state.failedRerunMsg]));
+    }
+
     if(!state.missedSort) state.missedSort = 'qn';
     pad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},['Sort by']));
     const sortWrap = el('div',{class:'presets', style:'margin-bottom:12px;'});
