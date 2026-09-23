@@ -1878,7 +1878,7 @@ function renderReview(app){
   app.appendChild(card);
 }
 
-// ---------------- HISTORY ----------------
+// ---------------- MISSED QUESTIONS ----------------
 // Individual browse/sort/remove view for the all-time missed pool, kept off
 // the setup screen so that screen stays a short list of actions rather than
 // growing one row per missed question.
@@ -1904,6 +1904,40 @@ function renderMissedList(app){
       },[label]));
     });
     pad.appendChild(sortWrap);
+
+    // Bulk removal by streak length: "Passed More Than N Times" drops every
+    // question whose current consecutive-pass streak exceeds N in one go,
+    // instead of clicking Remove on each mastered question individually.
+    pad.appendChild(el('div',{class:'helper', style:'margin:0 0 4px;font-weight:700;'},['Passed More Than ___ Times']));
+    pad.appendChild(el('div',{class:'row', style:'align-items:flex-end;margin-bottom:4px;'},[
+      el('div',{},[
+        el('label',{},['Times']),
+        el('input',{type:'number', min:'0', step:'1', placeholder:'e.g. 3', value: state.missedThreshold || '',
+          oninput:(e)=>{ state.missedThreshold = e.target.value; state.missedThresholdMsg = ''; }})
+      ]),
+      el('button',{class:'btn btn-danger', style:'margin-bottom:16px;', onclick: async ()=>{
+        const raw = (state.missedThreshold || '').trim();
+        const n = Number(raw);
+        if(raw === '' || !Number.isInteger(n) || n < 0){
+          state.missedThresholdMsg = 'Enter a whole number of 0 or more.';
+          render(); return;
+        }
+        const matches = state.wrongPool.filter(r => (r.passCount || 0) > n);
+        if(matches.length === 0){
+          state.missedThresholdMsg = `No questions have been passed more than ${n} time${n===1?'':'s'}.`;
+          render(); return;
+        }
+        if(confirm(`Remove ${matches.length} question${matches.length===1?'':'s'} passed more than ${n} time${n===1?'':'s'}? This can't be undone.`)){
+          await removeFromWrongPool(matches.map(r => r.qn));
+          state.missedThreshold = '';
+          state.missedThresholdMsg = '';
+          render();
+        }
+      }},['Remove'])
+    ]));
+    if(state.missedThresholdMsg){
+      pad.appendChild(el('div',{class:'err', style:'margin:-2px 0 12px;'},[state.missedThresholdMsg]));
+    }
 
     const sorted = state.wrongPool.slice().sort((a,b)=>{
       if(state.missedSort === 'passDesc') return (b.passCount||0)-(a.passCount||0) || a.qn-b.qn;
@@ -1934,6 +1968,7 @@ function renderMissedList(app){
   app.appendChild(card);
 }
 
+// ---------------- HISTORY ----------------
 function renderHistory(app){
   const card = el('div',{class:'card'});
   card.appendChild(el('div',{class:'pad'},[
